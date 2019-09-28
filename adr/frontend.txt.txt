@@ -1,0 +1,15 @@
+Which front-end framework should we use, if we choose to use one?
+Summary: In order to create a reactive and dynamic web app, we decided to use React as our front-end framework.
+Problem: The problem we need to solve is making a reactive web app in a short time (by the end of the semester). Preferably dynamically interact with database (no page reloads with each database interaction) because students will be commenting, group chatting, and adding goals (which should not reload the page).
+Constraints: Has to work with whichever programming language we decide to use, be easy enough for new users that we would be able to learn it and build our project by the end of the semester.
+Options:
+No framework
+Pros: Lots of freedom to do whatever we wanted, none of the team members have very much experience with front-end frameworks
+Cons: Will take a lot of time
+React
+Pros: JavaScript based, not too difficult to learn how to use, plenty of online documentation, Prof. Terrell advocates for React, App Lab uses React Native so we wouldn’t have issues getting help if we needed it, a popular front-end framework right now, would look good on resumes
+Cons: None of the team members have experience with React, does not have quite as many functionalities as Angular, such as dependency injection and component CSS encapsulation
+Angular.js
+Pros: JavaScript based, plenty of online documentation, popular front-end framework right now, more functionality than React, would look good on resumes
+Cons: may not be as easy to get help from LAs/App Lab for Angular; because it has a lot of functionalities Angular is not always the easiest to learn how to use, especially for developers who have very limited experience working with any front-end framework
+Rationale: We chose to use React as our front-end framework because there are plenty of resources on campus that could help us with React if we needed it, we would more easily be able to make a dynamic/reactive web page with React than with no framework, and because our project is simple, Angular.js could possibly be a little overkill to use for our project.

@@ -1,0 +1,15 @@
+Which programming language should we use?
+Summary: In order to develop the backend for our web app, we decided to use JavaScript.
+Problem: We need to choose a programming language(s) for the back-end of our web app. This language(s) need to be able to communicate with whichever database we choose to use, and the front-end framework if we choose to use one.
+Constraints: No constraints
+Options:
+JavaScript
+Pros: Can easily be used with node.js (which many frontend frameworks use). Team members are very familiar with it. Lightweight, fast. Usually used with HTML/CSS.
+Cons: If doing heavy data processing or machine learning, javascript as a backend is not the best.
+Go
+Pros: Fast, scalable, concise. 
+Cons: Team members have no experience.
+Java
+Pros: team members have a lot of experience, lots of documentation
+Cons: not many popular Java front-end frameworks
+Rationale: We decided to choose JavaScript as our back-end language because we are all familiar with JavaScript, and there are many really popular JS based front-end frameworks, so we would not have to use a separate language to work with a framework

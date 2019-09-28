@@ -1,0 +1,18 @@
+Where should we deploy our app to?
+Summary: We decided to use Heroku to deploy our app.
+Problem: We need to choose where we want our app to be deployed to. This has to be some place that requires little maintenance
+Constraints: No constraints, but free options would be nice
+Options: 
+Heroku
+Pros: Prof. Terrell uses it in class and recommends it. Has authentication add ons, has database add ons.
+Cons: No experience
+Firebase
+Pros: can also use Firebase has authentication add ons, has database add on.
+Cons: No experience
+AWS/Azure
+Pros: used widely, lots of documentation
+Cons: way too big for the scope of our project
+Rationale: We chose to use Heroku to deploy our app. We chose Heroku because although none of us team members have used it (or any other platforms for deployment), Prof. Terrell has used Heroku multiple times for in class examples and advocates for it. Additionally, Heroku has lots of plugins we can add-on if we want/need to. 
+
+
+

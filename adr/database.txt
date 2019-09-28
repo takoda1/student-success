@@ -1,0 +1,15 @@
+Which database should we use?
+Summary: To store data for our web app, we decided to use Heroku Postgres for our database.
+Problem: We need our web app to store each user’s data.  For every day, every student account will need to store a record of their goals, their reflections, their timers, and how much time was spent in total.  Each small group will need to store the messages they’ve shared with their small group, and the forum posts that are accessible to every account will also need to be stored.
+Constraints: We know that we don’t plan to use Express.js, which eliminates Parse as it’s meant to work with an Express app.
+Options:
+Heroku Postgres
+Pros: Connected directly to Heroku if we choose to host there, also has authentication add-ons, is able to connect to Nodejs apps, Postgres (and the pg module) are well-documented and fast, one of our members has worked with PostgreSQL
+Cons: The free tier is limited, and may need to be upgraded as the project exands (this may be outside of the scope of this semester)
+Firebase
+Pros: Provides user authentication through multiple sources, the free tier includes the needs of our prototype, includes database and hosting options, has an sdk for node.js apps
+Cons: The team has limited experience, and it might be optimized to use all backend services with Firebase, making it harder if we decide to use other platforms for hosting, authentication, etc
+Parse
+Pros: Queries are simple and fast.
+Cons: Class/table relations are not as intuitive as with tables. Team members have no experience.
+Rationale: One of our team members knows postgres fairly well and Heroku is our hosting platform of choice, so we figure that it will be simple to use Heroku Postgres as there is high compatibility/ease of use out of the box. We also think that conventional tables will be easier than storing everything as objects.

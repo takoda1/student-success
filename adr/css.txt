@@ -1,0 +1,12 @@
+Which CSS library should we use, if we choose to use one?
+Summary: In order to quickly make an appealing design for our frontend, we decided to use Bootstrap.
+Problem: We need our webapp to look appealing to increase student engagement with the app.
+Constraints: No constraints with the CSS libraries because they are usually accessed by url or as a file in the project, and linux/mac/windows can all accomplish this. No constraints in terms of cost either as the best and most popular CSS libraries are open source.
+Options:
+Bootstrap
+Pros: All team members have used bootstrap. Open source. Lots of documentation. Looks pretty good. Fast and quick to start using.
+Cons: Makes the website look the same as other bootstrap websites.
+Material design
+Pros: Looks good. Open source for many components. Lots of documentation.
+Cons: Clever design over usability, team members not very familiar.
+Rationale: We chose bootstrap because we are 1: most familiar with it. 2: It is very quick to import and start using. 3: It looks good.

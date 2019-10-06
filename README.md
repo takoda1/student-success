@@ -10,3 +10,5 @@
 8. Install postman to make requests, or use curl.
 
 ##Heroku deployment
+
+Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.

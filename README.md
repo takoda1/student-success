@@ -1,4 +1,4 @@
-#Setting up the API for development
+# Setting up the API for development
 
 1. Install postgresql
 2. Run the postgresql service
@@ -9,6 +9,18 @@
 7. Run node index.js
 8. Install postman to make requests, or use curl.
 
-##Heroku deployment
+## Heroku deployment
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
+
+## Current endpoints:
+
+GET /users   Returns all users
+
+GET /user/:id    Returns user with specified id
+
+POST /user   (Requires json body of {firstName, lastName, email})
+Posts user with specified values
+
+DELETE /user/:id	Deletes user with specified id
+

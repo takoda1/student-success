@@ -20,6 +20,10 @@ app.get('/users', queries.getUsers)
 
 app.post('/user', queries.addUser)
 
-app.listen(port, () => {
-    console.log('App running on port ${port}')
+app.get('/', (request, response)=>{
+    response.status(200).json({ success: "ABCCCC" });
+})
+
+app.listen(process.env.PORT || port, () => {
+    console.log('App running on port '+port)
 })

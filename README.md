@@ -8,3 +8,5 @@
 6. Run npm i
 7. Run node index.js
 8. Install postman to make requests, or use curl.
+
+##Heroku deployment

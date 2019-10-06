@@ -1,6 +1,7 @@
 const { pool } = require('./config')
 
 const getUsers = (request, response) => {
+    console.log("ABC");
     pool.query('SELECT * FROM users ORDER BY lastName asc', (error, results) => {
         if (error) {
             throw error
@@ -10,7 +11,6 @@ const getUsers = (request, response) => {
 }
 
 const addUser = (request, response) => {
-    console.log(request);
     const { firstName, lastName, email } = request.body;
 
     pool.query('INSERT INTO users (firstName, lastName, email) VALUES ($1, $2, $3)', [firstName, lastName, email], (error) => {

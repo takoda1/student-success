@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const queries = require('./queries')
-const port = 3000
+const port = process.env.port || 3000
 
 //Load connection pool for postgres
 const { pool } = require('./config')
@@ -21,7 +21,7 @@ app.get('/users', queries.getUsers)
 app.post('/user', queries.addUser)
 
 app.get('/', (request, response)=>{
-    response.status(200).json({ success: "ABCCCC" });
+    response.status(200).json({ success: "HEY WHATS UP" , user:"process.env.DB_USER"});
 })
 
 app.listen(process.env.PORT || port, () => {

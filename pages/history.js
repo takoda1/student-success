@@ -1,10 +1,9 @@
-import { NavBar } from '../shared';
+import { Layout } from '../shared';
 
 const History = () => (
-    <div>
-        <NavBar/>
+    <Layout>
         <p>This is your History page!</p>
-    </div>
+    </Layout>
 );
 
 export default History;

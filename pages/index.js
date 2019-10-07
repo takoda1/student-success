@@ -1,10 +1,9 @@
-import { NavBar } from '../shared';
+import { Layout } from '../shared';
 
 const Index = () => (
-  <div>
-    <NavBar/>
-    <p>Hello Next.js</p>
-  </div>
+  <Layout>
+    <p>Home Page</p>
+  </Layout>
 );
   
 export default Index;

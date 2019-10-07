@@ -1,5 +1,22 @@
 import Link from 'next/link';
-export { NavBar, Button };
+export { Layout };
+
+const layoutStyle = {
+  margin: 20,
+  padding: 20,
+  border: '1px solid #DDD'
+};
+
+const Layout = props => (
+  <div style={layoutStyle}>
+    <NavBar />
+    {props.children}
+  </div>
+);
+
+const linkStyle = {
+    marginRight: 15
+};
 
 function NavBar(props) {
     return (
@@ -15,7 +32,7 @@ function NavBar(props) {
 function Button(props) {
   return (
     <Link href={props.path}>
-      <a title={props.name}>{props.name}</a>
+      <a style={linkStyle} title={props.name}>{props.name}</a>
     </Link>
   )
 }

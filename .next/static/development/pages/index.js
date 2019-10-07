@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["static/development/pages/forum.js"],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["static/development/pages/index.js"],{
 
 /***/ "./node_modules/@babel/runtime-corejs2/core-js/array/is-array.js":
 /*!***********************************************************************!*\
@@ -4432,21 +4432,21 @@ module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
 /***/ }),
 
-/***/ "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fforum&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Fforum.js!./":
-/*!****************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fforum&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Fforum.js ***!
-  \****************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2F&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Findex.js!./":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2F&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Findex.js ***!
+  \***********************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-    (window.__NEXT_P=window.__NEXT_P||[]).push(["/forum", function() {
-      var mod = __webpack_require__(/*! ./pages/forum.js */ "./pages/forum.js")
+    (window.__NEXT_P=window.__NEXT_P||[]).push(["/", function() {
+      var mod = __webpack_require__(/*! ./pages/index.js */ "./pages/index.js")
       if(true) {
-        module.hot.accept(/*! ./pages/forum.js */ "./pages/forum.js", function() {
-          if(!next.router.components["/forum"]) return
-          var updatedPage = __webpack_require__(/*! ./pages/forum.js */ "./pages/forum.js")
-          next.router.update("/forum", updatedPage)
+        module.hot.accept(/*! ./pages/index.js */ "./pages/index.js", function() {
+          if(!next.router.components["/"]) return
+          var updatedPage = __webpack_require__(/*! ./pages/index.js */ "./pages/index.js")
+          next.router.update("/", updatedPage)
         })
       }
       return mod
@@ -9969,9 +9969,9 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./pages/forum.js":
+/***/ "./pages/index.js":
 /*!************************!*\
-  !*** ./pages/forum.js ***!
+  !*** ./pages/index.js ***!
   \************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -9981,34 +9981,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared */ "./shared.js");
-var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-success/pages/forum.js";
+var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-success/pages/index.js";
 
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
-var Forum = function Forum() {
-  return __jsx("div", {
+var Index = function Index() {
+  return __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
     __source: {
       fileName: _jsxFileName,
       lineNumber: 4
     },
     __self: this
-  }, __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["NavBar"], {
+  }, __jsx("p", {
     __source: {
       fileName: _jsxFileName,
       lineNumber: 5
     },
     __self: this
-  }), __jsx("p", {
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 6
-    },
-    __self: this
-  }, "This is your Forum page!"));
+  }, "Home Page"));
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (Forum);
+/* harmony default export */ __webpack_exports__["default"] = (Index);
 
 /***/ }),
 
@@ -10016,13 +10010,12 @@ var Forum = function Forum() {
 /*!*******************!*\
   !*** ./shared.js ***!
   \*******************/
-/*! exports provided: NavBar, Button */
+/*! exports provided: Layout */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return NavBar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return Button; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Layout", function() { return Layout; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
@@ -10032,12 +10025,38 @@ var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-succes
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
+var layoutStyle = {
+  margin: 20,
+  padding: 20,
+  border: '1px solid #DDD'
+};
+
+var Layout = function Layout(props) {
+  return __jsx("div", {
+    style: layoutStyle,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 11
+    },
+    __self: this
+  }, __jsx(NavBar, {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 12
+    },
+    __self: this
+  }), props.children);
+};
+
+var linkStyle = {
+  marginRight: 15
+};
 
 function NavBar(props) {
   return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 6
+      lineNumber: 23
     },
     __self: this
   }, __jsx(Button, {
@@ -10045,7 +10064,7 @@ function NavBar(props) {
     path: "/index",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 7
+      lineNumber: 24
     },
     __self: this
   }), __jsx(Button, {
@@ -10053,7 +10072,7 @@ function NavBar(props) {
     path: "/history",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 8
+      lineNumber: 25
     },
     __self: this
   }), __jsx(Button, {
@@ -10061,7 +10080,7 @@ function NavBar(props) {
     path: "/group",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 9
+      lineNumber: 26
     },
     __self: this
   }), __jsx(Button, {
@@ -10069,7 +10088,7 @@ function NavBar(props) {
     path: "/forum",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 10
+      lineNumber: 27
     },
     __self: this
   }));
@@ -10080,14 +10099,15 @@ function Button(props) {
     href: props.path,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 17
+      lineNumber: 34
     },
     __self: this
   }, __jsx("a", {
+    style: linkStyle,
     title: props.name,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 18
+      lineNumber: 35
     },
     __self: this
   }, props.name));
@@ -10095,14 +10115,14 @@ function Button(props) {
 
 /***/ }),
 
-/***/ 4:
-/*!********************************************************************************************************************************************************************!*\
-  !*** multi next-client-pages-loader?page=%2Fforum&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Fforum.js ***!
-  \********************************************************************************************************************************************************************/
+/***/ 0:
+/*!***************************************************************************************************************************************************************!*\
+  !*** multi next-client-pages-loader?page=%2F&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Findex.js ***!
+  \***************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! next-client-pages-loader?page=%2Fforum&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Fforum.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2Fforum&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Fforum.js!./");
+module.exports = __webpack_require__(/*! next-client-pages-loader?page=%2F&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Findex.js! */"./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?page=%2F&absolutePagePath=%2FUsers%2Fperry_000%2FDocuments%2FSchool%2FF19%2FCOMP523%2Fstudent-success%2Fpages%2Findex.js!./");
 
 
 /***/ }),
@@ -10118,5 +10138,5 @@ module.exports = dll_13346faca0e924a89b24;
 
 /***/ })
 
-},[[4,"static/runtime/webpack.js"]]]);
-//# sourceMappingURL=forum.js.map
+},[[0,"static/runtime/webpack.js"]]]);
+//# sourceMappingURL=index.js.map

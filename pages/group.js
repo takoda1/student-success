@@ -1,10 +1,9 @@
-import { NavBar } from '../shared';
+import { Layout } from '../shared';
 
 const Group = () => (
-    <div>
-        <NavBar/>
+    <Layout>
         <p>This is your Group page!</p>
-    </div>
+    </Layout>
 );
 
 export default Group;

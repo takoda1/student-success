@@ -1,10 +1,9 @@
-import { NavBar } from '../shared';
+import { Layout } from '../shared';
 
 const Forum = () => (
-    <div>
-        <NavBar/>
+    <Layout>
         <p>This is your Forum page!</p>
-    </div>
+    </Layout>
 );
 
 export default Forum;

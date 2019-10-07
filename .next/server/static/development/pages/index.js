@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -1781,9 +1781,9 @@ module.exports = __webpack_require__(/*! ./dist/client/link */ "./node_modules/n
 
 /***/ }),
 
-/***/ "./pages/forum.js":
+/***/ "./pages/index.js":
 /*!************************!*\
-  !*** ./pages/forum.js ***!
+  !*** ./pages/index.js ***!
   \************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -1793,32 +1793,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _shared__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared */ "./shared.js");
-var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-success/pages/forum.js";
+var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-success/pages/index.js";
 
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
-const Forum = () => __jsx("div", {
+const Index = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
   __source: {
     fileName: _jsxFileName,
     lineNumber: 4
   },
   __self: undefined
-}, __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["NavBar"], {
+}, __jsx("p", {
   __source: {
     fileName: _jsxFileName,
     lineNumber: 5
   },
   __self: undefined
-}), __jsx("p", {
-  __source: {
-    fileName: _jsxFileName,
-    lineNumber: 6
-  },
-  __self: undefined
-}, "This is your Forum page!"));
+}, "Home Page"));
 
-/* harmony default export */ __webpack_exports__["default"] = (Forum);
+/* harmony default export */ __webpack_exports__["default"] = (Index);
 
 /***/ }),
 
@@ -1826,13 +1820,12 @@ const Forum = () => __jsx("div", {
 /*!*******************!*\
   !*** ./shared.js ***!
   \*******************/
-/*! exports provided: NavBar, Button */
+/*! exports provided: Layout */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NavBar", function() { return NavBar; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return Button; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Layout", function() { return Layout; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
@@ -1842,12 +1835,36 @@ var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-succes
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
+const layoutStyle = {
+  margin: 20,
+  padding: 20,
+  border: '1px solid #DDD'
+};
+
+const Layout = props => __jsx("div", {
+  style: layoutStyle,
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 11
+  },
+  __self: undefined
+}, __jsx(NavBar, {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 12
+  },
+  __self: undefined
+}), props.children);
+
+const linkStyle = {
+  marginRight: 15
+};
 
 function NavBar(props) {
   return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 6
+      lineNumber: 23
     },
     __self: this
   }, __jsx(Button, {
@@ -1855,7 +1872,7 @@ function NavBar(props) {
     path: "/index",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 7
+      lineNumber: 24
     },
     __self: this
   }), __jsx(Button, {
@@ -1863,7 +1880,7 @@ function NavBar(props) {
     path: "/history",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 8
+      lineNumber: 25
     },
     __self: this
   }), __jsx(Button, {
@@ -1871,7 +1888,7 @@ function NavBar(props) {
     path: "/group",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 9
+      lineNumber: 26
     },
     __self: this
   }), __jsx(Button, {
@@ -1879,7 +1896,7 @@ function NavBar(props) {
     path: "/forum",
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 10
+      lineNumber: 27
     },
     __self: this
   }));
@@ -1890,14 +1907,15 @@ function Button(props) {
     href: props.path,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 17
+      lineNumber: 34
     },
     __self: this
   }, __jsx("a", {
+    style: linkStyle,
     title: props.name,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 18
+      lineNumber: 35
     },
     __self: this
   }, props.name));
@@ -1905,14 +1923,14 @@ function Button(props) {
 
 /***/ }),
 
-/***/ 7:
+/***/ 3:
 /*!******************************!*\
-  !*** multi ./pages/forum.js ***!
+  !*** multi ./pages/index.js ***!
   \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/perry_000/Documents/School/F19/COMP523/student-success/pages/forum.js */"./pages/forum.js");
+module.exports = __webpack_require__(/*! /Users/perry_000/Documents/School/F19/COMP523/student-success/pages/index.js */"./pages/index.js");
 
 
 /***/ }),
@@ -2050,4 +2068,4 @@ module.exports = require("url");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=forum.js.map
+//# sourceMappingURL=index.js.map

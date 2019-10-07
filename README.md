@@ -9,6 +9,10 @@
 7. Run node index.js
 8. Install postman to make requests, or use curl.
 
+## Future notes
+Run the react app on process.env.port (provided/populated by heroku) and run the api on
+another port; have the react app talk to the api using the api endpoints.
+
 ## Heroku deployment
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.

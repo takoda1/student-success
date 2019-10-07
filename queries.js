@@ -21,7 +21,35 @@ const addUser = (request, response) => {
     })
 }
 
+const getUser = (request, response) => {
+    const id = parseInt(request.params.id)
+    if (!isNaN(id)) {
+        pool.query('SELECT * FROM users WHERE id = $1', [id], (error, result) => {
+            if (error) { throw error }
+            response.status(200).json(result.rows);
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter not a number" })
+    }
+}
+
+const deleteUser = (request, response) => {
+    const id = parseInt(request.params.id)
+    if (!isNaN(id)) {
+        pool.query('DELETE FROM users WHERE id = $1', [id], (error, result) => {
+            if (error) { throw error }
+            response.status(200).send(`User deleted with ID: ${id}`)
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter not a number" })
+    }
+}
+
 module.exports = {
     getUsers,
     addUser,
+    getUser,
+    deleteUser,
 }

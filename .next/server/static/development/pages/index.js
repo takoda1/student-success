@@ -1845,6 +1845,14 @@ const Goals = () => __jsx("div", {
   __self: undefined
 }));
 
+const Timers = () => __jsx("div", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 18
+  },
+  __self: undefined
+});
+
 /* harmony default export */ __webpack_exports__["default"] = (Home);
 
 /***/ }),

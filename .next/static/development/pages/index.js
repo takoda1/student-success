@@ -10037,6 +10037,16 @@ var Goals = function Goals() {
   }));
 };
 
+var Timers = function Timers() {
+  return __jsx("div", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 18
+    },
+    __self: this
+  });
+};
+
 /* harmony default export */ __webpack_exports__["default"] = (Home);
 
 /***/ }),

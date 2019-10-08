@@ -1,5 +1,8 @@
 # Setting up the API for development
 
+Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup if you are on mac.
+
+
 1. Install postgresql
 2. Run the postgresql service
 3. Have a user and password created for postgres as defined in the .env

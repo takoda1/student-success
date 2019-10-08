@@ -1798,7 +1798,7 @@ var _jsxFileName = "/Users/perry_000/Documents/School/F19/COMP523/student-succes
 var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
 
 
-const Index = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
+const Home = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
   __source: {
     fileName: _jsxFileName,
     lineNumber: 4
@@ -1810,9 +1810,42 @@ const Index = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
     lineNumber: 5
   },
   __self: undefined
-}, "Home Page"));
+}, "Home Page"), __jsx(Goals, {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 6
+  },
+  __self: undefined
+}));
 
-/* harmony default export */ __webpack_exports__["default"] = (Index);
+const Goals = () => __jsx("div", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 11
+  },
+  __self: undefined
+}, __jsx("h1", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 12
+  },
+  __self: undefined
+}, "Today's Goals"), __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["GoalList"], {
+  goals: [{
+    content: "Research now",
+    complete: false
+  }, {
+    content: "Research later",
+    complete: true
+  }],
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 13
+  },
+  __self: undefined
+}));
+
+/* harmony default export */ __webpack_exports__["default"] = (Home);
 
 /***/ }),
 
@@ -1820,12 +1853,13 @@ const Index = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
 /*!*******************!*\
   !*** ./shared.js ***!
   \*******************/
-/*! exports provided: Layout */
+/*! exports provided: Layout, GoalList */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Layout", function() { return Layout; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GoalList", function() { return GoalList; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
@@ -1860,7 +1894,7 @@ const linkStyle = {
   marginRight: 15
 };
 
-function NavBar(props) {
+function NavBar() {
   return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
@@ -1919,6 +1953,47 @@ function Button(props) {
     },
     __self: this
   }, props.name));
+}
+
+function GoalList(props) {
+  return __jsx("ul", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 42
+    },
+    __self: this
+  }, props.goals.map(g => __jsx(GoalItem, {
+    goal: g,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 43
+    },
+    __self: this
+  })));
+}
+
+function GoalItem(props) {
+  return __jsx("div", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 50
+    },
+    __self: this
+  }, __jsx("p", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 51
+    },
+    __self: this
+  }, __jsx("input", {
+    type: "checkbox",
+    value: props.goal.complete,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 52
+    },
+    __self: this
+  }), props.goal.content));
 }
 
 /***/ }),

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-export { Layout };
+export { Layout, GoalList };
 
 const layoutStyle = {
   margin: 20,
@@ -18,7 +18,7 @@ const linkStyle = {
     marginRight: 15
 };
 
-function NavBar(props) {
+function NavBar() {
     return (
       <div>
         <Button name="Home" path="/index"/>
@@ -34,5 +34,25 @@ function Button(props) {
     <Link href={props.path}>
       <a style={linkStyle} title={props.name}>{props.name}</a>
     </Link>
+  )
+}
+
+function GoalList(props) {
+  return (
+    <ul>
+      {props.goals.map(g => <GoalItem goal = {g} />)}
+    </ul>
+  )
+}
+
+function GoalItem(props) {
+  return (
+    <div>
+      <p>
+        <input type="checkbox" value={props.goal.complete} />
+        {props.goal.content}
+      </p>
+      
+    </div>
   )
 }

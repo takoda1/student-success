@@ -1,3 +1,6 @@
+CREATE DATABASE api;
+\c api
+
 CREATE TABLE users (
 	ID SERIAL PRIMARY KEY,
 	firstName VARCHAR(30),

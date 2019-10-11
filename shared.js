@@ -1,5 +1,5 @@
 import Link from 'next/link';
-export { Layout, GoalList };
+export { Layout, GoalList, Timer };
 
 const layoutStyle = {
   margin: 20,
@@ -40,7 +40,7 @@ function Button(props) {
 function GoalList(props) {
   return (
     <ul>
-      {props.goals.map(g => <GoalItem goal = {g} />)}
+      {props.goals.map(g => <GoalItem key={g.content} goal={g} />)}
     </ul>
   )
 }
@@ -53,6 +53,31 @@ function GoalItem(props) {
         {props.goal.content}
       </p>
       
+    </div>
+  )
+}
+
+function Timer(props) {
+  function startTimer() {
+    console.log(`start ${props.name}`)
+  }
+
+  function stopTimer() {
+    console.log(`stop ${props.name}`)
+  }  
+
+  function resetTimer() {
+    console.log(`reset ${props.name}`)
+  }
+
+  return (
+    <div>
+      <p>
+        {props.name}: {"30:00"}
+        <button onClick={startTimer}>start</button>
+        <button onClick={stopTimer}>stop</button>
+        <button onClick={resetTimer}>reset</button>
+      </p>
     </div>
   )
 }

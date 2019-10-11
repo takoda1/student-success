@@ -1804,30 +1804,46 @@ const Home = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
     lineNumber: 4
   },
   __self: undefined
-}, __jsx("p", {
+}, __jsx("h2", {
   __source: {
     fileName: _jsxFileName,
     lineNumber: 5
   },
   __self: undefined
-}, "Home Page"), __jsx(Goals, {
+}, "Home Page"), __jsx("div", {
   __source: {
     fileName: _jsxFileName,
     lineNumber: 6
   },
   __self: undefined
-}));
-
-const Goals = () => __jsx("div", {
+}, __jsx(Goals, {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 11
+    lineNumber: 7
   },
   __self: undefined
-}, __jsx("h1", {
+}), __jsx(Timers, {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 12
+    lineNumber: 8
+  },
+  __self: undefined
+})));
+
+const Goals = () => __jsx("div", {
+  style: {
+    display: "inline-block",
+    padding: 20
+  },
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 14
+  },
+  __self: undefined
+}, __jsx("h3", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 15
   },
   __self: undefined
 }, "Today's Goals"), __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["GoalList"], {
@@ -1840,18 +1856,35 @@ const Goals = () => __jsx("div", {
   }],
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 13
+    lineNumber: 16
   },
   __self: undefined
 }));
 
 const Timers = () => __jsx("div", {
+  style: {
+    display: "inline-block",
+    padding: 20
+  },
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 18
+    lineNumber: 21
   },
   __self: undefined
-});
+}, __jsx("h3", {
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 22
+  },
+  __self: undefined
+}, "Timers"), __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Timer"], {
+  name: "Study",
+  __source: {
+    fileName: _jsxFileName,
+    lineNumber: 23
+  },
+  __self: undefined
+}));
 
 /* harmony default export */ __webpack_exports__["default"] = (Home);
 
@@ -1861,13 +1894,14 @@ const Timers = () => __jsx("div", {
 /*!*******************!*\
   !*** ./shared.js ***!
   \*******************/
-/*! exports provided: Layout, GoalList */
+/*! exports provided: Layout, GoalList, Timer */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Layout", function() { return Layout; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GoalList", function() { return GoalList; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Timer", function() { return Timer; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ "./node_modules/next/link.js");
@@ -1971,6 +2005,7 @@ function GoalList(props) {
     },
     __self: this
   }, props.goals.map(g => __jsx(GoalItem, {
+    key: g.content,
     goal: g,
     __source: {
       fileName: _jsxFileName,
@@ -2002,6 +2037,55 @@ function GoalItem(props) {
     },
     __self: this
   }), props.goal.content));
+}
+
+function Timer(props) {
+  function startTimer() {
+    console.log(`start ${props.name}`);
+  }
+
+  function stopTimer() {
+    console.log(`stop ${props.name}`);
+  }
+
+  function resetTimer() {
+    console.log(`reset ${props.name}`);
+  }
+
+  return __jsx("div", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 74
+    },
+    __self: this
+  }, __jsx("p", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 75
+    },
+    __self: this
+  }, props.name, ": ", "30:00", __jsx("button", {
+    onClick: startTimer,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 77
+    },
+    __self: this
+  }, "start"), __jsx("button", {
+    onClick: stopTimer,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 78
+    },
+    __self: this
+  }, "stop"), __jsx("button", {
+    onClick: resetTimer,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 79
+    },
+    __self: this
+  }, "reset")));
 }
 
 /***/ }),

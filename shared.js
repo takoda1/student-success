@@ -39,9 +39,13 @@ function Button(props) {
 
 function GoalList(props) {
   return (
-    <ul>
-      {props.goals.map(g => <GoalItem key={g.content} goal={g} />)}
-    </ul>
+    <div>
+      <ul>
+        {props.goals.map(g => <GoalItem key={g.content} goal={g} />)}
+        <p><textarea /><button>Add Goal</button></p>
+      </ul>
+      <GoalsCompleted goals = {props.goals}/>
+    </div>
   )
 }
 
@@ -51,8 +55,17 @@ function GoalItem(props) {
       <p>
         <input type="checkbox" value={props.goal.complete} />
         {props.goal.content}
+        {' '}
+        <button>Edit</button>
       </p>
-      
+    </div>
+  )
+}
+
+function GoalsCompleted(props) {
+  return (
+    <div>
+      <p>{(props.goals.reduce((memo, goal) => { memo ? goal.complete : false }, true)) ? "Goals completed!" : "Not yet!"}</p>
     </div>
   )
 }

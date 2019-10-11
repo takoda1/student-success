@@ -1833,17 +1833,21 @@ const Home = () => __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Layout"], {
 const Goals = () => __jsx("div", {
   style: {
     display: "inline-block",
-    padding: 20
+    width: '40%',
+    'vertical-align': 'top',
+    'margin-right': 35,
+    'padding-right': 15,
+    'border-right': '2px solid #DDD'
   },
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 14
+    lineNumber: 15
   },
   __self: undefined
 }, __jsx("h3", {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 15
+    lineNumber: 16
   },
   __self: undefined
 }, "Today's Goals"), __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["GoalList"], {
@@ -1856,7 +1860,7 @@ const Goals = () => __jsx("div", {
   }],
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 16
+    lineNumber: 17
   },
   __self: undefined
 }));
@@ -1864,24 +1868,25 @@ const Goals = () => __jsx("div", {
 const Timers = () => __jsx("div", {
   style: {
     display: "inline-block",
-    padding: 20
+    width: '40%',
+    'vertical-align': 'top'
   },
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 21
+    lineNumber: 22
   },
   __self: undefined
 }, __jsx("h3", {
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 22
+    lineNumber: 23
   },
   __self: undefined
 }, "Timers"), __jsx(_shared__WEBPACK_IMPORTED_MODULE_1__["Timer"], {
   name: "Study",
   __source: {
     fileName: _jsxFileName,
-    lineNumber: 23
+    lineNumber: 24
   },
   __self: undefined
 }));
@@ -1998,10 +2003,16 @@ function Button(props) {
 }
 
 function GoalList(props) {
-  return __jsx("ul", {
+  return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
       lineNumber: 42
+    },
+    __self: this
+  }, __jsx("ul", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 43
     },
     __self: this
   }, props.goals.map(g => __jsx(GoalItem, {
@@ -2009,23 +2020,48 @@ function GoalList(props) {
     goal: g,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 43
+      lineNumber: 44
     },
     __self: this
-  })));
+  })), __jsx("p", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 45
+    },
+    __self: this
+  }, __jsx("textarea", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 45
+    },
+    __self: this
+  }), __jsx("button", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 45
+    },
+    __self: this
+  }, "Add Goal"))), __jsx(GoalsCompleted, {
+    goals: props.goals,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 47
+    },
+    __self: this
+  }));
 }
 
 function GoalItem(props) {
   return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 50
+      lineNumber: 54
     },
     __self: this
   }, __jsx("p", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 51
+      lineNumber: 55
     },
     __self: this
   }, __jsx("input", {
@@ -2033,10 +2069,34 @@ function GoalItem(props) {
     value: props.goal.complete,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 52
+      lineNumber: 56
     },
     __self: this
-  }), props.goal.content));
+  }), props.goal.content, ' ', __jsx("button", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 59
+    },
+    __self: this
+  }, "Edit")));
+}
+
+function GoalsCompleted(props) {
+  return __jsx("div", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 67
+    },
+    __self: this
+  }, __jsx("p", {
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 68
+    },
+    __self: this
+  }, props.goals.reduce((memo, goal) => {
+    memo ? goal.complete : false;
+  }, true) ? "Goals completed!" : "Not yet!"));
 }
 
 function Timer(props) {
@@ -2055,34 +2115,34 @@ function Timer(props) {
   return __jsx("div", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 74
+      lineNumber: 87
     },
     __self: this
   }, __jsx("p", {
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 75
+      lineNumber: 88
     },
     __self: this
   }, props.name, ": ", "30:00", __jsx("button", {
     onClick: startTimer,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 77
+      lineNumber: 90
     },
     __self: this
   }, "start"), __jsx("button", {
     onClick: stopTimer,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 78
+      lineNumber: 91
     },
     __self: this
   }, "stop"), __jsx("button", {
     onClick: resetTimer,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 79
+      lineNumber: 92
     },
     __self: this
   }, "reset")));

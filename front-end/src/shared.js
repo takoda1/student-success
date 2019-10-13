@@ -1,43 +1,22 @@
-import Link from 'next/link';
+import React from 'react';
 export { Layout, GoalList, Timer };
 
 const layoutStyle = {
-  margin: 20,
   padding: 20,
+  background: '#A6C4FF', 
   border: '1px solid #DDD'
 };
 
-const Layout = props => (
-  <div style={layoutStyle}>
-    <NavBar />
-    {props.children}
-  </div>
-);
-
-const linkStyle = {
-    marginRight: 15
-};
-
-function NavBar() {
-    return (
-      <div>
-        <Button name="Home" path="/index"/>
-        <Button name="History" path="/history"/>
-        <Button name="Group" path="/group"/>
-        <Button name="Forum" path="/forum"/>
-      </div>
-    );
-}
-
-function Button(props) {
+function Layout(props) {
   return (
-    <Link href={props.path}>
-      <a style={linkStyle} title={props.name}>{props.name}</a>
-    </Link>
-  )
+    <div style={layoutStyle}>
+      {props.children}
+    </div>
+  );
 }
 
 function GoalList(props) {
+
   return (
     <div>
       <ul>
@@ -46,20 +25,31 @@ function GoalList(props) {
       </ul>
       <GoalsCompleted goals = {props.goals}/>
     </div>
-  )
+  );
 }
 
 function GoalItem(props) {
+  function handleCheck() {
+    // Send a post request of the completed status ?
+    // update the GoalsCompleted ?
+  }
+
+  let content = props.goal.content;
+
+  function editGoal() {
+    
+  }
+
   return (
     <div>
       <p>
-        <input type="checkbox" value={props.goal.complete} />
-        {props.goal.content}
+        <input type="checkbox" value={props.goal.complete} onChange={handleCheck}/>
+        <text class="content">{content}</text>
         {' '}
-        <button>Edit</button>
+        <button class="edit">Edit</button>
       </p>
     </div>
-  )
+  );
 }
 
 function GoalsCompleted(props) {
@@ -67,7 +57,7 @@ function GoalsCompleted(props) {
     <div>
       <p>{(props.goals.reduce((memo, goal) => { memo ? goal.complete : false }, true)) ? "Goals completed!" : "Not yet!"}</p>
     </div>
-  )
+  );
 }
 
 function Timer(props) {
@@ -92,5 +82,5 @@ function Timer(props) {
         <button onClick={resetTimer}>reset</button>
       </p>
     </div>
-  )
+  );
 }

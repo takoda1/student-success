@@ -1,7 +1,6 @@
 const { pool } = require('./config')
 
 const getUsers = (request, response) => {
-    console.log("ABC");
     pool.query('SELECT * FROM users ORDER BY lastName asc', (error, results) => {
         if (error) {
             throw error
@@ -17,7 +16,7 @@ const addUser = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(201).json({ status: 'success', message:'User added'})
+        response.status(201).send('User added!')
     })
 }
 
@@ -32,6 +31,16 @@ const getUser = (request, response) => {
     else {
         response.status(400).json({ "Error": "Parameter not a number" })
     }
+}
+
+const getUserByName = (request, response) => {
+    const firstName = request.params.firstName
+    const lastName = request.params.lastName
+
+    pool.query('SELECT * FROM users WHERE firstname = $1 AND lastname = $2', [firstName, lastName], (error, result) => {
+        if (error) { throw error }
+        response.status(200).json(result.rows)
+    })
 }
 
 const deleteUser = (request, response) => {
@@ -51,5 +60,6 @@ module.exports = {
     getUsers,
     addUser,
     getUser,
+    getUserByName,
     deleteUser,
 }

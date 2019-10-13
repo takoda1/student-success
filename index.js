@@ -32,6 +32,7 @@ app.use(cors())
 
 app.get('/users', queries.getUsers)
 app.get('/user/:id', queries.getUser)
+app.get('/user/:firstName/:lastName', queries.getUserByName)
 app.post('/user', queries.addUser)
 app.delete('/user/:id', queries.deleteUser)
 

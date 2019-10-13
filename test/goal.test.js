@@ -2,13 +2,6 @@
 This test assumes the database is up and running and init.sql has been ran
 */
 
-/*
-Tests acting weird because of asynchronous
-TODO: because we are performing asynchronous actions with the
-tests, the tests will "pass" if something goes wrong, but will still
-output an error. See how to fix this.
-*/
-
 var server = require('../index.js')
 var chai = require('chai')
 var chaiHttp = require('chai-http')
@@ -16,7 +9,7 @@ var should = chai.should()
 
 chai.use(chaiHttp)
 
-describe('the goal api', () => {
+describe('GOAL API', () => {
 
     const values = {
         userId: 1,
@@ -33,10 +26,10 @@ describe('the goal api', () => {
     var goalId = ''
 
     it('posts a goal with body {userId, goalDate, goalText, completed}', () => {
-
+        
         return chai.request(server)
         .post('/goal')
-            .send(goal)
+            .send(goal) //send the js goal object to be posted
             .then((res) => {
                 res.should.have.status(201)
             })

@@ -14,8 +14,8 @@ VALUES ('TEST', 'TEST', 'TEST@TEST.com');
 CREATE TABLE goals (
 	id SERIAL PRIMARY KEY,
 	userId INTEGER REFERENCES users(id),
-	goalDate DATE NOT NULL,
-	goalText VARCHAR(70),
+	goaldate DATE NOT NULL,
+	goaltext VARCHAR(70),
 	completed BOOLEAN NOT NULL
 );
 

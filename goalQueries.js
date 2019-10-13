@@ -3,7 +3,8 @@ const { pool } = require('./config')
 const getGoals = (request, response) => {
     const userId = parseInt(request.params.userId)
     const date = request.params.date;
-    if (!isNaN(userId)) {
+    var dateReg = /^\d{4}-\d{2}-\d{2}$/
+    if (!isNaN(userId) && date.match(dateReg) != null) {
         pool.query('SELECT * FROM goals WHERE userId = $1 AND goalDate = $2', [userId, date], (error, results) => {
             if (error) {
                 throw error
@@ -12,7 +13,7 @@ const getGoals = (request, response) => {
         })
     }
     else {
-        response.status(400).json({ "Error": "Parameter id not a number" })
+        response.status(400).json({ "Error": "Parameter id not a number or incorrect date format" })
     }
 }
 
@@ -32,6 +33,15 @@ const getGoal = (request, response) => {
     }
 }
 
+/*
+Expects: request.body to have json:
+{
+    userId: int,
+    goalDate: "yyyy-mm-dd",
+    goalText: "This is some text",
+    completed: boolean
+}
+*/
 const addGoal = (request, response) => {
     const { userId, goalDate, goalText, completed } = request.body;
 
@@ -54,7 +64,7 @@ const putGoal = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).json({ status: 'success', message: 'Goal updated' })
+            response.status(201).send('Goal updated')
         });
     }
     

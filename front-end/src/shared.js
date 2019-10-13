@@ -1,5 +1,4 @@
 import React from 'react';
-export { Layout, GoalList, Timer };
 
 const layoutStyle = {
   padding: 20,
@@ -23,7 +22,7 @@ function GoalList(props) {
         {props.goals.map(g => <GoalItem key={g.content} goal={g} />)}
         <p><textarea /><button>Add Goal</button></p>
       </ul>
-      <GoalsCompleted goals = {props.goals}/>
+      <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
     </div>
   );
 }
@@ -44,9 +43,9 @@ function GoalItem(props) {
     <div>
       <p>
         <input type="checkbox" value={props.goal.complete} onChange={handleCheck}/>
-        <text class="content">{content}</text>
+        {content}
         {' '}
-        <button class="edit">Edit</button>
+        <button className="edit">Edit</button>
       </p>
     </div>
   );
@@ -55,32 +54,49 @@ function GoalItem(props) {
 function GoalsCompleted(props) {
   return (
     <div>
-      <p>{(props.goals.reduce((memo, goal) => { memo ? goal.complete : false }, true)) ? "Goals completed!" : "Not yet!"}</p>
+      <p>{props.goalsCompleted}</p>
     </div>
   );
 }
 
-function Timer(props) {
-  function startTimer() {
-    console.log(`start ${props.name}`)
+class Timer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: 30
+    }
+
+    this.startTimer = this.startTimer.bind(this);
+    this.stopTimer = this.stopTimer.bind(this);
+    this.resetTimer = this.resetTimer.bind(this);
   }
 
-  function stopTimer() {
-    console.log(`stop ${props.name}`)
+  startTimer() {
+    this.timer = setInterval(() => this.setState({
+      time: this.state.time - 1
+    }), 1000)
+  }
+
+  stopTimer() {
+    clearInterval(this.timer)
   }  
 
-  function resetTimer() {
-    console.log(`reset ${props.name}`)
+  resetTimer() {
+    this.setState({time: 30})
   }
 
-  return (
-    <div>
-      <p>
-        {props.name}: {"30:00"}
-        <button onClick={startTimer}>start</button>
-        <button onClick={stopTimer}>stop</button>
-        <button onClick={resetTimer}>reset</button>
-      </p>
-    </div>
-  );
+  render() {
+    return (
+      <div>
+        <p>
+          {this.props.name}: {this.state.time}
+          <button onClick={this.startTimer}>start</button>
+          <button onClick={this.stopTimer}>stop</button>
+          <button onClick={this.resetTimer}>reset</button>
+        </p>
+      </div>
+    );
+  }
 }
+
+export { Layout, GoalList, Timer };

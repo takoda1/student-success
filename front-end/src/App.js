@@ -45,9 +45,7 @@ const linkStyle = {
 
 function Button(props) {
   return (
-    <Link to={props.path}>
-      <a style={linkStyle} title={props.name}>{props.name}</a>
-    </Link>
+    <Link to={props.path} style={linkStyle}>{props.name}</Link>
   );
 }
 

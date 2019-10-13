@@ -1,6 +1,3 @@
-CREATE DATABASE api;
-\c api
-
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
 	firstName VARCHAR(30),

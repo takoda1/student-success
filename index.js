@@ -11,7 +11,7 @@ our react app running on process.env.port and this api
 running on a different port that we can hopefuly talk to from our react
 app.
 */
-const port = process.env.port || 3000
+const port = process.env.port || 3001
 
 //Load connection pool for postgres
 const { pool } = require('./config')

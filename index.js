@@ -12,10 +12,12 @@ our react app running on process.env.port and this api
 running on a different port that we can hopefuly talk to from our react
 app.
 */
-const port = process.env.port || 3000
+
 
 //Load connection pool for postgres
 const { pool } = require('./config')
+
+const port = process.env.PORT
 
 
 const app = express();
@@ -30,6 +32,7 @@ app.use(cors())
 
 app.get('/users', queries.getUsers)
 app.get('/user/:id', queries.getUser)
+app.get('/user/:firstName/:lastName', queries.getUserByName)
 app.post('/user', queries.addUser)
 app.delete('/user/:id', queries.deleteUser)
 
@@ -43,6 +46,8 @@ app.get('/', (request, response)=>{
     response.status(200).json({ success: "HEY WHATS UP" , user:process.env.DB_USER});
 })
 
-app.listen(process.env.PORT || port, () => {
+app.listen(port, () => {
     console.log('App running on port '+port)
 })
+
+module.exports = app

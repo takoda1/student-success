@@ -21,6 +21,10 @@ another port; have the react app talk to the api using the api endpoints.
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
 
+## Tests
+
+`npm test` to run tests.
+
 ## Current endpoints:
 
 ### Users

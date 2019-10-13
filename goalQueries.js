@@ -1,9 +1,11 @@
 const { pool } = require('./config')
 
+var dateReg = /^\d{4}-\d{2}-\d{2}$/
+
 const getGoals = (request, response) => {
     const userId = parseInt(request.params.userId)
     const date = request.params.date;
-    var dateReg = /^\d{4}-\d{2}-\d{2}$/
+
     if (!isNaN(userId) && date.match(dateReg) != null) {
         pool.query('SELECT * FROM goals WHERE userId = $1 AND goalDate = $2', [userId, date], (error, results) => {
             if (error) {
@@ -45,12 +47,18 @@ Expects: request.body to have json:
 const addGoal = (request, response) => {
     const { userId, goalDate, goalText, completed } = request.body;
 
-    pool.query('INSERT INTO goals (userId, goalDate, goalText, completed) VALUES ($1, $2, $3, $4)', [userId, goalDate, goalText, completed], (error) => {
-        if (error) {
-            throw error
-        }
-        response.status(201).json({ status: 'success', message: 'Goal added' })
-    })
+
+    if (goalDate.match(dateReg) != null && typeof completed === "boolean") {
+        pool.query('INSERT INTO goals (userId, goalDate, goalText, completed) VALUES ($1, $2, $3, $4)', [userId, goalDate, goalText, completed], (error) => {
+            if (error) {
+                throw error
+            }
+            response.status(201).json({ status: 'success', message: 'Goal added' })
+        })
+    }
+    else {
+        response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean')
+    }
 }
 
 
@@ -59,13 +67,16 @@ const putGoal = (request, response) => {
     const id = parseInt(request.params.id)
 
     const { goalText, completed } = request.body;
-    if (!isNaN(id)) {
+    if (!isNaN(id) && typeof completed === "boolean") {
         pool.query('UPDATE goals SET goalText = $2, completed = $3 WHERE id = $1', [id, goalText, completed], (error) => {
             if (error) {
                 throw error
             }
             response.status(201).send('Goal updated')
         });
+    }
+    else {
+        response.status(400).send('Failure. Either the id provided is not a number, or completed is not a boolean')
     }
     
 }

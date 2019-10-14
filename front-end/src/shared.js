@@ -19,7 +19,7 @@ function GoalList(props) {
   return (
     <div>
       <ul>
-        {props.goals.map(g => <GoalItem key={g.content} goal={g} />)}
+        {props.goals.map(g => <GoalItem key={g.content} goal={g} onGoalChange={props.onGoalChange} />)}
         <p><textarea /><button>Add Goal</button></p>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
@@ -28,21 +28,12 @@ function GoalList(props) {
 }
 
 function GoalItem(props) {
-  function handleCheck() {
-    // Send a post request of the completed status ?
-    // update the GoalsCompleted ?
-  }
-
   let content = props.goal.content;
-
-  function editGoal() {
-    
-  }
 
   return (
     <div>
       <p>
-        <input type="checkbox" value={props.goal.complete} onChange={handleCheck}/>
+        <input type="checkbox" value={props.goal.complete} onChange={props.onGoalChange}/>
         {content}
         {' '}
         <button className="edit">Edit</button>

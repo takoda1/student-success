@@ -15,7 +15,9 @@ Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for post
 
 ## Download Font Awesome with npm
 $ npm i --save @fortawesome/fontawesome-svg-core
+
 $ npm i --save @fortawesome/free-solid-svg-icons
+
 $ npm i --save @fortawesome/react-fontawesome
 
 ## Future notes

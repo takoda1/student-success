@@ -8,7 +8,6 @@ import {
 import { Home } from './Home';
 import './App.css';
 
-
 class App extends Component {
   render() {
     return (
@@ -48,5 +47,4 @@ function Button(props) {
     <Link to={props.path} style={linkStyle}>{props.name}</Link>
   );
 }
-
 export default App;

@@ -13,7 +13,6 @@ running on a different port that we can hopefuly talk to from our react
 app.
 */
 
-
 //Load connection pool for postgres
 const { pool } = require('./config')
 

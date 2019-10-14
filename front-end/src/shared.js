@@ -19,7 +19,7 @@ function GoalList(props) {
   return (
     <div>
       <ul>
-        {props.goals.map(g => <GoalItem key={g.content} goal={g} onGoalChange={props.onGoalChange} />)}
+        {props.goals.map(g => <GoalItem key={g.goalText} goal={g} onGoalChange={props.onGoalChange} />)}
         <p><textarea /><button>Add Goal</button></p>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
@@ -28,13 +28,13 @@ function GoalList(props) {
 }
 
 function GoalItem(props) {
-  let content = props.goal.content;
+  let goalText = props.goal.goalText;
 
   return (
     <div>
       <p>
         <input type="checkbox" value={props.goal.complete} onChange={props.onGoalChange}/>
-        {content}
+        {goalText}
         {' '}
         <button className="edit">Edit</button>
       </p>

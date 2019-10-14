@@ -13,7 +13,7 @@ class Home extends React.Component {
     onGoalChange() {
         const goals = this.state.goals;
         for (const g of goals) {
-            if (goal.content === g.content) {
+            if (g.goalText === g.goalText) {
                 g.complete = !g.complete;
                 break;
             }

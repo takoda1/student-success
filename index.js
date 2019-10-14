@@ -16,7 +16,7 @@ app.
 //Load connection pool for postgres
 const { pool } = require('./config')
 
-const port = process.env.PORT
+const port = 3000
 
 
 const app = express();

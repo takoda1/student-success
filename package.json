@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev-front": "next",
-    "build-front": "next build",
-    "start-front": "next start"
+    "test": "mocha --timeout 10000"
   },
   "repository": {
     "type": "git",
@@ -24,12 +21,12 @@
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
-    "next": "^9.0.8",
-    "pg": "^7.12.1",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2"
+    "pg": "^7.12.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.1",
     "nodemon": "^1.19.3"
   }
 }

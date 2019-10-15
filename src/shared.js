@@ -15,11 +15,10 @@ function Layout(props) {
 }
 
 function GoalList(props) {
-
   return (
     <div>
       <ul>
-        {props.goals.map(g => <GoalItem key={g.goalText} goal={g} onGoalChange={props.onGoalChange} />)}
+        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalChange={props.onGoalChange} />)}
         <p><textarea /><button>Add Goal</button></p>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
@@ -28,12 +27,12 @@ function GoalList(props) {
 }
 
 function GoalItem(props) {
-  let goalText = props.goal.goalText;
+  let goalText = props.goal.goaltext;
 
   return (
     <div>
       <p>
-        <input type="checkbox" value={props.goal.complete} onChange={props.onGoalChange}/>
+        <input type="checkbox" checked={props.goal.complete} onChange={props.onGoalChange}/>
         {goalText}
         {' '}
         <button className="edit">Edit</button>

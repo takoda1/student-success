@@ -17,9 +17,7 @@ class Home extends React.Component {
 
     async componentDidMount() {
         const user = (await axios.get(`/user/${1}`)).data[0];
-        console.log(user);
         const goals = (await axios.get(`/goals/${user.id}/${"2019-09-14"}`)).data;
-        console.log(goals);
         this.setState({ goals });
     }
 

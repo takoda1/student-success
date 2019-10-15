@@ -15,7 +15,7 @@ class Home extends React.Component {
     }
 
     handleClick() {
-        axios.get('http://localhost:3000/users')
+        axios.get('/users')
             .then(response => this.setState({ username: response.data[0].firstname }))
     }
 

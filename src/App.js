@@ -6,8 +6,8 @@ import {
   Link
 } from "react-router-dom";
 import { Home } from './Home';
+import { History } from './History';
 import './App.css';
-
 
 class App extends Component {
   render() {
@@ -24,8 +24,13 @@ class App extends Component {
           </nav>
 
           <Switch>
-            <Route path="/">
+            <Route path="/index">
               <Home goals={[{content: 'hello', completed: true}]}/>
+            </Route>
+          </Switch>
+          <Switch>
+            <Route path="/history">
+              <History/>
             </Route>
           </Switch>
         </div>
@@ -48,5 +53,4 @@ function Button(props) {
     <Link to={props.path} style={linkStyle}>{props.name}</Link>
   );
 }
-
 export default App;

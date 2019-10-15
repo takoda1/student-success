@@ -1,13 +1,22 @@
 import { Layout, GoalList, Timer } from './shared';
 import React from 'react';
+import axios from 'axios';
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
+            username: '',
             goals: /* API call */ [{ userId: 0, goalDate: "2019-01-11", goalText: "Custom Goal #1", completed: false }, { userId: 0, goalDate: "2019-01-11", goalText: "Write/Research for 30 minutes", completed: false }],
             timers: /* API call */ '',
         };
+
+        this.handleClick = this.handleClick.bind(this)
+    }
+
+    handleClick() {
+        axios.get('/users')
+            .then(response => this.setState({ username: response.data[0].firstname }))
     }
 
     onGoalChange() {
@@ -26,7 +35,9 @@ class Home extends React.Component {
     render() {
         return (
             <Layout >
-            <h2>Home Page</h2>
+                <h2>Home Page</h2>
+                <button className='button' onClick={this.handleClick}>Click Me</button>
+                <p>{this.state.username}</p>
             <div>
                 <Goals goals={this.state.goals} onGoalChange={this.onGoalChange} />
                 <Timers />

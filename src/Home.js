@@ -5,13 +5,22 @@ import axios from 'axios';
 class Home extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = { 
             username: '',
-            goals: /* API call */ [{ userId: 0, goalDate: "2019-01-11", goalText: "Custom Goal #1", completed: false }, { userId: 0, goalDate: "2019-01-11", goalText: "Write/Research for 30 minutes", completed: false }],
+            goals: [], /* API call gets made in componentDidMount */
             timers: /* API call */ '',
         };
 
         this.handleClick = this.handleClick.bind(this)
+    }
+
+    async componentDidMount() {
+        const user = (await axios.get(`/user/${1}`)).data[0];
+        console.log(user);
+        const goals = (await axios.get(`/goals/${user.id}/${"2019-09-14"}`)).data;
+        console.log(goals);
+        this.setState({ goals });
     }
 
     handleClick() {

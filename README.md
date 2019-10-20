@@ -32,6 +32,19 @@ Currently, deploys to master on the repo takoda1/student-success automatically d
 
 `npm test` to run tests.
 
+## Tables
+
+Users:
+{id: int, firstname: string, lastname: string, email: string}
+
+
+Goals:
+{id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
+
+
+Timers:
+{id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, researchtime: int, writingtime: int, customtime: int}    (time is in seconds)
+
 ## Current endpoints:
 
 ### Users
@@ -42,24 +55,24 @@ GET /user/:id    Returns user with specified id
 
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
-POST /user   (Requires json body of {firstName: string, lastName: string, email: string})
+POST /user   (Requires json body of {firstname: string, lastname: string, email: string})
 Posts user with specified values
 
 DELETE /user/:id	Deletes user with specified id
 
 ### Goals
 
-GET /goals/:userId/:date
-Returns all goals for a specified user (userId, references primary key of users table)
+GET /goals/:userid/:date
+Returns all goals for a specified user (userid, references primary key of users table)
 and for a specified date in the format yyyy-mm-dd
 
 GET /goal/:id
 Returns a single goal referenced by the goal primary key id
 
-POST /goal    (Requires json/js body of {userId: number, goalDate: "yyyy-mm-dd", goalText: string, completed: boolean})
+POST /goal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean})
 Posts a goal with specified values
 
-PUT /goal/:id  (Requires json/js body of {goalText: string, completed: boolean})
+PUT /goal/:id  (Requires json/js body of {goaltext: string, completed: boolean})
 Updates/puts the goal specified by its unique id with new goalText and completed values.
 
 DELETE /goal/:id

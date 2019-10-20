@@ -12,20 +12,20 @@ chai.use(chaiHttp)
 describe('GOAL API', () => {
 
     const values = {
-        userId: 1,
+        userid: 1,
         date: '2019-09-09'
     }
 
     var goal = {
-        userId: values.userId,
-        goalDate: values.date,
-        goalText: 'this is text',
+        userid: values.userid,
+        goaldate: values.date,
+        goaltext: 'this is text',
         completed: true
     }
 
     var goalId = ''
 
-    it('posts a goal with body {userId, goalDate, goalText, completed}', () => {
+    it('posts a goal with body {userid, goaldate, goaltext, completed}', () => {
         
         return chai.request(server)
         .post('/goal')
@@ -38,7 +38,7 @@ describe('GOAL API', () => {
     it('gets all goals for a date and userId', () => {
 
         return chai.request(server)
-            .get('/goals/' + values.userId + '/' + values.date)
+            .get('/goals/' + values.userid + '/' + values.date)
             .then((res) => {
                 goalId = res.body[0].id
                 res.should.have.status(200)
@@ -65,7 +65,7 @@ describe('GOAL API', () => {
 
     it('Updates a single goal based on the goal\'s id, and updates the goalText and completed fields', () => {
         const newGoal = {
-            goalText: "YAY",
+            goaltext: "YAY",
             completed: false
         }
         return chai.request(server)
@@ -74,7 +74,7 @@ describe('GOAL API', () => {
             .then((res) => {
                 res.text.should.contain('Goal updated')
                 return chai.request(server).get('/goal/' + goalId).then((result) => {
-                    result.body[0].goaltext.should.equal(newGoal.goalText)
+                    result.body[0].goaltext.should.equal(newGoal.goaltext)
                 })
             })
     })

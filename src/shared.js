@@ -18,8 +18,11 @@ function GoalList(props) {
   return (
     <div>
       <ul>
-        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalChange={props.onGoalChange} />)}
-        <p><textarea /><button>Add Goal</button></p>
+        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} />)}
+        <form className="addGoal" onSubmit={props.onGoalAdded}>
+          <input value={props.newGoalText} onChange={props.onGoalTyped} />
+          <button>Add Goal</button>
+        </form>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
     </div>
@@ -32,7 +35,7 @@ function GoalItem(props) {
   return (
     <div>
       <p>
-        <input type="checkbox" checked={props.goal.complete} onChange={props.onGoalChange}/>
+        <input type="checkbox" checked={props.goal.complete} onChange={props.onGoalCheck}/>
         {goalText}
         {' '}
         <button className="edit">Edit</button>

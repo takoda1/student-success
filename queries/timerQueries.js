@@ -53,20 +53,26 @@ Expects: request.body to have json:
 */
 const addTimer = (request, response) => {
     const { userid, timerdate, researchtime, writingtime, customtime } = request.body;
-    console.log(userid, timerdate);
 
 
-    if (timerdate.match(dateReg) != null && !isNaN(userid)) {
-        pool.query('INSERT INTO timers (userId, timerdate, researchtime, writingtime, customtime) VALUES ($1, $2, $3, $4, $5)', [userid, timerdate, researchtime, writingtime, customtime], (error) => {
-            if (error) {
-                throw error
-            }
-            response.status(201).json({ status: 'success', message: 'Timer added' })
-        })
+
+    if (userid != null && timerdate != null) {
+        if (timerdate.match(dateReg) != null && !isNaN(userid)) {
+            pool.query('INSERT INTO timers (userId, timerdate, researchtime, writingtime, customtime) VALUES ($1, $2, $3, $4, $5)', [userid, timerdate, researchtime, writingtime, customtime], (error) => {
+                if (error) {
+                    throw error
+                }
+                response.status(201).json({ status: 'success', message: 'Timer added' })
+            })
+        }
+        else {
+            response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or userid is not a number')
+        }
     }
     else {
-        response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or userid is not a number')
+        response.status(400).send('Error. Either userid or timerdate fields do not exist or are named incorrectly or are null')
     }
+    
 }
 
 

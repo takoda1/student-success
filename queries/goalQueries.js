@@ -47,18 +47,23 @@ Expects: request.body to have json:
 const addGoal = (request, response) => {
     const { userid, goaldate, goaltext, completed } = request.body;
 
-
-    if (goaldate.match(dateReg) != null && typeof completed === "boolean") {
-        pool.query('INSERT INTO goals (userid, goaldate, goaltext, completed) VALUES ($1, $2, $3, $4)', [userid, goaldate, goaltext, completed], (error) => {
-            if (error) {
-                throw error
-            }
-            response.status(201).json({ status: 'success', message: 'Goal added' })
-        })
+    if (userid != null && goaldate != null) {
+        if (goaldate.match(dateReg) != null && typeof completed === "boolean") {
+            pool.query('INSERT INTO goals (userid, goaldate, goaltext, completed) VALUES ($1, $2, $3, $4)', [userid, goaldate, goaltext, completed], (error) => {
+                if (error) {
+                    throw error
+                }
+                response.status(201).json({ status: 'success', message: 'Goal added' })
+            })
+        }
+        else {
+            response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean')
+        }
     }
     else {
-        response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean')
+        response.status(400).send("Error: Either userid or goaldate fields do not exist or are named incorrectly or are null")
     }
+    
 }
 
 

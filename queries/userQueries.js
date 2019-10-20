@@ -10,14 +10,20 @@ const getUsers = (request, response) => {
 }
 
 const addUser = (request, response) => {
+    
     const { firstname, lastname, email } = request.body;
-
-    pool.query('INSERT INTO users (firstname, lastname, email) VALUES ($1, $2, $3)', [firstname, lastname, email], (error) => {
-        if (error) {
-            throw error
-        }
-        response.status(201).send('User added!')
-    })
+    if (firstname != null && lastname != null && email != null) {
+        pool.query('INSERT INTO users (firstname, lastname, email) VALUES ($1, $2, $3)', [firstname, lastname, email], (error) => {
+            if (error) {
+                throw error
+            }
+            response.status(201).send('User added!')
+        })
+    }
+    else {
+        response.status(400).send('Error: fields in body likely named incorrectly, at least one of them is undefined')
+    }
+    
 }
 
 const getUser = (request, response) => {
@@ -36,7 +42,6 @@ const getUser = (request, response) => {
 const getUserByName = (request, response) => {
     const firstname = request.params.firstname
     const lastname = request.params.lastname
-
     pool.query('SELECT * FROM users WHERE firstname = $1 AND lastname = $2', [firstname, lastname], (error, result) => {
         if (error) { throw error }
         response.status(200).json(result.rows)

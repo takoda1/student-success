@@ -18,7 +18,7 @@ function GoalList(props) {
   return (
     <div>
       <ul>
-        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} />)}
+        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} />)}
         <form className="addGoal" onSubmit={props.onGoalAdded}>
           <input value={props.newGoalText} onChange={props.onGoalTyped} />
           <button>Add Goal</button>
@@ -29,19 +29,42 @@ function GoalList(props) {
   );
 }
 
-function GoalItem(props) {
-  let goalText = props.goal.goaltext;
+class GoalItem extends React.Component {
+  constructor(props) {
+    super(props);
 
-  return (
-    <div>
+    this.state = {
+      editing: false,
+      goaltext: props.goal.goaltext
+    }
+  }
+
+  render() {
+    const editMode = (  
+      <form className="editGoal" onSubmit={(event) => {
+        this.setState({ editing: !this.state.editing });
+        this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
+      }}>
+        <input value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
+        <button>Update</button>
+      </form>
+    );
+
+    const viewMode = (
       <p>
-        <input type="checkbox" checked={props.goal.complete} onChange={props.onGoalCheck}/>
-        {goalText}
-        {' '}
-        <button className="edit">Edit</button>
+        <input type="checkbox" checked={this.props.goal.complete} onChange={this.props.onGoalCheck}/>
+            {this.state.goaltext}
+            {' '}
+        <button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</button>
       </p>
-    </div>
-  );
+    );
+
+    return (
+      <div>
+        {this.state.editing? editMode : viewMode}
+      </div>
+    );
+  }
 }
 
 function GoalsCompleted(props) {

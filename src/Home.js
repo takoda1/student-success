@@ -1,6 +1,10 @@
 import { Layout, GoalList, Timer } from './shared';
 import React from 'react';
 import axios from 'axios';
+import Moment from 'moment';
+
+const todayDate = Moment().format('YYYY-MM-DD');
+const userId = 1;
 
 class Home extends React.Component {
     constructor(props) {
@@ -9,7 +13,7 @@ class Home extends React.Component {
         this.state = { 
             username: '',
             goals: [], /* API call gets made in componentDidMount */
-            timers: /* API call */ '',
+            timers: [], /* API call */
             newGoalText: '',
         };
 
@@ -17,12 +21,14 @@ class Home extends React.Component {
         this.onGoalTyped = this.onGoalTyped.bind(this);
         this.onGoalSubmitted = this.onGoalSubmitted.bind(this);
         this.onGoalCheck = this.onGoalCheck.bind(this);
+        this.onGoalEdited = this.onGoalEdited.bind(this);
     }
 
     async componentDidMount() {
-        const user = (await axios.get(`/user/${1}`)).data[0];
-        const goals = (await axios.get(`/goals/${user.id}/${"2019-09-14"}`)).data;
-        this.setState({ goals });
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data;
+        this.setState({ username: user.firstname, goals, timers });
     }
 
     handleClick() {
@@ -44,12 +50,25 @@ class Home extends React.Component {
 
     async onGoalSubmitted(event) {
         event.preventDefault();
-        const user = (await axios.get(`/user/${1}`)).data[0];
-        const newGoal = { userId: user.id, goalDate: "2019-09-14", goalText: this.state.newGoalText, completed: false };
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const newGoal = { userid: user.id, goaldate: todayDate, goaltext: this.state.newGoalText, completed: false };
+        console.log(newGoal);
         await axios.post('/goal', newGoal);
-        const goals = (await axios.get(`/goals/${user.id}/${"2019-09-14"}`)).data;
+        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals, newGoalText: '' };
+        });
+    }
+
+    async onGoalEdited(event, newText, goalId, completed) {
+        event.preventDefault();
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const updatedGoal = { goaltext: newText, completed: completed };
+        console.log(updatedGoal);
+        await axios.put(`/goal/${goalId}`, updatedGoal);
+        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        this.setState(() => {
+            return { goals };
         });
     }
 
@@ -60,7 +79,7 @@ class Home extends React.Component {
                 <button className='button' onClick={this.handleClick}>Click Me</button>
                 <p>{this.state.username}</p>
             <div>
-                <Goals goals={this.state.goals} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} newGoalText={this.state.newGoalText} />
+                <Goals goals={this.state.goals} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} newGoalText={this.state.newGoalText} />
                 <Timers />
             </div>
             </Layout>
@@ -88,7 +107,7 @@ class Goals extends React.Component {
         return (
             <div style={{display: "inline-block", width: '40%', verticalAlign: 'top', marginRight: 35, paddingRight: 15, borderRight: '2px solid #DDD'}}>
                 <h3>Today's Goals</h3>
-                <GoalList goals={this.props.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} newGoalText={this.props.newGoalText} ></GoalList>
+                <GoalList goals={this.props.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} newGoalText={this.props.newGoalText} ></GoalList>
             </div>
         );
     }

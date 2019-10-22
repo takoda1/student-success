@@ -47,7 +47,6 @@ class Home extends React.Component {
         event.preventDefault();
         const user = (await axios.get(`/user/${userId}`)).data[0];
         const newGoal = { userid: user.id, goaldate: todayDate, goaltext: this.state.newGoalText, completed: false };
-        console.log(newGoal);
         await axios.post('/goal', newGoal);
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
         this.setState(() => {
@@ -59,7 +58,6 @@ class Home extends React.Component {
         event.preventDefault();
         const user = (await axios.get(`/user/${userId}`)).data[0];
         const updatedGoal = { goaltext: newText, completed: completed };
-        console.log(updatedGoal);
         await axios.put(`/goal/${goalId}`, updatedGoal);
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
         this.setState(() => {

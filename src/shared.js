@@ -52,7 +52,9 @@ class GoalItem extends React.Component {
 
     const viewMode = (
       <p>
-        <input type="checkbox" checked={this.props.goal.complete} onChange={this.props.onGoalCheck}/>
+        <input type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
+            this.props.onGoalCheck(event.target.checked, this.props.goal);
+          }}/>
             {this.state.goaltext}
             {' '}
         <button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</button>

@@ -15,8 +15,10 @@ class Home extends React.Component {
             goals: [], /* API call gets made in componentDidMount */
             timers: [], /* API call */
             newGoalText: '',
+            goalsCompleted: "Loading...",
         };
 
+        this.checkTotalGoals = this.checkTotalGoals.bind(this);
         this.onGoalTyped = this.onGoalTyped.bind(this);
         this.onGoalSubmitted = this.onGoalSubmitted.bind(this);
         this.onGoalCheck = this.onGoalCheck.bind(this);
@@ -27,16 +29,30 @@ class Home extends React.Component {
     async componentDidMount() {
         const user = (await axios.get(`/user/${userId}`)).data[0];
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
-        // const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data;
-        this.setState({ username: user.firstname, goals });
+        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data;
+        this.setState({ username: user.firstname, goals, timers });
+        this.checkTotalGoals();
     }
 
-    onGoalCheck() {
-        const goals = this.state.goals;
+    checkTotalGoals() {
+        const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ? "Goals completed!" : "Not yet!";
+        this.setState(() => {
+            return { goalsCompleted };
+        });
+    }
+
+    async onGoalCheck(completed, goal) {
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const updatedGoal = { goaltext: goal.goaltext, completed };
+        console.log(updatedGoal);
+        await axios.put(`/goal/${goal.id}`, updatedGoal);
+        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
         
         this.setState(() => {
             return { goals };
         });
+
+        this.checkTotalGoals();
     }
 
     onGoalTyped(event) {
@@ -52,6 +68,7 @@ class Home extends React.Component {
         this.setState(() => {
             return { goals, newGoalText: '' };
         });
+        this.checkTotalGoals();
     }
 
     async onGoalEdited(event, newText, goalId, completed) {
@@ -73,6 +90,7 @@ class Home extends React.Component {
         this.setState(() => {
             return { goals };
         });
+        this.checkTotalGoals();
     }
 
     render() {
@@ -81,7 +99,7 @@ class Home extends React.Component {
                 <h2>Home Page</h2>
                 <p>Welcome, {this.state.username}</p>
             <div>
-                <Goals goals={this.state.goals} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
+                <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
                 <Timers />
             </div>
             </Layout>
@@ -90,26 +108,11 @@ class Home extends React.Component {
 }
   
 class Goals extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            goalsCompleted: this.props.goals.reduce((memo, goal) => { return memo ? goal.complete : false }, true) ? "Goals completed!" : "Not yet!",
-        }
-    }
-
-    checkTotalGoals() {
-        const goalsCompleted = this.props.goals.reduce((memo, goal) => { return memo ? goal.complete : false }, true) ? "Goals completed!" : "Not yet!";
-        console.log(goalsCompleted);
-        this.setState(() => {
-            return { goalsCompleted };
-        });
-    }
-
     render() {
         return (
             <div style={{display: "inline-block", width: '40%', verticalAlign: 'top', marginRight: 35, paddingRight: 15, borderRight: '2px solid #DDD'}}>
                 <h3>Today's Goals</h3>
-                <GoalList goals={this.props.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
+                <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
             </div>
         );
     }

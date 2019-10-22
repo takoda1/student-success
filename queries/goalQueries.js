@@ -1,13 +1,13 @@
-const { pool } = require('./config')
+const { pool } = require('../config')
 
 var dateReg = /^\d{4}-\d{2}-\d{2}$/
 
 const getGoals = (request, response) => {
-    const userId = parseInt(request.params.userId)
+    const userid = parseInt(request.params.userid)
     const date = request.params.date;
 
-    if (!isNaN(userId) && date.match(dateReg) != null) {
-        pool.query('SELECT * FROM goals WHERE userId = $1 AND goalDate = $2', [userId, date], (error, results) => {
+    if (!isNaN(userid) && date.match(dateReg) != null) {
+        pool.query('SELECT * FROM goals WHERE userid = $1 AND goaldate = $2', [userid, date], (error, results) => {
             if (error) {
                 throw error
             }
@@ -20,10 +20,10 @@ const getGoals = (request, response) => {
 }
 
 const getGoal = (request, response) => {
-    const goalId = parseInt(request.params.id)
+    const id = parseInt(request.params.id)
 
-    if (!isNaN(goalId)) {
-        pool.query('SELECT * FROM goals WHERE id = $1 ', [goalId], (error, results) => {
+    if (!isNaN(id)) {
+        pool.query('SELECT * FROM goals WHERE id = $1 ', [id], (error, results) => {
             if (error) {
                 throw error
             }
@@ -45,20 +45,25 @@ Expects: request.body to have json:
 }
 */
 const addGoal = (request, response) => {
-    const { userId, goalDate, goalText, completed } = request.body;
+    const { userid, goaldate, goaltext, completed } = request.body;
 
-
-    if (goalDate.match(dateReg) != null && typeof completed === "boolean") {
-        pool.query('INSERT INTO goals (userId, goalDate, goalText, completed) VALUES ($1, $2, $3, $4)', [userId, goalDate, goalText, completed], (error) => {
-            if (error) {
-                throw error
-            }
-            response.status(201).json({ status: 'success', message: 'Goal added' })
-        })
+    if (userid != null && goaldate != null) {
+        if (goaldate.match(dateReg) != null && typeof completed === "boolean") {
+            pool.query('INSERT INTO goals (userid, goaldate, goaltext, completed) VALUES ($1, $2, $3, $4)', [userid, goaldate, goaltext, completed], (error) => {
+                if (error) {
+                    throw error
+                }
+                response.status(201).json({ status: 'success', message: 'Goal added' })
+            })
+        }
+        else {
+            response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean')
+        }
     }
     else {
-        response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean')
+        response.status(400).send("Error: Either userid or goaldate fields do not exist or are named incorrectly or are null")
     }
+    
 }
 
 
@@ -66,9 +71,9 @@ const addGoal = (request, response) => {
 const putGoal = (request, response) => {
     const id = parseInt(request.params.id)
 
-    const { goalText, completed } = request.body;
+    const { goaltext, completed } = request.body;
     if (!isNaN(id) && typeof completed === "boolean") {
-        pool.query('UPDATE goals SET goalText = $2, completed = $3 WHERE id = $1', [id, goalText, completed], (error) => {
+        pool.query('UPDATE goals SET goaltext = $2, completed = $3 WHERE id = $1', [id, goaltext, completed], (error) => {
             if (error) {
                 throw error
             }

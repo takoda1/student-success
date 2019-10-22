@@ -25,7 +25,7 @@ class App extends Component {
 
           <Switch>
             <Route path="/index">
-              <Home goals={[{content: 'hello', completed: true}]}/>
+              <Home />
             </Route>
           </Switch>
           <Switch>

@@ -18,3 +18,15 @@ CREATE TABLE goals (
 
 INSERT INTO goals (userId, goalDate, goalText, completed)
 VALUES ('1', '2019-09-14', 'TEST', TRUE), ('1', '2019-09-14', 'TEST2', FALSE);
+
+CREATE TABLE timers (
+	id SERIAL PRIMARY KEY,
+	userId INTEGER REFERENCES users(id),
+	timerdate DATE NOT NULL,
+	researchtime INT,
+	writingtime INT,
+	customtime INT
+);
+
+INSERT INTO timers (userId, timerdate, researchtime, writingtime, customtime)
+VALUES ('1', '2019-09-14', '45', '1000', '11'), ('1', '2019-09-15', '22233', '223', '4454');

@@ -18,7 +18,7 @@ function GoalList(props) {
   return (
     <div>
       <ul>
-        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} />)}
+        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <form className="addGoal" onSubmit={props.onGoalAdded}>
           <input value={props.newGoalText} onChange={props.onGoalTyped} />
           <button>Add Goal</button>
@@ -56,6 +56,7 @@ class GoalItem extends React.Component {
             {this.state.goaltext}
             {' '}
         <button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</button>
+        <button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</button>
       </p>
     );
 

@@ -97,3 +97,22 @@ Updates/puts the timer specified by its unique id with new researchtime, writing
 
 DELETE /timer/:id
 Deletes the timer specified by its unique id
+
+### Reflections
+
+GET /reflection/:userid/:date
+Returns the reflection for a specified user (userid, references primary key of users table)
+and for a specified date in the format yyyy-mm-dd
+
+GET /reflection/:id
+Returns a single reflection referenced by the reflection primary key id
+
+POST /reflection   (Requires json/js body of {userid: number, reflectiondate: "yyyy-mm-dd", reflectiontext: string})
+Posts a reflection with specified values
+
+PUT /reflection/:id  (Requires json/js body of {reflectiontext: string})
+Updates/puts the reflection specified by its unique id with new reflectiontext value.
+
+DELETE /reflection/:id
+Deletes the reflection specified by its unique id
+

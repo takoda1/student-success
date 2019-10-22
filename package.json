@@ -29,6 +29,7 @@
     "pg": "^7.12.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "react-moment": "^0.9.6",
     "react-router-dom": "^5.1.2",
     "react-scripts": "0.9.5"
   },

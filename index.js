@@ -5,6 +5,7 @@ const cors = require('cors')
 const userQueries = require('./queries/userQueries')
 const goalQueries = require('./queries/goalQueries')
 const timerQueries = require('./queries/timerQueries')
+const reflectionQueries = require('./queries/reflectionQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -46,6 +47,12 @@ app.get('/timer/:id', timerQueries.getTimerById)
 app.post('/timer', timerQueries.addTimer)
 app.put('/timer/:id', timerQueries.putTimer)
 app.delete('/timer/:id', timerQueries.deleteTimer)
+
+app.get('/reflection/:userid/:date', reflectionQueries.getReflection)
+app.get('/reflection/:id', reflectionQueries.getReflectionById)
+app.post('/reflection', reflectionQueries.addReflection)
+app.put('/reflection/:id', reflectionQueries.putReflection)
+app.delete('/reflection/:id', reflectionQueries.deleteReflection)
 
 
 

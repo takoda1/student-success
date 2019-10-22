@@ -13,13 +13,6 @@ Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for post
 8. Run node index.js
 9. Install postman to make requests, or use curl.
 
-## Download Font Awesome with npm
-$ npm i --save @fortawesome/fontawesome-svg-core
-
-$ npm i --save @fortawesome/free-solid-svg-icons
-
-$ npm i --save @fortawesome/react-fontawesome
-
 ## Future notes
 Run the react app on process.env.port (provided/populated by heroku) and run the api on
 another port; have the react app talk to the api using the api endpoints.
@@ -27,6 +20,13 @@ another port; have the react app talk to the api using the api endpoints.
 ## Heroku deployment
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
+
+## Download Font Awesome with npm
+$ npm i --save @fortawesome/fontawesome-svg-core
+
+$ npm i --save @fortawesome/free-solid-svg-icons
+
+$ npm i --save @fortawesome/react-fontawesome
 
 ## Tests
 
@@ -97,3 +97,22 @@ Updates/puts the timer specified by its unique id with new researchtime, writing
 
 DELETE /timer/:id
 Deletes the timer specified by its unique id
+
+### Reflections
+
+GET /reflection/:userid/:date
+Returns the reflection for a specified user (userid, references primary key of users table)
+and for a specified date in the format yyyy-mm-dd
+
+GET /reflection/:id
+Returns a single reflection referenced by the reflection primary key id
+
+POST /reflection   (Requires json/js body of {userid: number, reflectiondate: "yyyy-mm-dd", reflectiontext: string})
+Posts a reflection with specified values
+
+PUT /reflection/:id  (Requires json/js body of {reflectiontext: string})
+Updates/puts the reflection specified by its unique id with new reflectiontext value.
+
+DELETE /reflection/:id
+Deletes the reflection specified by its unique id
+

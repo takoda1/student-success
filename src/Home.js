@@ -102,6 +102,7 @@ class Home extends React.Component {
                 <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
                 <Timers />
             </div>
+            <Reflections />
             </Layout>
         );
     }
@@ -130,6 +131,35 @@ class Timers extends React.Component {
                 <Timer name="Study"/>
                 <Timer name="Research"/>
                 <Timer name="Custom"/>
+            </div>
+        );
+    }
+}
+
+class Reflections extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            reflections: ""
+        }
+    }
+    
+    async componentDidMount() {
+
+    }
+
+    render() {
+        const viewMode = (
+            <p>
+                
+            </p>
+        );
+
+        return (
+            <div>
+                <h3>Today's Reflections</h3>
+                <p></p>
             </div>
         );
     }

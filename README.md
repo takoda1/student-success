@@ -13,13 +13,6 @@ Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for post
 8. Run node index.js
 9. Install postman to make requests, or use curl.
 
-## Download Font Awesome with npm
-$ npm i --save @fortawesome/fontawesome-svg-core
-
-$ npm i --save @fortawesome/free-solid-svg-icons
-
-$ npm i --save @fortawesome/react-fontawesome
-
 ## Future notes
 Run the react app on process.env.port (provided/populated by heroku) and run the api on
 another port; have the react app talk to the api using the api endpoints.
@@ -27,6 +20,13 @@ another port; have the react app talk to the api using the api endpoints.
 ## Heroku deployment
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
+
+## Download Font Awesome with npm
+$ npm i --save @fortawesome/fontawesome-svg-core
+
+$ npm i --save @fortawesome/free-solid-svg-icons
+
+$ npm i --save @fortawesome/react-fontawesome
 
 ## Tests
 

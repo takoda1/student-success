@@ -1,8 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const queries = require('./queries')
-const goalQueries = require('./goalQueries')
+
+const userQueries = require('./queries/userQueries')
+const goalQueries = require('./queries/goalQueries')
+const timerQueries = require('./queries/timerQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -27,19 +29,26 @@ app.use(
 )
 app.use(cors())
 
+app.get('/users', userQueries.getUsers)
+app.get('/user/:id', userQueries.getUser)
+app.get('/user/:firstname/:lastname', userQueries.getUserByName)
+app.post('/user', userQueries.addUser)
+app.delete('/user/:id', userQueries.deleteUser)
 
-
-app.get('/users', queries.getUsers)
-app.get('/user/:id', queries.getUser)
-app.get('/user/:firstName/:lastName', queries.getUserByName)
-app.post('/user', queries.addUser)
-app.delete('/user/:id', queries.deleteUser)
-
-app.get('/goals/:userId/:date', goalQueries.getGoals)
+app.get('/goals/:userid/:date', goalQueries.getGoals)
 app.get('/goal/:id', goalQueries.getGoal)
 app.post('/goal', goalQueries.addGoal)
 app.put('/goal/:id', goalQueries.putGoal)
 app.delete('/goal/:id', goalQueries.deleteGoal)
+
+app.get('/timer/:userid/:date', timerQueries.getTimer)
+app.get('/timer/:id', timerQueries.getTimerById)
+app.post('/timer', timerQueries.addTimer)
+app.put('/timer/:id', timerQueries.putTimer)
+app.delete('/timer/:id', timerQueries.deleteTimer)
+
+
+
 
 app.get('/', (request, response)=>{
     response.status(200).json({ success: "HEY WHATS UP" , user:process.env.DB_USER});

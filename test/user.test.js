@@ -12,14 +12,14 @@ chai.use(chaiHttp)
 describe('USER API', () => {
 
     var user = {
-        firstName: "Test",
-        lastName: "BOI",
+        firstname: "Test",
+        lastname: "BOI",
         email: "A@A.com"
     }
 
     var userId = ''
 
-    it('posts a user with body {firstName, lastName, email}', () => {
+    it('posts a user with body {firstname, lastname, email}', () => {
 
         return chai.request(server)
             .post('/user')
@@ -45,7 +45,7 @@ describe('USER API', () => {
     it('Gets a single user based on their first and last names', () => {
 
         return chai.request(server)
-            .get('/user/' + user.firstName + '/' + user.lastName)
+            .get('/user/' + user.firstname + '/' + user.lastname)
             .then((res) => {
                 res.should.have.status(200)
                 res.body.length.should.equal(1)

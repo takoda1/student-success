@@ -14,12 +14,13 @@ describe('USER API', () => {
     var user = {
         firstname: "Test",
         lastname: "BOI",
-        email: "A@A.com"
+        email: "A@A.com",
+        groupid: 1
     }
 
     var userId = ''
 
-    it('posts a user with body {firstname, lastname, email}', () => {
+    it('posts a user with body {firstname, lastname, email, groupid}', () => {
 
         return chai.request(server)
             .post('/user')

@@ -1,3 +1,10 @@
+h1 {
+  margin-left: 2em;
+}
+h2 {
+    font-size: 2.15em;
+    margin-top: 0em;
+}
 .history-grid-container {
   display: flex;
   justify-content: center;
@@ -51,6 +58,18 @@
   margin-top: -1em;
   font-size: 1.25em;
 }
+.history-goals {
+    font-size: 1.25em;
+    margin-top: -1em;
+    list-style-type: none;
+}
+
+.history-reflections p {
+  font-size: 1.25em;
+  margin-top: -1em;
+}
+
+/* Font Awesome */
 .fa-check-circle {
   font-size: 3em;
   color: #7BFF4D;
@@ -63,20 +82,8 @@
   background-color: white;
   border-radius: 100%;
 }
-.history-goals {
-    font-size: 1.25em;
-    margin-top: -1em;
-    list-style-type: none;
-}
-
-.history-reflections p {
-  font-size: 1.25em;
-  margin-top: -1em;
-}
-h1 {
-  margin-left: 2em;
-}
-h2 {
-    font-size: 2.15em;
-    margin-top: 0em;
+.fa-caret-right, .fa-caret-left {
+  font-size: 4em;
+  align-self: center;
+  color: #404CB8;
 }

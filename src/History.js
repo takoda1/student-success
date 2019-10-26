@@ -51,13 +51,13 @@ class History extends Component {
 
     async onArrowClicked(next) {
         if(next) {
-            var d = new Date(this.state.week[6]);
+            let d = new Date(this.state.week[6]);
             d.setDate(d.getDate() + 8);
             this.setState({week: Last7Days(d)});
             // this.setState({week: getCurrentWeek(d)});
         }
         else {
-            var d = new Date(this.state.week[0]);
+            let d = new Date(this.state.week[0]);
             d.setDate(d.getDate());
             this.setState({week: Last7Days(d)});
             // this.setState({week: getCurrentWeek(d)});
@@ -84,7 +84,7 @@ class History extends Component {
 class Calendar extends Component {
       render() {
         const listDays = this.props.week.map((date) =>
-        <div key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{fixDate(date)}</div>
+        <button key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{fixDate(date)}</button>
         );
     
         return(

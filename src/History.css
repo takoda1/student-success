@@ -11,10 +11,16 @@ h2 {
 }
 .history-date {
   padding: 1em 2em;
+  width: 7em;
   background-color: #D8EBF4;
   margin: 1em;
   border-radius: 10px;
   font-size: 1.25em;
+  transition: background .4s;
+}
+.history-date:hover {
+  background: #BAD5E1;
+  transition: background .4s;
 }
 .history-goal-list {
   background-color: #A6C4FF;
@@ -86,4 +92,13 @@ h2 {
   font-size: 4em;
   align-self: center;
   color: #404CB8;
+  transition: color .4s;
+}
+.fa-caret-left:hover {
+  color: #7681F0;
+  transition: color .4s;
+}
+.fa-caret-right:hover {
+  color: #7681F0;
+  transition: color .4s;
 }

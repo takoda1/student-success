@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './History.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 const userId = 1;
+const today = new Date();
 
 class History extends Component {
     constructor(props) {
@@ -15,10 +16,12 @@ class History extends Component {
             timers: '',
             reflections: '',
             selectedDate: getTodaysDate(),
+            week: Last7Days(today),
             
         };
 
         this.onDayClicked = this.onDayClicked.bind(this);
+        this.onArrowClicked = this.onArrowClicked.bind(this);
     }
 
     async componentDidMount() {
@@ -39,8 +42,6 @@ class History extends Component {
         const timers = (await axios.get(`/timer/${userId}/${date}`)).data[0];
         const reflections = (await axios.get(`/reflection/${userId}/${this.state.selectedDate}`)).data[0];
 
-
-
         this.setState({
             timers,
             goals,
@@ -48,11 +49,27 @@ class History extends Component {
         });
     }
 
+    async onArrowClicked(next) {
+        if(next) {
+            var d = new Date(this.state.week[6]);
+            d.setDate(d.getDate() + 8);
+            this.setState({week: Last7Days(d)});
+            // this.setState({week: getCurrentWeek(d)});
+        }
+        else {
+            var d = new Date(this.state.week[0]);
+            d.setDate(d.getDate());
+            this.setState({week: Last7Days(d)});
+            // this.setState({week: getCurrentWeek(d)});
+        }
+        
+    }
+
     render() {
         return(
             <div>
-                <h1>History for {fixDate(this.state.selectedDate)}</h1>
-                <Calendar onDayClicked={this.onDayClicked} />
+                <h1>History for {fixDateWithYear(this.state.selectedDate)}</h1>
+                <Calendar week={this.state.week} onDayClicked={this.onDayClicked} onArrowClicked={this.onArrowClicked} />
                 <div className="history-grid-goals">
                     <Completed goals={this.state.goals} selectedDate={this.state.selectedDate}/>
                     <Goals goals={this.state.goals}/>
@@ -64,17 +81,18 @@ class History extends Component {
     }
 }
 
-
 class Calendar extends Component {
       render() {
-        const listDays = Last7Days().map((date) =>
+        const listDays = this.props.week.map((date) =>
         <div key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{fixDate(date)}</div>
         );
     
         return(
-          <div className="history-grid-container">
-            {listDays}
-          </div>
+            <div className="history-grid-container">
+                <FontAwesomeIcon icon={faCaretLeft} onClick={() => this.props.onArrowClicked(false)} />
+                {listDays}
+                <FontAwesomeIcon icon={faCaretRight} onClick={() => this.props.onArrowClicked(true)}/>
+            </div>
         );
       }
 }
@@ -82,11 +100,11 @@ class Calendar extends Component {
 class Goals extends Component {
       render() {
         return(
-          <div className="history-goal-list">
+            <div className="history-goal-list">
                 <h2>My Goals</h2>
                 <CheckboxGoals goals={this.props.goals} />
-          </div>
-        );
+            </div>
+        );
       }
     }
 
@@ -100,7 +118,6 @@ class CheckboxGoals extends Component {
         else{
             return(<div className="history-goals">No goals.</div>);
         }
-        
     }
 }
 
@@ -186,9 +203,9 @@ class Completed extends Component {
     }
 
 
-
-
 }
+
+// Functions
 
 function getTodaysDate() {
     var d = new Date();
@@ -203,6 +220,11 @@ function fixDate(d) {
     return(res[1].concat("/", res[2]));
 }
 
+function fixDateWithYear(d) {
+    var res = d.split("-");
+    return(res[1].concat("/", res[2], "/", res[0]));
+}
+
 function formatDate(date){
         var dd = date.getDate();
         var mm = date.getMonth()+1;
@@ -213,10 +235,10 @@ function formatDate(date){
         return date
      }
 
-function Last7Days () {
+function Last7Days (date) {
         var result = [];
         for (var i=0; i<7; i++) {
-            var d = new Date();
+            var d = new Date(date);
             d.setDate(d.getDate() - i);
             result.unshift( formatDate(d) )
         }
@@ -224,6 +246,17 @@ function Last7Days () {
         return(result);
 }
 
+function getCurrentWeek(d) {
+    let curr = new Date(d); 
+    let week = []
+
+    for (let i = 0; i <= 6; i++) {
+        let first = curr.getDate() - curr.getDay() + i;
+        let day = new Date(curr.setDate(first)).toISOString().slice(0, 10)
+        week.push(day)
+    }
+    return(week);
+}
 
 function secondsToHms(d) {
     d = Number(d);
@@ -234,7 +267,5 @@ function secondsToHms(d) {
 
     return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
 }
-
-
 
 export { History };

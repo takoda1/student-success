@@ -11,7 +11,7 @@
 }
 .history-goal-list {
   background-color: #A6C4FF;
-  width: 20vw;
+  width: 15vw;
   padding: 0.75em 2em 2em 2em;
   border-radius: 10px;
 }
@@ -22,20 +22,34 @@
 .history-goals-aside {
   text-align: center;
   font-size: 2em;
-  width: 20vw;
-  background-color: #A6C4FF;
-  padding: 0.75em 0.75em 1.25em 0.75em;
+  width: 15vw;
+  /* background-color: #A6C4FF; */
+  padding: .75em 0.75em 1.25em 0.75em;
   border-radius: 10px;
 }
+.history-no-goals {
+  margin-top: 1em;
+}
 .history-timers {
-  width: 20vw;
+  width: 15vw;
   background-color: #A6C4FF;
   border-radius: 10px;
   padding: 0.75em 2em 2em 2em;
 }
+.history-reflections {
+  background-color: #A6C4FF;
+  width: 15vw;
+  padding: 0.75em 2em 2em 2em;
+  border-radius: 10px;
+}
 .history-timers-list {
     margin-top: -1em;
     font-size: 1.25em;
+    margin-left: -1em;
+}
+.no-timers {
+  margin-top: -1em;
+  font-size: 1.25em;
 }
 .fa-check-circle {
   font-size: 3em;
@@ -54,10 +68,15 @@
     margin-top: -1em;
     list-style-type: none;
 }
+
+.history-reflections p {
+  font-size: 1.25em;
+  margin-top: -1em;
+}
 h1 {
   margin-left: 2em;
 }
 h2 {
     font-size: 2.15em;
-    margin-top: -.25em;
+    margin-top: 0em;
 }

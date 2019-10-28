@@ -141,25 +141,58 @@ class Reflections extends React.Component {
         super(props);
 
         this.state = {
-            reflections: ""
+            reflection: {},
+            reflectionText: "",
+            editing: false,
+            doneToday: true,
         }
+
+        this.onReflectionSubmitted = this.onReflectionSubmitted.bind(this);
     }
     
     async componentDidMount() {
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const reflection = (await axios.get(`/reflection/${user.id}/${todayDate}`)).data[0];
+        if (reflection) {
+            this.setState({ reflection, doneToday: true, reflectionText: reflection.reflectiontext });
+        } else {
+            this.setState({ doneToday: false });
+        }
+    }
 
+    async onReflectionSubmitted(event) {
+        event.preventDefault();
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        if (this.state.doneToday) {
+            await axios.put(`/reflection/${this.state.reflection.id}`, { reflectiontext: this.state.reflectionText });
+        } else {
+            await axios.post(`/reflection`, { userid: user.id, reflectiondate: todayDate, reflectiontext: this.state.reflectionText });
+            this.setState({ doneToday: true });
+        }
+        
+        const reflection = (await axios.get(`/reflection/${user.id}/${todayDate}`)).data[0];
+        this.setState({ reflection, editing: false });
     }
 
     render() {
         const viewMode = (
             <p>
-                
+                {this.state.reflectionText}
+                <button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</button>
             </p>
+        );
+
+        const editMode = (
+            <form className="editReflection" onSubmit={this.onReflectionSubmitted}>
+                <input value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
+                <button>Submit</button>
+            </form>
         );
 
         return (
             <div>
                 <h3>Today's Reflections</h3>
-                <p></p>
+                {this.state.editing ? editMode : viewMode}
             </div>
         );
     }

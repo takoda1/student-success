@@ -1,12 +1,21 @@
+CREATE TABLE groups (
+	id SERIAL PRIMARY KEY,
+	groupname VARCHAR(1000)
+);
+
+INSERT INTO groups (groupname)
+VALUES ('GROUP FOR EATING EATING EATING');
+
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
 	firstName VARCHAR(30),
 	lastName VARCHAR(30),
-	email VARCHAR(30)
+	email VARCHAR(30),
+	groupid INTEGER REFERENCES groups(id)
 );
 
-INSERT INTO users (firstName, lastName, email)
-VALUES ('TEST', 'TEST', 'TEST@TEST.com');
+INSERT INTO users (firstName, lastName, email, groupid)
+VALUES ('TEST', 'TEST', 'TEST@TEST.com', 1);
 
 CREATE TABLE goals (
 	id SERIAL PRIMARY KEY,

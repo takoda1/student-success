@@ -1,64 +1,211 @@
 import React, { Component } from 'react';
 import './History.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
+const userId = 1;
+const today = new Date();
+
 class History extends Component {
-     constructor(props) {
-        super(props);   
-             this.state = { 
-               username: '',
-               userId: 1,
-               goals: [], /* API call gets made in componentDidMount */
-               selectedDate: getTodaysDate(),
-               researchTime: 0,
-               writingTime: 0,
-               customTime: 0,
-              };
-              this.onDayClicked = this.onDayClicked.bind(this);
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            goals: [],
+            timers: '',
+            reflections: '',
+            selectedDate: getTodaysDate(),
+            week: Last7Days(today),
+            
+        };
+
+        this.onDayClicked = this.onDayClicked.bind(this);
+        this.onArrowClicked = this.onArrowClicked.bind(this);
+    }
+
+    async componentDidMount() {
+
+        const goals = (await axios.get(`/goals/${userId}/${this.state.selectedDate}`)).data;
+        const timers = (await axios.get(`/timer/${userId}/${this.state.selectedDate}`)).data[0];
+        const reflections = (await axios.get(`/reflection/${userId}/${this.state.selectedDate}`)).data[0];
+        this.setState({
+            goals,
+            timers,
+            reflections,
+        });
+    }
+
+    async onDayClicked(date) {
+        this.setState({selectedDate: date});
+        const goals = (await axios.get(`/goals/${userId}/${date}`)).data;
+        const timers = (await axios.get(`/timer/${userId}/${date}`)).data[0];
+        const reflections = (await axios.get(`/reflection/${userId}/${this.state.selectedDate}`)).data[0];
+
+        this.setState({
+            timers,
+            goals,
+            reflections,
+        });
+    }
+
+    async onArrowClicked(next) {
+        if(next) {
+            let d = new Date(this.state.week[6]);
+            d.setDate(d.getDate() + 8);
+            this.setState({week: Last7Days(d)});
+            // this.setState({week: getCurrentWeek(d)});
         }
-
-
-        componentDidMount() {
-            axios.get(`/user/${ this.state.userId }`)
-              .then(res => {
-                const apiUser = res.data[0];
-                this.setState({ username: apiUser.email, userId: apiUser.id });
-              });
-
-            axios.get(`/timer/${ this.state.userId }/${this.state.selectedDate}`)
-              .then(res => {
-                  this.setState({researchTime: secondsToHms(res.data[0].researchtime), 
-                                writingTime: secondsToHms(res.data[0].writingtime), 
-                                customTime: secondsToHms(res.data[0].customtime)});
-              });
-            axios.get(`goals/${ this.state.userId }/${this.state.selectedDate}`)
-              .then(res => {
-                this.setState({goals: res.data});
-              });
-        }
-
-        onDayClicked(dayIndex) {
-             this.setState({ selectedDate: dayIndex });
-            //  alert("please work");
+        else {
+            let d = new Date(this.state.week[0]);
+            d.setDate(d.getDate());
+            this.setState({week: Last7Days(d)});
+            // this.setState({week: getCurrentWeek(d)});
         }
         
+    }
 
     render() {
         return(
             <div>
-                <h1>History</h1>
-                <Calendar />
-                <div className="history-grid-goals">
-                    <AllCompleted date={ this.state.selectedDate } goals={ this.state.goals } />
-                    <Goals userId={this.state.userId} goals={this.state.goals} date={this.state.selectedDate}/>
-                    <Timers />
-                </div>
-            </div>
+                <h1>History for {fixDateWithYear(this.state.selectedDate)}</h1>
+                <Calendar week={this.state.week} onDayClicked={this.onDayClicked} onArrowClicked={this.onArrowClicked} />
+                <div className="history-grid-goals">
+                    <Completed goals={this.state.goals} selectedDate={this.state.selectedDate}/>
+                    <Goals goals={this.state.goals}/>
+                    <Timers timers={this.state.timers}/>
+                    <Reflections reflections={this.state.reflections}/>
+                </div>
+            </div>
         );
     }
 }
+
+class Calendar extends Component {
+      render() {
+        const listDays = this.props.week.map((date) =>
+        <button key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{fixDate(date)}</button>
+        );
+    
+        return(
+            <div className="history-grid-container">
+                <FontAwesomeIcon icon={faCaretLeft} onClick={() => this.props.onArrowClicked(false)} />
+                {listDays}
+                <FontAwesomeIcon icon={faCaretRight} onClick={() => this.props.onArrowClicked(true)}/>
+            </div>
+        );
+      }
+}
+
+class Goals extends Component {
+      render() {
+        return(
+            <div className="history-goal-list">
+                <h2>My Goals</h2>
+                <CheckboxGoals goals={this.props.goals} />
+            </div>
+        );
+      }
+    }
+
+class CheckboxGoals extends Component {
+    render () {
+        if(this.props.goals.length !== 0){
+            const listGoals = this.props.goals.map((goal) =>
+            <li key={goal.id}> <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> {goal.goaltext}</li> );
+            return(<div className="history-goals">{listGoals}</div>);
+        }
+        else{
+            return(<div className="history-goals">No goals.</div>);
+        }
+    }
+}
+
+class Timers extends Component {
+      render() {
+        if(this.props.timers) {
+            return(
+                <div className="history-timers">
+                    <h2>Timers</h2>
+                    <ul className="history-timers-list">
+                        <li>Research: {secondsToHms(this.props.timers.researchtime)}</li>
+                        <li>Writing: {secondsToHms(this.props.timers.writingtime)}</li>
+                        <li>Custom: {secondsToHms(this.props.timers.customtime)}</li>
+                    </ul>
+                </div>
+            );
+        }
+        else {
+            return(
+                <div className="history-timers">
+                    <h2>Timers</h2>
+                    <div className="no-timers">No timers.</div>
+                </div>
+            );
+        }
+      }
+}
+
+class Reflections extends Component {
+    render() {
+        if(this.props.reflections){
+            return(
+                <div className="history-reflections">
+                    <h2>Reflection</h2>
+                    <p>
+                        {this.props.reflections.reflectiontext}
+                    </p>
+                </div>
+            );
+        }
+        else{
+            return(
+                <div className="history-reflections">
+                    <h2>Reflection</h2>
+                    <p>No reflection.</p>
+                </div>
+            );
+        }
+        
+    }
+}
+
+class Completed extends Component {
+    render() {
+        let date = fixDate(this.props.selectedDate);
+        if(this.props.goals.length !== 0){
+            const isCompleted = this.props.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ? true : false;
+            if(isCompleted=== true) {
+                return(
+                    <div className="history-goals-aside">
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                        <p>You've completed all of your goals for {date}! :)</p>
+                    </div> 
+                 );
+            }
+            else {
+                return(
+                    <div className="history-goals-aside">
+                        <FontAwesomeIcon icon={faMinusCircle} />
+                        <p>You did not meet all of your goals for {date} :(</p>
+                    </div> 
+                );
+            }
+        }
+        else {
+            return(
+                <div className="history-goals-aside">
+                    <div className="history-no-goals">No goals recorded on {date}.</div>
+                </div>
+            );
+        }
+        
+    }
+
+
+}
+
+// Functions
 
 function getTodaysDate() {
     var d = new Date();
@@ -72,14 +219,11 @@ function fixDate(d) {
     var res = d.split("-");
     return(res[1].concat("/", res[2]));
 }
-function stripDate(d) {
-    var res = d.split("T");
-    return(res[0]);
-}
 
-// function thisDate(props) {
-//   return <div className="history-date">{props.text}</div>;
-// }
+function fixDateWithYear(d) {
+    var res = d.split("-");
+    return(res[1].concat("/", res[2], "/", res[0]));
+}
 
 function formatDate(date){
         var dd = date.getDate();
@@ -91,10 +235,10 @@ function formatDate(date){
         return date
      }
 
-function Last7Days () {
+function Last7Days (date) {
         var result = [];
         for (var i=0; i<7; i++) {
-            var d = new Date();
+            var d = new Date(date);
             d.setDate(d.getDate() - i);
             result.unshift( formatDate(d) )
         }
@@ -102,88 +246,16 @@ function Last7Days () {
         return(result);
 }
 
+function getCurrentWeek(d) {
+    let curr = new Date(d); 
+    let week = []
 
-class Calendar extends History {
-  render() {
-    const listDays = Last7Days().map((date) =>
-    <div key={date} className="history-date" onClick={this.onDayClicked}>{fixDate(date)}</div>
-    );
-
-    return(
-      <div className="history-grid-container">
-        {listDays}
-      </div>
-    );
-  }
-}
-
-function AllCompleted(props) {
-  var l = props.goals;
-  var yes =false;
-  let date = props.date;
-  let fixed = fixDate(date);
-  for (const [completed] of props.goals.entries()) {
-    if([completed] === true) {
-      yes = false;
-    }
-    else {
-        // do nothing
+    for (let i = 0; i <= 6; i++) {
+        let first = curr.getDate() - curr.getDay() + i;
+        let day = new Date(curr.setDate(first)).toISOString().slice(0, 10)
+        week.push(day)
     }
-  }
-  if(yes === true) {
-    return(
-      <div className="history-goals-aside">
-        <FontAwesomeIcon icon={faCheckCircle} />
-        <p>You've completed all of your goals for {fixed}! :)</p>
-      </div> 
-    );
-  }
-  else {
-    return(
-      <div className="history-goals-aside">
-        <FontAwesomeIcon icon={faMinusCircle} />
-        <p>You did not meet all of your goals for {fixed} :(</p>
-      </div> 
-    
-    );
-  }
-
-
-}
-
-class CheckboxGoals extends History {
-    render () {
-        const listGoals = this.state.goals.map((goal) =>
-       <li key={goal.id}> <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> {goal.goaltext}</li> );
-        return(<div className="history-goals">{listGoals}</div>);
-    }
-}
-
-class Goals extends History {
-  render() {
-    return(
-      <div className="history-goal-list">
-        <h2>My Goals</h2>
-                <CheckboxGoals selectedDate={this.state.selectedDate} />
-      </div>
-    );
-  }
-}
-
-class Timers extends History {
-
-  render() {
-    return(
-      <div className="history-timers">
-        <h2>Timers</h2>
-        <ul className="history-timers-list">
-            <li>Research: {this.state.researchTime}</li>
-            <li>Writing: {this.state.writingTime}</li>
-            <li>Custom: {this.state.customTime}</li>
-        </ul>
-      </div>
-    );
-  }
+    return(week);
 }
 
 function secondsToHms(d) {
@@ -195,7 +267,5 @@ function secondsToHms(d) {
 
     return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
 }
-
-
 
 export { History };

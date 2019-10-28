@@ -6,6 +6,7 @@ const userQueries = require('./queries/userQueries')
 const goalQueries = require('./queries/goalQueries')
 const timerQueries = require('./queries/timerQueries')
 const reflectionQueries = require('./queries/reflectionQueries')
+const groupQueries = require('./queries/groupQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -54,7 +55,10 @@ app.post('/reflection', reflectionQueries.addReflection)
 app.put('/reflection/:id', reflectionQueries.putReflection)
 app.delete('/reflection/:id', reflectionQueries.deleteReflection)
 
-
+app.get('/group/:groupname', groupQueries.getGroup)
+app.get('/grou/:id', groupQueries.getGroupById)
+app.post('/group', groupQueries.addGroup)
+app.delete('/group/:id', groupQueries.deleteGroup)
 
 
 app.get('/', (request, response)=>{

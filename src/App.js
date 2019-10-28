@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 import { Home } from './Home';
 import { History } from './History';
@@ -24,6 +25,9 @@ class App extends Component {
           </nav>
 
           <Switch>
+            <Route exact path="/">
+              <Redirect to="/index"></Redirect>
+            </Route>
             <Route path="/index">
               <Home />
             </Route>

@@ -235,9 +235,10 @@ class Timer extends React.Component {
     render() {
         const editMode = (
             <form onSubmit={() => this.setState({ editing: false })}>
-                <div>
+                <p>
+                    Enter Time in Seconds:
                     <input type="number" step="1" value={this.state.goal} onChange={(event) => this.setState({ goal: event.target.value })} />
-                </div>
+                </p>
                 <button>Save</button>
             </form>
         );

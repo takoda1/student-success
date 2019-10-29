@@ -157,9 +157,9 @@ class Timers extends React.Component {
             <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top' }}>
                 <div>
                     <h3>Timers</h3>
-                    <Timer name={this.state.customName} updateTimers={this.updateTimers} timers={this.state.timers} category="custom" />
                     <Timer name="Writing" updateTimers={this.updateTimers} timers={this.state.timers} category="writing" />
                     <Timer name="Research" updateTimers={this.updateTimers} timers={this.state.timers} category="research" />
+                    <Timer name={this.state.customName} updateTimers={this.updateTimers} timers={this.state.timers} category="custom" />
                 </div>
                 <div>
                     <h3>Your {todayDate.slice(5, 7)}/{todayDate.slice(8, 10)} Times</h3>
@@ -191,7 +191,8 @@ class Timer extends React.Component {
         this.state = {
             time: 0,
             goal: 30 * 60,
-            start: 0
+            start: 0,
+            editing: false
         }
 
         this.startTimer = this.startTimer.bind(this);
@@ -202,7 +203,6 @@ class Timer extends React.Component {
 
     startTimer() {
         clearInterval(this.timer);
-        console.log(this.state.goal);
         this.setState({
             time: this.state.time,
             start: Math.floor(Date.now()/1e3) - this.state.time
@@ -211,7 +211,7 @@ class Timer extends React.Component {
             this.setState({
                 time: Math.floor(Date.now()/1e3) - this.state.start
             });
-            if (this.state.time === this.state.goal) {
+            if (this.state.time >= this.state.goal) {
                 this.stopTimer();
                 this.timerFinished();
             }
@@ -233,14 +233,29 @@ class Timer extends React.Component {
     }
 
     render() {
+        const editMode = (
+            <form onSubmit={() => this.setState({ editing: false })}>
+                <div>
+                    <input type="number" step="1" value={this.state.goal} onChange={(event) => this.setState({ goal: event.target.value })} />
+                </div>
+                <button>Save</button>
+            </form>
+        );
+
+        const viewMode = (
+            <p>
+                {this.props.name}: {secondsToHms(Math.floor((this.state.goal - this.state.time)))}
+                <button onClick={this.startTimer}>start</button>
+                <button onClick={this.stopTimer}>stop</button>
+                <button onClick={this.resetTimer}>reset</button>
+                {" "}
+                <button onClick={() => this.setState({ editing: true })}>Enter Time</button>
+            </p>
+        );
+
         return (
             <div>
-                <p>
-                    {this.props.name}: {secondsToHms(Math.floor((this.state.goal - this.state.time)))}
-                    <button onClick={this.startTimer}>start</button>
-                    <button onClick={this.stopTimer}>stop</button>
-                    <button onClick={this.resetTimer}>reset</button>
-                </p>
+                {this.state.editing ? editMode : viewMode }
             </div>
         );
     }

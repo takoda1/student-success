@@ -78,44 +78,14 @@ function GoalsCompleted(props) {
   );
 }
 
-class Timer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      time: 30
-    }
+function secondsToHms(d) {
+  d = Number(d);
 
-    this.startTimer = this.startTimer.bind(this);
-    this.stopTimer = this.stopTimer.bind(this);
-    this.resetTimer = this.resetTimer.bind(this);
-  }
+  var h = Math.floor(d / 3600);
+  var m = Math.floor(d % 3600 / 60);
+  var s = Math.floor(d % 3600 % 60);
 
-  startTimer() {
-    this.timer = setInterval(() => this.setState({
-      time: this.state.time - 1
-    }), 1000)
-  }
-
-  stopTimer() {
-    clearInterval(this.timer)
-  }  
-
-  resetTimer() {
-    this.setState({time: 30})
-  }
-
-  render() {
-    return (
-      <div>
-        <p>
-          {this.props.name}: {this.state.time}
-          <button onClick={this.startTimer}>start</button>
-          <button onClick={this.stopTimer}>stop</button>
-          <button onClick={this.resetTimer}>reset</button>
-        </p>
-      </div>
-    );
-  }
+  return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
 }
 
-export { Layout, GoalList, Timer };
+export { Layout, GoalList, secondsToHms };

@@ -5,12 +5,21 @@ h2 {
     font-size: 2.15em;
     margin-top: 0em;
 }
+.history-day-names {
+  display: flex;
+  justify-content: space-around;
+}
+.history-day-names p {
+  width: 7em;
+  margin: 1em;
+  text-align: center;
+}
 .history-grid-container {
   display: flex;
   justify-content: center;
 }
 .history-date {
-  padding: 1em 2em;
+  padding: .5em 0 .5em 0;
   width: 7em;
   background-color: #D8EBF4;
   margin: 1em;

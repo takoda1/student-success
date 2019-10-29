@@ -2,6 +2,9 @@ import { Layout, GoalList, secondsToHms } from './shared';
 import React from 'react';
 import axios from 'axios';
 import Moment from 'moment';
+import "./Home.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 const userId = 1;
@@ -33,7 +36,22 @@ class Home extends React.Component {
     }
 
     checkTotalGoals() {
-        const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ? "Goals completed!" : "Not yet!";
+        const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ?
+            (
+                <div>
+                    <FontAwesomeIcon icon={faCheckCircle} />
+                    <p style={{ display:"inline-block" }}> You've completed all of your goals for today! :) </p> 
+                </div>
+             
+            ) :
+            (
+                <div>
+                    <FontAwesomeIcon icon={faMinusCircle} />
+                    <p style={{ display:"inline-block" }}> You haven't completed your goals yet, keep it up! </p> 
+                </div>
+            
+            );
+
         this.setState(() => {
             return { goalsCompleted };
         });
@@ -108,9 +126,11 @@ class Home extends React.Component {
 class Goals extends React.Component {
     render() {
         return (
-            <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top', marginRight: 35, paddingRight: 15, borderRight: '2px solid #DDD' }}>
+            <div style={{ display: "inline-block", width: '50%', verticalAlign: 'top'}}>
                 <h3>Today's Goals</h3>
-                <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
+                <div style={{ marginRight: 15, paddingRight: 25, borderRight: '2px solid #DDD' }}>
+                    <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
+                </div>
             </div>
         );
     }
@@ -158,29 +178,33 @@ class Timers extends React.Component {
         return (
             <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top' }}>
                 <div>
-                    <h3>Timers</h3>
-                    <Timer name="Writing" updateTimers={this.updateTimers} category="writing" />
-                    <Timer name="Research" updateTimers={this.updateTimers} category="research" />
-                    <Timer name={this.state.customName} updateTimers={this.updateTimers} category="custom" />
+                    <h3 style={{ display: "inline-block", width: '60%', marginRight: 15, paddingRight: 25 }} >Timers</h3>
+                    <h3 style={{ display: "inline-block", width: '30%' }} >Today's Times</h3>
                 </div>
                 <div>
-                    <h3>Your {todayDate.slice(5, 7)}/{todayDate.slice(8, 10)} Times</h3>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <th>Writing</th>
-                                <td>{ready ? secondsToHms(this.state.timers.writingtime) : secondsToHms(0) }</td>
-                            </tr>
-                            <tr>
-                                <th>Research</th>
-                                <td>{ready ? secondsToHms(this.state.timers.researchtime) : secondsToHms(0) }</td>
-                            </tr>
-                            <tr>
-                                <th>Custom</th>
-                                <td>{ready ? secondsToHms(this.state.timers.customtime) : secondsToHms(0) }</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div className="timers-list" style={{ display: "inline-block", width: '60%', verticalAlign: 'top', marginRight: 15, paddingRight: 25, borderRight: '2px solid #DDD'  }}>
+                        <Timer name="Writing" updateTimers={this.updateTimers} category="writing" />
+                        <Timer name="Research" updateTimers={this.updateTimers} category="research" />
+                        <Timer name={this.state.customName} updateTimers={this.updateTimers} category="custom" />
+                    </div>
+                    <div style={{ display: "inline-block", width: '30%', verticalAlign: 'top' }}>
+                        <table className="timers-table">
+                            <tbody>
+                                <tr>
+                                    <th>Writing</th>
+                                    <td>{ready ? secondsToHms(this.state.timers.writingtime) : secondsToHms(0) }</td>
+                                </tr>
+                                <tr>
+                                    <th>Research</th>
+                                    <td>{ready ? secondsToHms(this.state.timers.researchtime) : secondsToHms(0) }</td>
+                                </tr>
+                                <tr>
+                                    <th>Custom</th>
+                                    <td>{ready ? secondsToHms(this.state.timers.customtime) : secondsToHms(0) }</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         );
@@ -194,7 +218,8 @@ class Timer extends React.Component {
             time: 0,
             goal: 30 * 60,
             start: 0,
-            editing: false
+            editing: false,
+            active: false
         }
 
         this.startTimer = this.startTimer.bind(this);
@@ -207,7 +232,8 @@ class Timer extends React.Component {
         clearInterval(this.timer);
         this.setState({
             time: this.state.time,
-            start: Math.floor(Date.now()/1e3) - this.state.time
+            start: Math.floor(Date.now()/1e3) - this.state.time,
+            active: true
         });
         this.timer = setInterval(() => {
             this.setState({
@@ -222,42 +248,53 @@ class Timer extends React.Component {
 
     stopTimer() {
         clearInterval(this.timer);
+        this.setState({ active: false });
     }
 
     resetTimer() {
         this.stopTimer();
+        this.props.updateTimers(this.state.time, this.props.category);
         this.setState({ time: 0 })
     }
 
     async timerFinished() {
         alert("Time complete!");
-        this.props.updateTimers(this.state.time, this.props.category);
+        this.resetTimer();
     }
 
     render() {
         const editMode = (
             <form onSubmit={() => this.setState({ editing: false })}>
                 <p>
-                    Enter Time in Seconds:
-                    <input type="number" step="1" value={this.state.goal} onChange={(event) => this.setState({ goal: event.target.value })} />
+                    Enter Time in Minutes:
+                    <input type="number" step="1" value={this.state.goal / 60 } onChange={(event) => this.setState({ goal: event.target.value * 60 })} />
                 </p>
                 <button>Save</button>
             </form>
         );
 
+        const startB = this.state.active ? null : (<button onClick={this.startTimer}>start</button>);
+        const stopB = this.state.active ? (<button onClick={this.stopTimer}>stop</button>) : null;
+        const resetB = this.state.active ? null : (<button onClick={this.resetTimer}>reset</button>);
+        const editB = this.state.active ? null : (<button onClick={() => this.setState({ editing: true })}>Enter Time</button>);
+
         const viewMode = (
-            <p>
-                {this.props.name}: {secondsToHms(Math.floor((this.state.goal - this.state.time)))}
-                <button onClick={this.startTimer}>start</button>
-                <button onClick={this.stopTimer}>stop</button>
-                <button onClick={this.resetTimer}>reset</button>
-                {" "}
-                <button onClick={() => this.setState({ editing: true })}>Enter Time</button>
-            </p>
+            <div>
+                <p style={{ display: 'inline-block', width: '45%' }}>
+                    {this.props.name}: {secondsToHms(Math.floor((this.state.goal - this.state.time)))}
+                </p>
+                <div style={{ display: 'inline-block' }}>
+                    {startB}
+                    {stopB}
+                    {resetB}
+                    {" "}
+                    {editB}
+                </div>
+            </div>
         );
 
         return (
-            <div>
+            <div className="timers">
                 {this.state.editing ? editMode : viewMode }
             </div>
         );
@@ -304,7 +341,7 @@ class Reflections extends React.Component {
 
     render() {
         const viewMode = (
-            <div>
+            <div className="reflections">
                 <p>
                     {this.state.reflectionText}
                 </p>
@@ -314,7 +351,7 @@ class Reflections extends React.Component {
 
         const editMode = (
             <form className="editReflection" onSubmit={this.onReflectionSubmitted}>
-                <div>
+                <div className="reflections">
                     <input value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
                 </div>
                 <button>Submit</button>

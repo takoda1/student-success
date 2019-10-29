@@ -1,0 +1,56 @@
+button {
+  background-color: #D8EBF4;
+  border-radius: 10px;
+  font-size: .75em;
+  transition: background .4s;
+}
+button:hover {
+  background: #BAD5E1;
+  transition: background .4s;
+}
+.goal-list {
+  background-color: #A6C4FF;
+  padding: 0.75em .75em .75em .75em;
+  border-radius: 10px;
+}
+.goals {
+  font-size: 1em;
+  margin-top: -1em;
+  list-style-type: none;
+}
+.timers {
+  width: 100%;
+  background-color: #A6C4FF;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  padding: 1px 1px 1px 10px;
+}
+.timers-table {
+  background-color: #A6C4FF;
+  border-radius: 10px;
+  padding: 0.75em .75em .75em .75em;
+  text-align: left;
+}
+.reflections {
+  background-color: #A6C4FF;
+  padding: 0.75em .75em .75em .75em;
+  border-radius: 10px;
+}
+.reflections p {
+  font-size: 1em;
+  margin-top: -0.25em;
+}
+
+/* Font Awesome */
+.fa-check-circle {
+  font-size: 3em;
+  color: #7BFF4D;
+  background-color: white;
+  border-radius: 100%;
+}
+.fa-minus-circle {
+  font-size: 3em;
+  color: #404CB8;
+  background-color: white;
+  border-radius: 100%;
+}

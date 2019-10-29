@@ -1,4 +1,4 @@
-import { Layout, GoalList, Timer } from './shared';
+import { Layout, GoalList, secondsToHms } from './shared';
 import React from 'react';
 import axios from 'axios';
 import Moment from 'moment';
@@ -10,10 +10,9 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { 
+        this.state = {
             username: '',
             goals: [], /* API call gets made in componentDidMount */
-            timers: [], /* API call */
             newGoalText: '',
             goalsCompleted: "Loading...",
         };
@@ -29,8 +28,7 @@ class Home extends React.Component {
     async componentDidMount() {
         const user = (await axios.get(`/user/${userId}`)).data[0];
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
-        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data;
-        this.setState({ username: user.firstname, goals, timers });
+        this.setState({ username: user.firstname, goals });
         this.checkTotalGoals();
     }
 
@@ -44,10 +42,9 @@ class Home extends React.Component {
     async onGoalCheck(completed, goal) {
         const user = (await axios.get(`/user/${userId}`)).data[0];
         const updatedGoal = { goaltext: goal.goaltext, completed };
-        console.log(updatedGoal);
         await axios.put(`/goal/${goal.id}`, updatedGoal);
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
-        
+
         this.setState(() => {
             return { goals };
         });
@@ -98,39 +95,168 @@ class Home extends React.Component {
             <Layout >
                 <h2>Home Page</h2>
                 <p>Welcome, {this.state.username}</p>
-            <div>
-                <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
-                <Timers />
-            </div>
-            <Reflections />
+                <div>
+                    <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
+                    <Timers />
+                </div>
+                <Reflections />
             </Layout>
         );
     }
 }
-  
+
 class Goals extends React.Component {
     render() {
         return (
-            <div style={{display: "inline-block", width: '40%', verticalAlign: 'top', marginRight: 35, paddingRight: 15, borderRight: '2px solid #DDD'}}>
+            <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top', marginRight: 35, paddingRight: 15, borderRight: '2px solid #DDD' }}>
                 <h3>Today's Goals</h3>
                 <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
             </div>
         );
     }
 }
-  
+
 class Timers extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    // }
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            timers: {}, /* API call */
+            customName: "Custom"
+        }
+
+        this.updateTimers = this.updateTimers.bind(this);
+    }
+
+    async componentDidMount() {
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data[0];
+        this.setState({ timers });
+    }
+
+    async updateTimers(time, category) {
+        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const which = `${category}time`;
+        const timerTemplate = this.state.timers ? 
+            { writingtime: this.state.timers.writingtime, researchtime: this.state.timers.researchtime, customtime: this.state.timers.customtime } :
+            { writingtime: 0, researchtime: 0, customtime: 0 };
+        timerTemplate[which] += time;
+
+        if (this.state.timers) {
+            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate });
+        } else {
+            await axios.post(`/timer`, {...timerTemplate, userid: user.id, timerdate: todayDate });
+        }
+
+        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data[0];
+        this.setState({ timers })
+    }
 
     render() {
         return (
-            <div style={{display: "inline-block", width: '40%', verticalAlign: 'top'}}>
-                <h3>Timers</h3>
-                <Timer name="Study"/>
-                <Timer name="Research"/>
-                <Timer name="Custom"/>
+            <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top' }}>
+                <div>
+                    <h3>Timers</h3>
+                    <Timer name="Writing" updateTimers={this.updateTimers} category="writing" />
+                    <Timer name="Research" updateTimers={this.updateTimers} category="research" />
+                    <Timer name={this.state.customName} updateTimers={this.updateTimers} category="custom" />
+                </div>
+                <div>
+                    <h3>Your {todayDate.slice(5, 7)}/{todayDate.slice(8, 10)} Times</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Writing</th>
+                                <td>{secondsToHms(this.state.timers.writingtime)}</td>
+                            </tr>
+                            <tr>
+                                <th>Research</th>
+                                <td>{secondsToHms(this.state.timers.researchtime)}</td>
+                            </tr>
+                            <tr>
+                                <th>Custom</th>
+                                <td>{secondsToHms(this.state.timers.customtime)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    }
+}
+
+class Timer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            time: 0,
+            goal: 30 * 60,
+            start: 0,
+            editing: false
+        }
+
+        this.startTimer = this.startTimer.bind(this);
+        this.stopTimer = this.stopTimer.bind(this);
+        this.resetTimer = this.resetTimer.bind(this);
+        this.timerFinished = this.timerFinished.bind(this);
+    }
+
+    startTimer() {
+        clearInterval(this.timer);
+        this.setState({
+            time: this.state.time,
+            start: Math.floor(Date.now()/1e3) - this.state.time
+        });
+        this.timer = setInterval(() => {
+            this.setState({
+                time: Math.floor(Date.now()/1e3) - this.state.start
+            });
+            if (this.state.time >= this.state.goal) {
+                this.stopTimer();
+                this.timerFinished();
+            }
+        }, 100);
+    }
+
+    stopTimer() {
+        clearInterval(this.timer);
+    }
+
+    resetTimer() {
+        this.stopTimer();
+        this.setState({ time: 0 })
+    }
+
+    async timerFinished() {
+        alert("Time complete!");
+        this.props.updateTimers(this.state.time, this.props.category);
+    }
+
+    render() {
+        const editMode = (
+            <form onSubmit={() => this.setState({ editing: false })}>
+                <p>
+                    Enter Time in Seconds:
+                    <input type="number" step="1" value={this.state.goal} onChange={(event) => this.setState({ goal: event.target.value })} />
+                </p>
+                <button>Save</button>
+            </form>
+        );
+
+        const viewMode = (
+            <p>
+                {this.props.name}: {secondsToHms(Math.floor((this.state.goal - this.state.time)))}
+                <button onClick={this.startTimer}>start</button>
+                <button onClick={this.stopTimer}>stop</button>
+                <button onClick={this.resetTimer}>reset</button>
+                {" "}
+                <button onClick={() => this.setState({ editing: true })}>Enter Time</button>
+            </p>
+        );
+
+        return (
+            <div>
+                {this.state.editing ? editMode : viewMode }
             </div>
         );
     }
@@ -149,7 +275,7 @@ class Reflections extends React.Component {
 
         this.onReflectionSubmitted = this.onReflectionSubmitted.bind(this);
     }
-    
+
     async componentDidMount() {
         const user = (await axios.get(`/user/${userId}`)).data[0];
         const reflection = (await axios.get(`/reflection/${user.id}/${todayDate}`)).data[0];
@@ -169,22 +295,26 @@ class Reflections extends React.Component {
             await axios.post(`/reflection`, { userid: user.id, reflectiondate: todayDate, reflectiontext: this.state.reflectionText });
             this.setState({ doneToday: true });
         }
-        
+
         const reflection = (await axios.get(`/reflection/${user.id}/${todayDate}`)).data[0];
         this.setState({ reflection, editing: false });
     }
 
     render() {
         const viewMode = (
-            <p>
-                {this.state.reflectionText}
-                <button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</button>
-            </p>
+            <div>
+                <p>
+                    {this.state.reflectionText}
+                </p>
+                <button className="edit" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</button>
+            </div>
         );
 
         const editMode = (
             <form className="editReflection" onSubmit={this.onReflectionSubmitted}>
-                <input value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
+                <div>
+                    <input value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
+                </div>
                 <button>Submit</button>
             </form>
         );

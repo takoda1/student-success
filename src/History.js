@@ -16,7 +16,7 @@ class History extends Component {
             timers: '',
             reflections: '',
             selectedDate: getTodaysDate(),
-            week: Last7Days(today),
+            week: getCurrentWeek(today),
             
         };
 
@@ -84,14 +84,14 @@ class History extends Component {
 class Calendar extends Component {
       render() {
         const listDays = this.props.week.map((date) =>
-        <button key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{fixDate(date)}</button>
+        <button key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</button>
         );
     
         return(
-            <div className="history-grid-container">
+            <div className="history-grid-container">
                 <FontAwesomeIcon icon={faCaretLeft} onClick={() => this.props.onArrowClicked(false)} />
                 {listDays}
-                <FontAwesomeIcon icon={faCaretRight} onClick={() => this.props.onArrowClicked(true)}/>
+                <FontAwesomeIcon icon={faCaretRight} onClick={() => this.props.onArrowClicked(true)} />
             </div>
         );
       }
@@ -244,6 +244,15 @@ function Last7Days (date) {
         }
     
         return(result);
+}
+
+function getDayofWeek(date) {
+    let d = new Date(date);
+    var n = d.getDay();
+    console.log(n.getDay);
+
+    var mapDays = new Map([[6, "Sunday"], [0, "Monday"], [1, "Tuesday"], [2, "Wednesday"], [3, "Thursday"], [4, "Friday"], [5, "Saturday"]]);
+    return(mapDays.get(n));
 }
 
 function getCurrentWeek(d) {

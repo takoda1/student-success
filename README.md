@@ -35,7 +35,7 @@ $ npm i --save @fortawesome/react-fontawesome
 ## Tables
 
 Users:
-{id: int, firstname: string, lastname: string, email: string}
+{id: int, firstname: string, lastname: string, email: string, group: foreignKey(groups: id)}
 
 
 Goals:
@@ -44,6 +44,12 @@ Goals:
 
 Timers:
 {id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, researchtime: int, writingtime: int, customtime: int}    (time is in seconds)
+
+Reflections:
+{id: int, userid: foreignKey(Users: id), reflectiondate: yyyy-mm-dd, reflectiontext: string}
+
+Groups:
+{id: int, groupname: string}
 
 ## Current endpoints:
 

@@ -51,7 +51,6 @@ describe('GOAL API', () => {
     })
 
     it('Gets a single goal based on the goal\'s id', () => {
-        
         return chai.request(server)
             .get('/goal/' + goalId)
             .then((res) => {

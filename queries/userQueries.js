@@ -11,9 +11,9 @@ const getUsers = (request, response) => {
 
 const addUser = (request, response) => {
     
-    const { firstname, lastname, email } = request.body;
+    const { firstname, lastname, email, groupid } = request.body;
     if (firstname != null && lastname != null && email != null) {
-        pool.query('INSERT INTO users (firstname, lastname, email) VALUES ($1, $2, $3)', [firstname, lastname, email], (error) => {
+        pool.query('INSERT INTO users (firstname, lastname, email, groupid) VALUES ($1, $2, $3, $4)', [firstname, lastname, email, groupid], (error) => {
             if (error) {
                 throw error
             }

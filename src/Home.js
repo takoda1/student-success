@@ -97,7 +97,7 @@ class Home extends React.Component {
                 <p>Welcome, {this.state.username}</p>
                 <div>
                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
-                    <Timers timers={this.state.timers} />
+                    <Timers />
                 </div>
                 <Reflections />
             </Layout>
@@ -157,9 +157,9 @@ class Timers extends React.Component {
             <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top' }}>
                 <div>
                     <h3>Timers</h3>
-                    <Timer name="Writing" updateTimers={this.updateTimers} timers={this.state.timers} category="writing" />
-                    <Timer name="Research" updateTimers={this.updateTimers} timers={this.state.timers} category="research" />
-                    <Timer name={this.state.customName} updateTimers={this.updateTimers} timers={this.state.timers} category="custom" />
+                    <Timer name="Writing" updateTimers={this.updateTimers} category="writing" />
+                    <Timer name="Research" updateTimers={this.updateTimers} category="research" />
+                    <Timer name={this.state.customName} updateTimers={this.updateTimers} category="custom" />
                 </div>
                 <div>
                     <h3>Your {todayDate.slice(5, 7)}/{todayDate.slice(8, 10)} Times</h3>

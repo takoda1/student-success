@@ -2,7 +2,6 @@ import React from 'react';
 
 const layoutStyle = {
   padding: 20,
-  background: '#A6C4FF', 
   border: '1px solid #DDD'
 };
 
@@ -17,7 +16,7 @@ function Layout(props) {
 function GoalList(props) {
   return (
     <div>
-      <ul>
+      <ul className="goal-list">
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <form className="addGoal" onSubmit={props.onGoalAdded}>
           <input value={props.newGoalText} onChange={props.onGoalTyped} />
@@ -63,7 +62,7 @@ class GoalItem extends React.Component {
     );
 
     return (
-      <div>
+      <div className="goals">
         {this.state.editing? editMode : viewMode}
       </div>
     );
@@ -73,7 +72,7 @@ class GoalItem extends React.Component {
 function GoalsCompleted(props) {
   return (
     <div>
-      <p>{props.goalsCompleted}</p>
+      {props.goalsCompleted}
     </div>
   );
 }

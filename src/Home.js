@@ -153,6 +153,8 @@ class Timers extends React.Component {
     }
 
     render() {
+        const ready = this.state.timers;
+
         return (
             <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top' }}>
                 <div>
@@ -167,15 +169,15 @@ class Timers extends React.Component {
                         <tbody>
                             <tr>
                                 <th>Writing</th>
-                                <td>{secondsToHms(this.state.timers.writingtime)}</td>
+                                <td>{ready ? secondsToHms(this.state.timers.writingtime) : secondsToHms(0) }</td>
                             </tr>
                             <tr>
                                 <th>Research</th>
-                                <td>{secondsToHms(this.state.timers.researchtime)}</td>
+                                <td>{ready ? secondsToHms(this.state.timers.researchtime) : secondsToHms(0) }</td>
                             </tr>
                             <tr>
                                 <th>Custom</th>
-                                <td>{secondsToHms(this.state.timers.customtime)}</td>
+                                <td>{ready ? secondsToHms(this.state.timers.customtime) : secondsToHms(0) }</td>
                             </tr>
                         </tbody>
                     </table>

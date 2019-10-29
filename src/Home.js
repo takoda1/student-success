@@ -2,6 +2,8 @@ import { Layout, GoalList, secondsToHms } from './shared';
 import React from 'react';
 import axios from 'axios';
 import Moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 const userId = 1;
@@ -33,7 +35,21 @@ class Home extends React.Component {
     }
 
     checkTotalGoals() {
-        const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ? "Goals completed!" : "Not yet!";
+        const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ?
+            (
+              <p>
+                <FontAwesomeIcon icon={faCheckCircle} />
+                You've completed all of your goals for today! :)
+              </p> 
+            ) :
+            (
+              <p>
+                <FontAwesomeIcon icon={faMinusCircle} />
+                You haven't completed your goals yet, keep it up!
+              </p> 
+            
+            );
+
         this.setState(() => {
             return { goalsCompleted };
         });
@@ -226,20 +242,21 @@ class Timer extends React.Component {
 
     resetTimer() {
         this.stopTimer();
+        this.props.updateTimers(this.state.time, this.props.category);
         this.setState({ time: 0 })
     }
 
     async timerFinished() {
         alert("Time complete!");
-        this.props.updateTimers(this.state.time, this.props.category);
+        this.resetTimer();
     }
 
     render() {
         const editMode = (
             <form onSubmit={() => this.setState({ editing: false })}>
                 <p>
-                    Enter Time in Seconds:
-                    <input type="number" step="1" value={this.state.goal} onChange={(event) => this.setState({ goal: event.target.value })} />
+                    Enter Time in Minutes:
+                    <input type="number" step="1" value={this.state.goal / 60 } onChange={(event) => this.setState({ goal: event.target.value * 60 })} />
                 </p>
                 <button>Save</button>
             </form>

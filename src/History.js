@@ -130,8 +130,8 @@ class Timers extends Component {
                 <div className="history-timers">
                     <h2>Timers</h2>
                     <ul className="history-timers-list">
-                        <li>Research: {secondsToHms(this.props.timers.researchtime)}</li>
                         <li>Writing: {secondsToHms(this.props.timers.writingtime)}</li>
+                        <li>Research: {secondsToHms(this.props.timers.researchtime)}</li>
                         <li>Custom: {secondsToHms(this.props.timers.customtime)}</li>
                     </ul>
                 </div>

@@ -34,9 +34,11 @@ class History extends Component {
             timers,
             reflections,
         });
+        console.log(this.state.selectedDate);
     }
 
     async onDayClicked(date) {
+        console.log(date);
         this.setState({selectedDate: date});
         const goals = (await axios.get(`/goals/${userId}/${date}`)).data;
         const timers = (await axios.get(`/timer/${userId}/${date}`)).data[0];
@@ -210,8 +212,14 @@ class Completed extends Component {
 function getTodaysDate() {
     var d = new Date();
     var year = d.getFullYear().toString();
-    var month = (d.getMonth() + 1).toString();
-    var day = d.getDate().toString();
+    var month = (d.getMonth() + 1);
+    var day = d.getDate();
+    if(month < 10) {
+        month = '0' + month;
+    }
+    if(day < 10) {
+        day = '0' + day;
+    }
     return(year.concat("-", month, "-", day));
 }
 

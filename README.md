@@ -35,6 +35,16 @@ $ npm i --save @fortawesome/react-fontawesome
 
 `npm test` to run tests.
 
+# Developer section
+
+## How to access authentication details in-app
+
+In a react component:
+-`const { user } = useAuth0();`
+-Access email with `user.email`
+`Access name with `user.name`
+-Look at components/Profile.js to see an example
+
 ## Tables
 
 Users:

@@ -19,7 +19,7 @@ function GoalList(props) {
       <ul className="goal-list">
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <form className="addGoal" onSubmit={props.onGoalAdded}>
-          <input value={props.newGoalText} onChange={props.onGoalTyped} />
+          <input className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
           <button>Add Goal</button>
         </form>
       </ul>

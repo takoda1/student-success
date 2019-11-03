@@ -345,14 +345,14 @@ class Reflections extends React.Component {
                 <p>
                     {this.state.reflectionText}
                 </p>
-                <button className="edit" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</button>
+                <button className="editReflection" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</button>
             </div>
         );
 
         const editMode = (
-            <form className="editReflection" onSubmit={this.onReflectionSubmitted}>
+            <form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
                 <div className="reflections">
-                    <input value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
+                    <input id="reflectionField" value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
                 </div>
                 <button>Submit</button>
             </form>

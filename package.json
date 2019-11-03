@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js | react-scripts start",
-    "test": "mocha --timeout 10000"
+    "test": "nyc mocha --timeout 1000"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,8 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^6.2.1",
-    "nodemon": "^1.19.3"
+    "nodemon": "^1.19.3",
+    "nyc": "^14.1.1"
   },
   "proxy": "http://localhost:3000"
 }

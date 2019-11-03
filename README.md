@@ -21,6 +21,9 @@ another port; have the react app talk to the api using the api endpoints.
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
 
+To deploy the app yourself, create a heroku account, create a new dyno, and connect your cloned/forked github repository
+to 
+
 ## Download Font Awesome with npm
 $ npm i --save @fortawesome/fontawesome-svg-core
 

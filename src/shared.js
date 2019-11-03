@@ -44,7 +44,7 @@ class GoalItem extends React.Component {
         this.setState({ editing: !this.state.editing });
         this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
       }}>
-        <input value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
+        <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
         <button>Update</button>
       </form>
     );

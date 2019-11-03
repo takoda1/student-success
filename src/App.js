@@ -9,11 +9,26 @@ import {
 import { Home } from './Home';
 import { History } from './History';
 import './App.css';
+import NavBar from "./components/NavBar";
+import { useAuth0 } from "./react-auth0-spa";
 
-class App extends Component {
-  render() {
+import Profile from "./components/Profile";
+
+function App() {
+
+    const { loading } = useAuth0();
+
+    if (loading) {
+        return (
+            <div>Loading...</div>
+        );
+    }
+    
     return (
-      <Router>
+        <Router>
+            <header>
+                <NavBar />
+            </header>
         <div>
           <nav>
             <div style={{background: '#1c53c9', padding: 30}}>
@@ -31,16 +46,14 @@ class App extends Component {
             <Route path="/index">
               <Home />
             </Route>
-          </Switch>
-          <Switch>
             <Route path="/history">
-              <History/>
+                <History />
             </Route>
+            <Route path="/profile" component={Profile} />
           </Switch>
         </div>
       </Router>
     );
-  }
 }
 
 const linkStyle = {

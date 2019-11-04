@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import {
-  BrowserRouter as Router,
-  Switch,
   withRouter,
   Route,
   Link,
@@ -45,22 +43,28 @@ class App extends Component {
     render() {
         return (
             <div>
-                <NavBar/>
-                
-                    
+                <NavBar />
 
-                   
-                        <Route exact path="/">
-                            <Redirect to="/index"></Redirect>
-                        </Route>
-                        <Route path="/index">
-                            <Home />
-                        </Route>
-                        <Route path="/history">
-                            <History />
-                        </Route>
-                        <Route path="/profile" component={Profile} />
-                        <Route exact path='/callback' component={Callback} />
+                <nav>
+                    <div style={{ background: '#1c53c9', padding: 30 }}>
+                        <Button name="Home" path="/index" />
+                        <Button name="History" path="/history" />
+                        <Button name="Group" path="/group" />
+                        <Button name="Forum" path="/forum" />
+                    </div>
+                </nav>
+
+                    <Route exact path="/">
+                        <Redirect to="/index"></Redirect>
+                    </Route>
+                    <Route path="/index">
+                        <Home />
+                    </Route>
+                    <Route path="/history">
+                        <History />
+                    </Route>
+                    <Route path="/profile" component={Profile} />
+                    <Route exact path='/callback' component={Callback} />
                 
             </div>
         );

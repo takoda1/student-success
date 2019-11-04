@@ -1,6 +1,7 @@
 import auth0 from 'auth0-js';
 import config from "./auth_config.json";
 
+
 class Auth {
     constructor() {
         this.auth0 = new auth0.WebAuth({
@@ -8,7 +9,7 @@ class Auth {
             domain: config.domain,
             
             clientID: config.clientId,
-            redirectUri: 'http://localhost:3005/callback',
+            redirectUri: config.env === "production"? 'https://student-success.herokuapp.com/callback' : 'http://localhost:3005/callback',
             responseType: 'id_token',
             scope: 'openid profile'
         });
@@ -58,7 +59,7 @@ class Auth {
 
     signOut() {
         this.auth0.logout({
-            returnTo: 'http://localhost:3005',
+            returnTo: config.env === "production" ? 'https://student-success.herokuapp.com' : 'http://localhost:3005',
             clientID: config.clientId,
         });
     }

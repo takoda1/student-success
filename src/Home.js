@@ -379,6 +379,10 @@ class Reflections extends React.Component {
         return (
             <div>
                 <h3>Today's Reflections</h3>
+                <p>Some guiding questions:</p>
+                <p>1. What obstacles did you encounter, if any?</p>
+                <p>2. What are some opportunities for improvement?</p>
+                <p>3. Any wins for the day worth recording?</p>
                 {this.state.editing ? editMode : viewMode}
             </div>
         );

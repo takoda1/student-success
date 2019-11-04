@@ -60,11 +60,6 @@ app.get('/grou/:id', groupQueries.getGroupById)
 app.post('/group', groupQueries.addGroup)
 app.delete('/group/:id', groupQueries.deleteGroup)
 
-
-app.get('/', (request, response)=>{
-    response.status(200).json({ success: "HEY WHATS UP" , user:process.env.DB_USER});
-})
-
 app.listen(port, () => {
     console.log('App running on port '+port)
 })

@@ -55,7 +55,7 @@ const deleteGroup = (request, response) => {
         })
     }
     else {
-        response.status(400).json({ "Error": "Parameter not a number" })
+        response.status(400).send("Error: Parameter not a number")
     }
 }
 

@@ -15,7 +15,7 @@ const getGoals = (request, response) => {
         })
     }
     else {
-        response.status(400).json({ "Error": "Parameter id not a number or incorrect date format" })
+        response.status(400).send("Error: Parameter id not a number or incorrect date format")
     }
 }
 

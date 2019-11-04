@@ -21,6 +21,9 @@ another port; have the react app talk to the api using the api endpoints.
 
 Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
 
+To deploy the app yourself, create a heroku account, create a new dyno, and connect your cloned/forked github repository
+to 
+
 ## Download Font Awesome with npm
 $ npm i --save @fortawesome/fontawesome-svg-core
 
@@ -31,6 +34,22 @@ $ npm i --save @fortawesome/react-fontawesome
 ## Tests
 
 `npm test` to run tests.
+
+# Developer section
+
+## How to access authentication details in-app
+
+In a react component:
+-`import auth0Client from '../Auth';`
+-Access email with `auth0Client.getProfile().name`
+-Look at components/NavBar.js to see an example
+
+## How to use authentication locally
+-Change src/auth_config.json's `"environment": "production"` to `"enviornment": "development"`
+
+### Authentication used
+-Used Auth0
+-Followed this tutorial: https://auth0.com/blog/react-tutorial-building-and-securing-your-first-app/#Securing-your-React-App
 
 ## Tables
 

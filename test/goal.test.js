@@ -50,6 +50,24 @@ describe('GOAL API', () => {
             })
     })
 
+    it('Correctly errors when provided erroneous userid input when getting goals for a user', () => {
+        return chai.request(server)
+            .get('/goals/abc/' + '2019-09-09')
+            .then((res) => {
+                res.should.have.status(400)
+                res.error.text.should.contain("Error: Parameter id not a number or incorrect date format")
+            })
+    })
+
+    it('Correctly errors when provided erroneous date input when getting goals for a user', () => {
+        return chai.request(server)
+            .get('/goals/1/' + '20-00-aa')
+            .then((res) => {
+                res.should.have.status(400)
+                res.error.text.should.contain("Error: Parameter id not a number or incorrect date format")
+            })
+    })
+
     it('Gets a single goal based on the goal\'s id', () => {
         return chai.request(server)
             .get('/goal/' + goalId)

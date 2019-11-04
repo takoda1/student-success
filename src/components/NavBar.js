@@ -1,36 +1,28 @@
-// src/components/NavBar.js
+import React from 'react';
+import {Link, withRouter} from 'react-router-dom';
+import auth0Client from '../Auth';
 
-import React from "react";
-import { useAuth0 } from "../react-auth0-spa";
-
-import { Link } from "react-router-dom";
-
-const NavBar = () => {
-	const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+function NavBar(props) {
+	const signOut = () => {
+		auth0Client.signOut();
+		props.history.replace('/');
+	};
 
 	return (
-		<div>
-			{!isAuthenticated && (
-			  <button
-				onClick={() =>
-				  loginWithRedirect({})
-			}
-			  >
-				Log in
-			  </button>
-			)}
+	  <nav className="navbar navbar-dark bg-primary fixed-top">
+	{
+		!auth0Client.isAuthenticated() &&
+        <button className="btn btn-dark" onClick={auth0Client.signIn}>Sign In</button>
+	}
+	{
+		auth0Client.isAuthenticated() &&
+        <div>
+          <label className="mr-2 text-white">{auth0Client.getProfile().name}</label>
+          <button className="btn btn-dark" onClick={() => {signOut()}}>Sign Out</button>
+        </div>
+	}
+	</nav>
+  );
+}
 
-{isAuthenticated && <button onClick={() => logout()}>Log out</button>}
-
-	{/* NEW - add a link to the home and profile pages */}
-	{isAuthenticated && (
-      <span>
-        <Link to="/">Home</Link>&nbsp;
-        <Link to="/profile">Profile</Link>
-      </span>
-    )}
-		</div>
-	);
-};
-
-export default NavBar;
+export default withRouter(NavBar);

@@ -40,10 +40,16 @@ $ npm i --save @fortawesome/react-fontawesome
 ## How to access authentication details in-app
 
 In a react component:
--`const { user } = useAuth0();`
--Access email with `user.email`
-`Access name with `user.name`
--Look at components/Profile.js to see an example
+-`import auth0Client from '../Auth';`
+-Access email with `auth0Client.getProfile().name`
+-Look at components/NavBar.js to see an example
+
+## How to use authentication locally
+-Change src/auth_config.json's `"environment": "production"` to `"enviornment": "development"`
+
+### Authentication used
+-Used Auth0
+-Followed this tutorial: https://auth0.com/blog/react-tutorial-building-and-securing-your-first-app/#Securing-your-React-App
 
 ## Tables
 

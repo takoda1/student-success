@@ -18,6 +18,13 @@ describe('Home Page Tests', function() {
         cy.contains("Study stuff today. For real.")
     })
 
+    it('Checks the goal and shows all goals completed', function() {
+        cy.visit('localhost:3005/index')
+        cy.contains("You haven't completed your goals yet, keep it up!")
+        cy.get('[type="checkbox"]').check()
+        cy.contains("You've completed all of your goals for today! :)")
+    }) 
+
     it('Removes the goal', function() {
         cy.visit('localhost:3005/index')
         cy.contains("Study stuff today. For real").get(".remove").click()
@@ -27,9 +34,19 @@ describe('Home Page Tests', function() {
     it("Edits today's reflection", function() {
         cy.visit('localhost:3005/index')
         cy.get(".editReflection").click()
-        cy.get("#reflectionField").type("Today I wrote some great tests.").should('include.value', 'Today I wrote some great tests.')
+        cy.get("#reflectionField").clear().type("Today I wrote some great tests.").should('have.value', 'Today I wrote some great tests.')
         cy.contains("Submit").click()
         cy.contains("Today I wrote some great tests.")
+    })
+
+    it("Starts and ends a timer", function() {
+        cy.visit('localhost:3005/index').wait(2e3)
+        const starting = cy.get("td")
+        cy.contains("start").click().wait(5e3)
+        cy.contains("stop").click()
+        cy.contains("00:29:55")
+        cy.contains("reset").click()
+        cy.get("td").should("not.eq", starting)
     })
 })
   

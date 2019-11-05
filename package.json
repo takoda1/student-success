@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js | react-scripts start",
-    "test": "nyc mocha --timeout 1000"
+    "test": "nyc --reporter=html --reporter=text mocha --timeout=1000 --exit"
   },
   "repository": {
     "type": "git",

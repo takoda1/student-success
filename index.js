@@ -58,10 +58,16 @@ app.delete('/reflection/:id', reflectionQueries.deleteReflection)
 app.get('/group/:groupname', groupQueries.getGroup)
 app.get('/grou/:id', groupQueries.getGroupById)
 app.post('/group', groupQueries.addGroup)
-app.delete('/group/:id', groupQueries.deleteGroup)
+app.delete('/group/:id', groupQueries.deleteGroup) 
+
+app.get('/quit', (req, res) => {
+    res.send('Closing..')
+    app.close()
+})
 
 app.listen(port, () => {
     console.log('App running on port '+port)
 })
+
 
 module.exports = app

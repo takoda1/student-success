@@ -71,8 +71,6 @@ class History extends Component {
     render() {
         return(
             <div>
-                {
-                    auth0Client.isAuthenticated() &&
                     <div>
                         <h1>History for {fixDateWithYear(this.state.selectedDate)}</h1>
                         <Calendar week={this.state.week} onDayClicked={this.onDayClicked} onArrowClicked={this.onArrowClicked} />
@@ -83,7 +81,6 @@ class History extends Component {
                             <Reflections reflections={this.state.reflections} />
                         </div>
                     </div>
-                }
             </div>
         );
     }

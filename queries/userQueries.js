@@ -48,6 +48,15 @@ const getUserByName = (request, response) => {
     })
 }
 
+const getUserByEmail = (request, response) => {
+    const email = request.params.email
+
+    pool.query('SELECT * FROM users WHERE email = $1', [email], (error, result) => {
+        if (error) { throw error }
+        response.status(200).json(result.rows)
+    })
+}
+
 const deleteUser = (request, response) => {
     const id = parseInt(request.params.id)
     if (!isNaN(id)) {
@@ -66,5 +75,6 @@ module.exports = {
     addUser,
     getUser,
     getUserByName,
+    getUserByEmail,
     deleteUser,
 }

@@ -112,8 +112,6 @@ class Home extends React.Component {
     render() {
         return (
         <div>
-            {
-                auth0Client.isAuthenticated() &&
                 <Layout >
                     <h2>Home Page</h2>
                     <p>Welcome, {this.state.username}</p>
@@ -123,7 +121,6 @@ class Home extends React.Component {
                     </div>
                     <Reflections />
                 </Layout>
-            }
         </div>
         );
     }

@@ -58,6 +58,18 @@ describe('USER API', () => {
 
     })
 
+    it('Gets a single user based on their email', () => {
+        return chai.request(server)
+            .get('/userByEmail/' + user.email)
+            .then((res) => {
+                res.should.have.status(200)
+                res.body.length.should.equal(1)
+                for (var key in user) {
+                    chai.expect(res.body[0].key).to.equal(user.key)
+                }
+            })
+    })
+
     it('Deletes a single user based on the user\'s id', () => {
 
         return chai.request(server)

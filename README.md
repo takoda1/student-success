@@ -78,6 +78,8 @@ GET /users   Returns all users
 
 GET /user/:id    Returns user with specified id
 
+GET /userByEmail/:email		Returns the user with specified email
+
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
 POST /user   (Requires json body of {firstname: string, lastname: string, email: string})

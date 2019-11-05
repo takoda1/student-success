@@ -5,6 +5,7 @@ import Moment from 'moment';
 import "./Home.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import auth0Client from './Auth';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 const userId = 1;
@@ -110,15 +111,20 @@ class Home extends React.Component {
 
     render() {
         return (
-            <Layout >
-                <h2>Home Page</h2>
-                <p>Welcome, {this.state.username}</p>
-                <div>
-                    <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
-                    <Timers />
-                </div>
-                <Reflections />
-            </Layout>
+        <div>
+            {
+                auth0Client.isAuthenticated() &&
+                <Layout >
+                    <h2>Home Page</h2>
+                    <p>Welcome, {this.state.username}</p>
+                    <div>
+                        <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
+                        <Timers />
+                    </div>
+                    <Reflections />
+                </Layout>
+            }
+        </div>
         );
     }
 }

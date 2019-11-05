@@ -3,6 +3,7 @@ import './History.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import auth0Client from './Auth';
 
 const userId = 1;
 const today = new Date();
@@ -70,14 +71,19 @@ class History extends Component {
     render() {
         return(
             <div>
-                <h1>History for {fixDateWithYear(this.state.selectedDate)}</h1>
-                <Calendar week={this.state.week} onDayClicked={this.onDayClicked} onArrowClicked={this.onArrowClicked} />
-                <div className="history-grid-goals">
-                    <Completed goals={this.state.goals} selectedDate={this.state.selectedDate}/>
-                    <Goals goals={this.state.goals}/>
-                    <Timers timers={this.state.timers}/>
-                    <Reflections reflections={this.state.reflections}/>
-                </div>
+                {
+                    auth0Client.isAuthenticated() &&
+                    <div>
+                        <h1>History for {fixDateWithYear(this.state.selectedDate)}</h1>
+                        <Calendar week={this.state.week} onDayClicked={this.onDayClicked} onArrowClicked={this.onArrowClicked} />
+                        <div className="history-grid-goals">
+                            <Completed goals={this.state.goals} selectedDate={this.state.selectedDate} />
+                            <Goals goals={this.state.goals} />
+                            <Timers timers={this.state.timers} />
+                            <Reflections reflections={this.state.reflections} />
+                        </div>
+                    </div>
+                }
             </div>
         );
     }

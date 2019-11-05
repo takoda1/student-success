@@ -9,10 +9,7 @@ import { Home } from './Home';
 import { History } from './History';
 import './App.css';
 import NavBar from "./components/NavBar";
-//import { useAuth0 } from "./react-auth0-spa";
 import auth0Client from './Auth';
-
-
 import Profile from "./components/Profile";
 import Callback from './Callback';
 
@@ -37,6 +34,7 @@ class App extends Component {
             if (err.error !== 'login_required') console.log(err.error);
         }
         this.setState({ checkingSession: false });
+        this.forceUpdate();
     }
 
     
@@ -44,15 +42,15 @@ class App extends Component {
         return (
             <div>
                 <NavBar />
-
-                <nav>
-                    <div style={{ background: '#1c53c9', padding: 30 }}>
-                        <Button name="Home" path="/index" />
-                        <Button name="History" path="/history" />
-                        <Button name="Group" path="/group" />
-                        <Button name="Forum" path="/forum" />
-                    </div>
-                </nav>
+                <div>
+                    <nav>
+                        <div style={{ background: '#1c53c9', padding: 30 }}>
+                            <Button name="Home" path="/index" />
+                            <Button name="History" path="/history" />
+                            <Button name="Group" path="/group" />
+                            <Button name="Forum" path="/forum" />
+                        </div>
+                    </nav>
 
                     <Route exact path="/">
                         <Redirect to="/index"></Redirect>
@@ -65,7 +63,7 @@ class App extends Component {
                     </Route>
                     <Route path="/profile" component={Profile} />
                     <Route exact path='/callback' component={Callback} />
-                
+                </div>
             </div>
         );
     }

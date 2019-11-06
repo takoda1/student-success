@@ -11,6 +11,7 @@ import './App.css';
 import NavBar from "./components/NavBar";
 //import { useAuth0 } from "./react-auth0-spa";
 import auth0Client from './Auth';
+import Button from 'react-bootstrap/Button';
 
 
 import Profile from "./components/Profile";
@@ -44,13 +45,12 @@ class App extends Component {
         return (
             <div>
                 <NavBar />
-
                 <nav>
-                    <div style={{ background: '#1c53c9', padding: 30 }}>
-                        <Button name="Home" path="/index" />
-                        <Button name="History" path="/history" />
-                        <Button name="Group" path="/group" />
-                        <Button name="Forum" path="/forum" />
+                    <div style={{ background: '#1c53c9', paddingBottom: 15 }}>
+                        <NavButton name="Home" path="/index" />
+                        <NavButton name="History" path="/history" />
+                        <NavButton name="Group" path="/group" />
+                        <NavButton name="Forum" path="/forum" />
                     </div>
                 </nav>
 
@@ -76,18 +76,9 @@ class App extends Component {
     }
 }
 
-const linkStyle = {
-  marginRight: 15,
-  paddingLeft: 20,
-  paddingRight: 20,
-  paddingTop: 10,
-  paddingBottom: 10,
-  background: '#4f7fe8'
-};
-
-function Button(props) {
+function NavButton(props) {
   return (
-    <Link to={props.path} style={linkStyle}>{props.name}</Link>
+      <Button className="nav-button" href={props.path} size="lg">{props.name}</Button>
   );
 }
 export default withRouter(App);

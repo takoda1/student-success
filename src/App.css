@@ -17,7 +17,10 @@
   font-size: large;
 }
 body {
-  background-color: #86AFFF;
+  background-color: #86AFFF !important;
+}
+.nav-button {
+  margin-left: 20px;
 }
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }

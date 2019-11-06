@@ -1,28 +1,30 @@
 import React from 'react';
 import {withRouter} from 'react-router-dom';
 import auth0Client from '../Auth';
+import Button from 'react-bootstrap/Button';
+import NavBar from 'react-bootstrap/Navbar';
 
-function NavBar(props) {
+function AuthNavBar(props) {
 	const signOut = () => {
 		auth0Client.signOut();
 		props.history.replace('/');
 	};
 
 	return (
-	  <nav className="navbar navbar-dark bg-primary fixed-top">
+		<NavBar style={{ background: '#1c53c9', margin: 0 }}>
 	{
 		!auth0Client.isAuthenticated() &&
-        <button className="btn btn-dark" onClick={auth0Client.signIn}>Sign In</button>
+        <Button variant="primary" size="sm" onClick={auth0Client.signIn}>Sign In</Button>
 	}
 	{
 		auth0Client.isAuthenticated() &&
         <div>
           <label className="mr-2 text-white">{auth0Client.getProfile().name}</label>
-          <button className="btn btn-dark" onClick={() => {signOut()}}>Sign Out</button>
+          <Button variant="primary" size="sm" onClick={() => {signOut()}}>Sign Out</Button>
         </div>
 	}
-	</nav>
+	</NavBar>
   );
 }
 
-export default withRouter(NavBar);
+export default withRouter(AuthNavBar);

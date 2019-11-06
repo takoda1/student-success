@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { Home } from './Home';
 import { History } from './History';
+import { Admin } from './Admin';
 import './App.css';
 import NavBar from "./components/NavBar";
 //import { useAuth0 } from "./react-auth0-spa";
@@ -51,6 +52,7 @@ class App extends Component {
                         <Button name="History" path="/history" />
                         <Button name="Group" path="/group" />
                         <Button name="Forum" path="/forum" />
+                        <Button name="Admin" path="/admin" />
                     </div>
                 </nav>
 
@@ -66,6 +68,7 @@ class App extends Component {
                       <Route path="/history">
                           <History />
                       </Route>
+                      <Route path="/admin"><Admin /></Route>
                       <Route path="/profile" component={Profile} />
                     </div>
                 }

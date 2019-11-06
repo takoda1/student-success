@@ -5,7 +5,6 @@ import Moment from 'moment';
 import "./Home.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
-import auth0Client from './Auth';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 const userId = 1;

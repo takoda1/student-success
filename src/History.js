@@ -3,7 +3,6 @@ import './History.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import auth0Client from './Auth';
 
 const userId = 1;
 const today = new Date();

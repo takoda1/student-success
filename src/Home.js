@@ -5,9 +5,10 @@ import Moment from 'moment';
 import "./Home.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import auth0Client from './Auth';
 
 const todayDate = Moment().format('YYYY-MM-DD');
-const userId = 1;
+let userId;
 
 class Home extends React.Component {
     constructor(props) {
@@ -29,8 +30,10 @@ class Home extends React.Component {
     }
 
     async componentDidMount() {
-        const user = (await axios.get(`/user/${userId}`)).data[0];
+        const username = auth0Client.getProfile().name;
+        let user = (await axios.get(`/userByEmail/${username}`)).data[0];
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        userId = user.id;
         this.setState({ username: user.firstname, goals });
         this.checkTotalGoals();
     }

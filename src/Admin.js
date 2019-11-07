@@ -7,12 +7,14 @@ class Admin extends React.Component {
 
         this.state = {
             currentUsers: [],
+            currentGroups: [],
             firstField: "",
             lastField: "",
             emailField: "",
         }
 
         this.addUser = this.addUser.bind(this);
+        this.addGroup = this.addGroup.bind(this);
     }
 
     async componentDidMount() {
@@ -34,22 +36,45 @@ class Admin extends React.Component {
         });
     }
 
+    async addGroup(event) {
+        event.preventDefault();
+    }
+
     render() {
         return (
             <div>
                 <h1>Admin</h1>
-                <div className="userList">
-                    <h3>Users:</h3>
-                    <ul>
-                        { this.state.currentUsers.map((user) => <li key={ user.id }>{`${user.lastname}, ${user.firstname} - ${user.email} - Group ${user.groupid}`}</li>)}
-                    </ul>
+                <div>
+                    <div className="userList">
+                        <h3>Users:</h3>
+                        <ul>
+                            { this.state.currentUsers.map((user) => <li key={ user.id }>{`${user.lastname}, ${user.firstname} - ${user.email} - Group ${user.groupid}`}</li>)}
+                        </ul>
+                    </div>
+                    <form className="addUser" onSubmit={this.addUser}>
+                        <input className="firstField" value={this.state.firstField} onChange={(event) => this.setState({ firstField: event.target.value })} />
+                        <input className="lastField" value={this.state.lastField} onChange={(event) => this.setState({ lastField: event.target.value })} />
+                        <input className="emailField" value={this.state.emailField} onChange={(event) => this.setState({ emailField: event.target.value })} />
+                        <button>Add User</button>
+                    </form>
                 </div>
-                <form className="addUser" onSubmit={this.addUser}>
-                    <input className="firstField" value={this.state.firstField} onChange={(event) => this.setState({ firstField: event.target.value })} />
-                    <input className="lastField" value={this.state.lastField} onChange={(event) => this.setState({ lastField: event.target.value })} />
-                    <input className="emailField" value={this.state.emailField} onChange={(event) => this.setState({ emailField: event.target.value })} />
-                    <button>Add User</button>
-                </form>
+                <div>
+                    <h3>Groups</h3>
+                    <ul>
+                        { this.state.currentGroups.map((group) => {
+                            return (<div>
+                                <li key={ group.id }>{ group.groupname }</li>
+                                <button>View</button>
+                            </div>);
+                        })}
+                    </ul>
+                    <form className="addGroup" onSubmit={this.addGroup}>
+                        <input></input>
+                        <input></input>
+                        <button>Add Group</button>
+                    </form>
+                </div>
+                
             </div>
         );
     }

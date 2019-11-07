@@ -14,21 +14,19 @@ h2 {
   margin: 1em;
   text-align: center;
 }
-.history-grid-container {
-  display: flex;
-  justify-content: center;
+.btn-toolbar {
+  justify-content: center !important;
 }
 .history-date {
   padding: .5em 0 .5em 0;
   width: 7em;
-  background-color: #D8EBF4;
+  background-color: #D8EBF4 !important;
+  color: black !important;
   margin: 1em;
-  border-radius: 10px;
-  font-size: 1.25em;
   transition: background .4s;
 }
 .history-date:hover {
-  background: #BAD5E1;
+  background: #BAD5E1 !important;
   transition: background .4s;
 }
 .history-goal-list {

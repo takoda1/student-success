@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import auth0Client from './Auth';
+import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 
 const today = new Date();
 
@@ -71,7 +73,7 @@ class History extends Component {
 
     render() {
         return(
-            <div>
+            <div><br/>
                     <div>
                         <h1>History for {fixDateWithYear(this.state.selectedDate)}</h1>
                         <Calendar week={this.state.week} onDayClicked={this.onDayClicked} onArrowClicked={this.onArrowClicked} />
@@ -90,15 +92,15 @@ class History extends Component {
 class Calendar extends Component {
       render() {
         const listDays = this.props.week.map((date) =>
-        <button key={date} className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</button>
+        <Button key={date} variant="outline-primary" size="lg" className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</Button>
         );
     
         return(
-            <div className="history-grid-container">
+            <ButtonToolbar>
                 <FontAwesomeIcon icon={faCaretLeft} onClick={() => this.props.onArrowClicked(false)} />
                 {listDays}
                 <FontAwesomeIcon icon={faCaretRight} onClick={() => this.props.onArrowClicked(true)} />
-            </div>
+            </ButtonToolbar>
         );
       }
 }
@@ -107,7 +109,7 @@ class Goals extends Component {
       render() {
         return(
             <div className="history-goal-list">
-                <h2>My Goals</h2>
+                <h2>My Goals</h2><br/>
                 <CheckboxGoals goals={this.props.goals} />
             </div>
         );
@@ -132,7 +134,7 @@ class Timers extends Component {
         if(this.props.timers) {
             return(
                 <div className="history-timers">
-                    <h2>Timers</h2>
+                    <h2>Timers</h2><br/>
                     <ul className="history-timers-list">
                         <li>Writing: {secondsToHms(this.props.timers.writingtime)}</li>
                         <li>Research: {secondsToHms(this.props.timers.researchtime)}</li>
@@ -144,7 +146,7 @@ class Timers extends Component {
         else {
             return(
                 <div className="history-timers">
-                    <h2>Timers</h2>
+                    <h2>Timers</h2><br/>
                     <div className="no-timers">No timers.</div>
                 </div>
             );
@@ -157,7 +159,7 @@ class Reflections extends Component {
         if(this.props.reflections){
             return(
                 <div className="history-reflections">
-                    <h2>Reflection</h2>
+                    <h2>Reflection</h2><br/>
                     <p>
                         {this.props.reflections.reflectiontext}
                     </p>
@@ -167,7 +169,7 @@ class Reflections extends Component {
         else{
             return(
                 <div className="history-reflections">
-                    <h2>Reflection</h2>
+                    <h2>Reflection</h2><br/>
                     <p>No reflection.</p>
                 </div>
             );

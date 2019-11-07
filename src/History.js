@@ -7,7 +7,6 @@ import auth0Client from './Auth';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 
-const userId = 1;
 const today = new Date();
 
 class History extends Component {
@@ -15,12 +14,12 @@ class History extends Component {
         super(props);
 
         this.state = {
+            user: null,
             goals: [],
             timers: '',
             reflections: '',
             selectedDate: getTodaysDate(),
             week: getCurrentWeek(today),
-            
         };
 
         this.onDayClicked = this.onDayClicked.bind(this);
@@ -28,11 +27,13 @@ class History extends Component {
     }
 
     async componentDidMount() {
-
-        const goals = (await axios.get(`/goals/${userId}/${this.state.selectedDate}`)).data;
-        const timers = (await axios.get(`/timer/${userId}/${this.state.selectedDate}`)).data[0];
-        const reflections = (await axios.get(`/reflection/${userId}/${this.state.selectedDate}`)).data[0];
+        const email = encodeURIComponent(auth0Client.getProfile().name)
+        const user = (await axios.get(`/userByEmail/${email}`)).data[0];
+        const goals = (await axios.get(`/goals/${user.id}/${this.state.selectedDate}`)).data;
+        const timers = (await axios.get(`/timer/${user.id}/${this.state.selectedDate}`)).data[0];
+        const reflections = (await axios.get(`/reflection/${user.id}/${this.state.selectedDate}`)).data[0];
         this.setState({
+            user,
             goals,
             timers,
             reflections,
@@ -43,9 +44,9 @@ class History extends Component {
     async onDayClicked(date) {
         console.log(date);
         this.setState({selectedDate: date});
-        const goals = (await axios.get(`/goals/${userId}/${date}`)).data;
-        const timers = (await axios.get(`/timer/${userId}/${date}`)).data[0];
-        const reflections = (await axios.get(`/reflection/${userId}/${this.state.selectedDate}`)).data[0];
+        const goals = (await axios.get(`/goals/${this.state.user.id}/${date}`)).data;
+        const timers = (await axios.get(`/timer/${this.state.user.id}/${date}`)).data[0];
+        const reflections = (await axios.get(`/reflection/${this.state.user.id}/${this.state.selectedDate}`)).data[0];
 
         this.setState({
             timers,

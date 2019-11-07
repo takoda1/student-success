@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import {
   withRouter,
   Route,
-  Link,
   Redirect
 } from "react-router-dom";
 import { Home } from './Home';
@@ -24,10 +24,12 @@ class App extends Component {
         super(props);
         this.state = {
             checkingSession: true,
+            user: null,
         }
     }
 
     async componentDidMount() {
+        let user = this.state.user;
         if (this.props.location.pathname === '/callback') {
             this.setState({ checkingSession: false });
             return;
@@ -35,10 +37,13 @@ class App extends Component {
         try {
             await auth0Client.silentAuth();
             this.forceUpdate();
+            const email = encodeURIComponent(auth0Client.getProfile().name)
+            user = (await axios.get(`/userByEmail/${email}`)).data[0];
         } catch (err) {
             if (err.error !== 'login_required') console.log(err.error);
         }
-        this.setState({ checkingSession: false });
+        
+        this.setState({ checkingSession: false, user });
     }
 
     
@@ -57,21 +62,21 @@ class App extends Component {
                 </nav>
 
                 {
-                    auth0Client.isAuthenticated() ? (
+                    this.state.user ? (
                         <div>
                         <Route exact path="/">
                             <Redirect to="/index"></Redirect>
                         </Route>
                         <Route path="/index">
-                            <Home />
+                            <Home user={this.state.user} />
                         </Route>
                         <Route path="/history">
-                            <History />
+                            <History user={this.state.user} />
                         </Route>
-                        <Route path="/admin"><Admin /></Route>
+                        <Route path="/admin"><Admin user={this.state.user} /></Route>
                         <Route path="/profile" component={Profile} />
                         </div>
-                    ) : (<p>Please sign in to view your goals!</p> )
+                    ) : (<p>You are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
                 }
                 <Route exact path='/callback' component={Callback} />
                 

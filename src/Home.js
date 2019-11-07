@@ -5,7 +5,6 @@ import Moment from 'moment';
 import "./Home.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
-import auth0Client from './Auth';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 
@@ -14,7 +13,6 @@ class Home extends React.Component {
         super(props);
 
         this.state = {
-            user: null,
             goals: [], /* API call gets made in componentDidMount */
             newGoalText: '',
             goalsCompleted: "Loading...",
@@ -29,10 +27,8 @@ class Home extends React.Component {
     }
 
     async componentDidMount() {
-        const email = encodeURIComponent(auth0Client.getProfile().name)
-        const user = (await axios.get(`/userByEmail/${email}`)).data[0];
-        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
-        this.setState({ user, goals });
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
+        this.setState({ goals });
         this.checkTotalGoals();
     }
 
@@ -61,7 +57,7 @@ class Home extends React.Component {
     async onGoalCheck(completed, goal) {
         const updatedGoal = { goaltext: goal.goaltext, completed };
         await axios.put(`/goal/${goal.id}`, updatedGoal);
-        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
 
         this.setState(() => {
             return { goals };
@@ -76,9 +72,9 @@ class Home extends React.Component {
 
     async onGoalSubmitted(event) {
         event.preventDefault();
-        const newGoal = { userid: this.state.user.id, goaldate: todayDate, goaltext: this.state.newGoalText, completed: false };
+        const newGoal = { userid: this.props.user.id, goaldate: todayDate, goaltext: this.state.newGoalText, completed: false };
         await axios.post('/goal', newGoal);
-        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals, newGoalText: '' };
         });
@@ -89,7 +85,7 @@ class Home extends React.Component {
         event.preventDefault();
         const updatedGoal = { goaltext: newText, completed: completed };
         await axios.put(`/goal/${goalId}`, updatedGoal);
-        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals };
         });
@@ -98,7 +94,7 @@ class Home extends React.Component {
     async onGoalRemoved(goalId) {
         event.preventDefault();
         await axios.delete(`/goal/${goalId}`);
-        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals };
         });
@@ -106,7 +102,7 @@ class Home extends React.Component {
     }
 
     render() {
-        const loading = this.state.user === null;
+        const loading = this.props.user === null;
 
         return (
         <div>
@@ -116,12 +112,12 @@ class Home extends React.Component {
                         loading ? (<p>Loading...</p>) :
                         (
                             <div>
-                                <p>Welcome, {this.state.user.firstname}</p>
+                                <p>Welcome, {this.props.user.firstname}</p>
                                 <div>
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
-                                    <Timers user={this.state.user} />
+                                    <Timers user={this.props.user} />
                                 </div>
-                                <Reflections user={this.state.user} />
+                                <Reflections user={this.props.user} />
                             </div>
                         )
                     }

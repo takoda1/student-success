@@ -8,14 +8,13 @@ import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons'
 import auth0Client from './Auth';
 
 const todayDate = Moment().format('YYYY-MM-DD');
-let userId;
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            username: '',
+            user: null,
             goals: [], /* API call gets made in componentDidMount */
             newGoalText: '',
             goalsCompleted: "Loading...",
@@ -30,11 +29,10 @@ class Home extends React.Component {
     }
 
     async componentDidMount() {
-        const username = auth0Client.getProfile().name;
-        let user = (await axios.get(`/userByEmail/${username}`)).data[0];
+        const email = encodeURIComponent(auth0Client.getProfile().name)
+        const user = (await axios.get(`/userByEmail/${email}`)).data[0];
         const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
-        userId = user.id;
-        this.setState({ username: user.firstname, goals });
+        this.setState({ user, goals });
         this.checkTotalGoals();
     }
 
@@ -61,10 +59,9 @@ class Home extends React.Component {
     }
 
     async onGoalCheck(completed, goal) {
-        const user = (await axios.get(`/user/${userId}`)).data[0];
         const updatedGoal = { goaltext: goal.goaltext, completed };
         await axios.put(`/goal/${goal.id}`, updatedGoal);
-        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
 
         this.setState(() => {
             return { goals };
@@ -79,10 +76,9 @@ class Home extends React.Component {
 
     async onGoalSubmitted(event) {
         event.preventDefault();
-        const user = (await axios.get(`/user/${userId}`)).data[0];
-        const newGoal = { userid: user.id, goaldate: todayDate, goaltext: this.state.newGoalText, completed: false };
+        const newGoal = { userid: this.state.user.id, goaldate: todayDate, goaltext: this.state.newGoalText, completed: false };
         await axios.post('/goal', newGoal);
-        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals, newGoalText: '' };
         });
@@ -91,10 +87,9 @@ class Home extends React.Component {
 
     async onGoalEdited(event, newText, goalId, completed) {
         event.preventDefault();
-        const user = (await axios.get(`/user/${userId}`)).data[0];
         const updatedGoal = { goaltext: newText, completed: completed };
         await axios.put(`/goal/${goalId}`, updatedGoal);
-        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals };
         });
@@ -102,9 +97,8 @@ class Home extends React.Component {
 
     async onGoalRemoved(goalId) {
         event.preventDefault();
-        const user = (await axios.get(`/user/${userId}`)).data[0];
         await axios.delete(`/goal/${goalId}`);
-        const goals = (await axios.get(`/goals/${user.id}/${todayDate}`)).data;
+        const goals = (await axios.get(`/goals/${this.state.user.id}/${todayDate}`)).data;
         this.setState(() => {
             return { goals };
         });
@@ -112,16 +106,26 @@ class Home extends React.Component {
     }
 
     render() {
+        const loading = this.state.user === null;
+
         return (
         <div>
                 <Layout >
                     <h2>Home Page</h2>
-                    <p>Welcome, {this.state.username}</p>
-                    <div>
-                        <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
-                        <Timers />
-                    </div>
-                    <Reflections />
+                    {
+                        loading ? (<p>Loading...</p>) :
+                        (
+                            <div>
+                                <p>Welcome, {this.state.user.firstname}</p>
+                                <div>
+                                    <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
+                                    <Timers user={this.state.user} />
+                                </div>
+                                <Reflections user={this.state.user} />
+                            </div>
+                        )
+                    }
+                    
                 </Layout>
         </div>
         );
@@ -155,8 +159,7 @@ class Timers extends React.Component {
     }
 
     async componentDidMount() {
-        const user = (await axios.get(`/user/${userId}`)).data[0];
-        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data[0];
+        const timers = (await axios.get(`/timer/${this.props.user.id}/${todayDate}`)).data[0];
         this.setState({ timers });
     }
 
@@ -165,7 +168,6 @@ class Timers extends React.Component {
     }
 
     async updateTimers(time, category) {
-        const user = (await axios.get(`/user/${userId}`)).data[0];
         const which = `${category}time`;
         const timerTemplate = this.state.timers ? 
             { writingtime: this.state.timers.writingtime, researchtime: this.state.timers.researchtime, customtime: this.state.timers.customtime } :
@@ -175,10 +177,10 @@ class Timers extends React.Component {
         if (this.state.timers) {
             await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate });
         } else {
-            await axios.post(`/timer`, {...timerTemplate, userid: user.id, timerdate: todayDate });
+            await axios.post(`/timer`, {...timerTemplate, userid: this.props.user.id, timerdate: todayDate });
         }
 
-        const timers = (await axios.get(`/timer/${user.id}/${todayDate}`)).data[0];
+        const timers = (await axios.get(`/timer/${this.props.user.id}/${todayDate}`)).data[0];
         this.setState({ timers })
     }
 
@@ -339,8 +341,7 @@ class Reflections extends React.Component {
     }
 
     async componentDidMount() {
-        const user = (await axios.get(`/user/${userId}`)).data[0];
-        const reflection = (await axios.get(`/reflection/${user.id}/${todayDate}`)).data[0];
+        const reflection = (await axios.get(`/reflection/${this.props.user.id}/${todayDate}`)).data[0];
         if (reflection) {
             this.setState({ reflection, doneToday: true, reflectionText: reflection.reflectiontext });
         } else {
@@ -350,15 +351,14 @@ class Reflections extends React.Component {
 
     async onReflectionSubmitted(event) {
         event.preventDefault();
-        const user = (await axios.get(`/user/${userId}`)).data[0];
         if (this.state.doneToday) {
             await axios.put(`/reflection/${this.state.reflection.id}`, { reflectiontext: this.state.reflectionText });
         } else {
-            await axios.post(`/reflection`, { userid: user.id, reflectiondate: todayDate, reflectiontext: this.state.reflectionText });
+            await axios.post(`/reflection`, { userid: this.props.user.id, reflectiondate: todayDate, reflectiontext: this.state.reflectionText });
             this.setState({ doneToday: true });
         }
 
-        const reflection = (await axios.get(`/reflection/${user.id}/${todayDate}`)).data[0];
+        const reflection = (await axios.get(`/reflection/${this.props.user.id}/${todayDate}`)).data[0];
         this.setState({ reflection, editing: false });
     }
 

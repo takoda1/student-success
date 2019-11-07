@@ -57,20 +57,21 @@ class App extends Component {
                 </nav>
 
                 {
-                    auth0Client.isAuthenticated() &&
-                    <div>
-                      <Route exact path="/">
-                          <Redirect to="/index"></Redirect>
-                      </Route>
-                      <Route path="/index">
-                          <Home />
-                      </Route>
-                      <Route path="/history">
-                          <History />
-                      </Route>
-                      <Route path="/admin"><Admin /></Route>
-                      <Route path="/profile" component={Profile} />
-                    </div>
+                    auth0Client.isAuthenticated() ? (
+                        <div>
+                        <Route exact path="/">
+                            <Redirect to="/index"></Redirect>
+                        </Route>
+                        <Route path="/index">
+                            <Home />
+                        </Route>
+                        <Route path="/history">
+                            <History />
+                        </Route>
+                        <Route path="/admin"><Admin /></Route>
+                        <Route path="/profile" component={Profile} />
+                        </div>
+                    ) : (<p>Please sign in to view your goals!</p> )
                 }
                 <Route exact path='/callback' component={Callback} />
                 

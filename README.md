@@ -76,32 +76,6 @@ This repository has an MIT license. More details can be found in the LICENSE.md 
 # 8. Acknowledgements
 We would like to give acknowledgements to Dr. Jeff Terrell at the University of North Carolina at Chapel Hill for giving us the help, resources, and knowledge that we needed to complete this project, as well as John Dinger, for being our project management mentor throughout this project.
 
-# Setting up the API for development
-
-Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup if you are on mac.
-
-
-1. Install postgresql
-2. Run the postgresql service
-3. Have a user and password created for postgres as defined in the .env
-4. Log in as this new user rather than the default login
-5. Have a database created with name defined in .env. (there is a line that says DB_DATABASE=....)
-6. Have the user connect to the database \c <databasename> and run the sql commands in init.sql to setup the tables.
-7. Run npm i
-8. Run node index.js
-9. Install postman to make requests, or use curl.
-
-## Future notes
-Run the react app on process.env.port (provided/populated by heroku) and run the api on
-another port; have the react app talk to the api using the api endpoints.
-
-## Heroku deployment
-
-Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
-
-To deploy the app yourself, create a heroku account, create a new dyno, and connect your cloned/forked github repository
-to 
-
 
 # Developer section
 

@@ -58,6 +58,7 @@ app.put('/reflection/:id', reflectionQueries.putReflection)
 app.delete('/reflection/:id', reflectionQueries.deleteReflection)
 
 app.get('/group/:groupname', groupQueries.getGroup)
+app.get('/groups', groupQueries.getGroups)
 app.get('/grou/:id', groupQueries.getGroupById)
 app.post('/group', groupQueries.addGroup)
 app.delete('/group/:id', groupQueries.deleteGroup) 

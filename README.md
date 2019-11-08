@@ -62,7 +62,10 @@ More info can be found at the project website: http://comp523teamb.web.unc.edu/
 Primary authors of this project are: Perry Healy, JingJing Jacobson, and Takoda Ren
 
 # 7. License
+This repository has an MIT license. More details can be found in the LICENSE.md file.  
 
+# 8. Acknowledgements
+We would like to give acknowledgements to Dr. Jeff Terrell at the University of North Carolina at Chapel Hill for giving us the help, resources, and knowledge that we needed to complete this project, as well as John Dinger, for being our project management mentor throughout this project.
 
 # Setting up the API for development
 

@@ -40,6 +40,17 @@ describe('Group API', () => {
             })
     })
 
+    it('gets all groups', () => {
+        return chai.request(server)
+            .get('/groups')
+            .then((res) => {
+                res.should.have.status(200)
+                res.body.should.be.a('array')
+                //getting group inserted by init.sql as well as from this test
+                res.body.length.should.equal(2)
+            })
+    })
+
     it('Gets a single group by ID', () => {
         
         return chai.request(server)

@@ -16,6 +16,9 @@
 .App-intro {
   font-size: large;
 }
+.navbar-expand {
+  justify-content: flex-end !important;
+}
 body {
   background-color: #86AFFF !important;
 }

@@ -5,6 +5,7 @@ import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortaw
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import { getTodaysDate, secondsToHms } from './shared';
 
 const today = new Date();
 
@@ -210,20 +211,6 @@ class Completed extends Component {
 
 // Functions
 
-function getTodaysDate() {
-    var d = new Date();
-    var year = d.getFullYear().toString();
-    var month = (d.getMonth() + 1);
-    var day = d.getDate();
-    if(month < 10) {
-        month = '0' + month;
-    }
-    if(day < 10) {
-        day = '0' + day;
-    }
-    return(year.concat("-", month, "-", day));
-}
-
 function fixDate(d) {
     var res = d.split("-");
     return(res[1].concat("/", res[2]));
@@ -274,16 +261,6 @@ function getCurrentWeek(d) {
         week.push(day)
     }
     return(week);
-}
-
-function secondsToHms(d) {
-    d = Number(d);
-
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-
-    return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
 }
 
 export { History };

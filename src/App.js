@@ -8,6 +8,7 @@ import {
 import { Home } from './Home';
 import { History } from './History';
 import { Admin } from './Admin';
+import { Group } from './Group';
 import './App.css';
 import NavBar from "./components/NavBar";
 //import { useAuth0 } from "./react-auth0-spa";
@@ -72,6 +73,9 @@ class App extends Component {
                         </Route>
                         <Route path="/history">
                             <History user={this.state.user} />
+                        </Route>
+                        <Route path="/group">
+                            <Group user={this.state.user} />
                         </Route>
                         <Route path="/admin"><Admin user={this.state.user} /></Route>
                         <Route path="/profile" component={Profile} />

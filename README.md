@@ -1,6 +1,26 @@
 ## 0. Software for Student Success
 This webapp is meant to be used for senior honors students working on their honors thesis to help them stay organized and motivated throughout the writing process. The app also allows students to collaborate and interact with other students in their class.
 
+## 2. Testing
+`npm test` to run backend/api tests.  
+`cypress open` to run frontend cypress tests.
+
+## 3. Deployment  
+The app is deployed to heroku, and can be accessed here: https://student-success.herokuapp.com/.  
+
+## 4. Technologies Used
+React.js, Express.js, Node.js, Postgres  
+The ADRs are in the folder `adr`, which is in the root directory of the repository.  
+
+## 5. Contributing
+For new developers, developers will need to get access to the heroku (email jingjing.jacobson@gmail.com, takoda.ren@gmail.com or perryh@cs.unc.edu for access). Developers can then fork this github repository and connect the new repository to be deployed to the heroku project.  
+More info can be found at the project website: http://comp523teamb.web.unc.edu/
+
+## 6. Authors  
+Primary authors of this project are: Perry Healy, JingJing Jacobson, and Takoda Ren
+
+## 7. License
+
 
 # Setting up the API for development
 
@@ -28,9 +48,6 @@ Currently, deploys to master on the repo takoda1/student-success automatically d
 To deploy the app yourself, create a heroku account, create a new dyno, and connect your cloned/forked github repository
 to 
 
-## Tests
-
-`npm test` to run tests.
 
 # Developer section
 

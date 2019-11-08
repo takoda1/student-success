@@ -50,6 +50,15 @@ On 11/8/2019, commit number 173, on a windows machine, these steps pulled up a l
 # 3. Deployment  
 The app is deployed to heroku, and can be accessed here: https://student-success.herokuapp.com/.  
 
+- The production system lives on heroku. To get access to the project, email Takoda: takoda.ren@gmail.com
+- No staging or pre-production environments exist
+- Once you have access to the project, you will notice that there is an add-on: Heroku postgres.
+- To connect to this database, install the heroku CLI first
+- Then, run `heroku login`
+- Then run heroku `pg:psql postgresql-shaped-80610 --app student-success` to connect to the database to run commands.
+- If the database is empty, run init.sql with `cat init.sql | pg:psql postgresql-shaped-80610 --app student-success`
+- Continuous deployment is enabled, it is connected to github.com/takoda1/student-success. This can be changed to whatever repository when you are added as a collaborator to heroku.
+
 # 4. Technologies Used
 React.js, Express.js, Node.js, Postgres  
 The ADRs are in the folder `adr`, which is in the root directory of the repository.  

@@ -80,7 +80,7 @@ class App extends Component {
                         <Route path="/admin"><Admin user={this.state.user} /></Route>
                         <Route path="/profile" component={Profile} />
                         </div>
-                    ) : (<p>You are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
+                    ) : (<p>Loading... If this takes a while, you are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
                 }
                 <Route exact path='/callback' component={Callback} />
                 

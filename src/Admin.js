@@ -10,6 +10,7 @@ class Admin extends React.Component {
             firstField: "",
             lastField: "",
             emailField: "",
+            groupField: 0,
         }
 
         this.addUser = this.addUser.bind(this);
@@ -23,7 +24,7 @@ class Admin extends React.Component {
     async addUser(event) {
         event.preventDefault();
 
-        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField });
+        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid: this.state.groupField});
         const currentUsers = (await axios.get("/users")).data;
         
         this.setState({
@@ -31,6 +32,7 @@ class Admin extends React.Component {
             firstField: "",
             lastField: "",
             emailField: "",
+            groupField: 0,
         });
     }
 
@@ -48,6 +50,7 @@ class Admin extends React.Component {
                     <input className="firstField" value={this.state.firstField} onChange={(event) => this.setState({ firstField: event.target.value })} />
                     <input className="lastField" value={this.state.lastField} onChange={(event) => this.setState({ lastField: event.target.value })} />
                     <input className="emailField" value={this.state.emailField} onChange={(event) => this.setState({ emailField: event.target.value })} />
+                    <input className="emailField" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
                     <button>Add User</button>
                 </form>
             </div>

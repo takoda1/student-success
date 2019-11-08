@@ -39,6 +39,19 @@ const getUser = (request, response) => {
     }
 }
 
+const getUserByGroup = (request, response) => {
+    const groupid = parseInt(request.params.groupid)
+    if (!isNaN(groupid)) {
+        pool.query('SELECT * FROM users WHERE groupid = $1', [groupid], (error, result) => {
+            if (error) { throw error }
+            response.status(200).json(result.rows)
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter groupid is not a number" })
+    }
+}
+
 const getUserByName = (request, response) => {
     const firstname = request.params.firstname
     const lastname = request.params.lastname
@@ -76,5 +89,6 @@ module.exports = {
     getUser,
     getUserByName,
     getUserByEmail,
+    getUserByGroup,
     deleteUser,
 }

@@ -1,4 +1,8 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import './Home.css';
+import Col from 'react-bootstrap/Col';
 
 const layoutStyle = {
   padding: 20,
@@ -18,10 +22,10 @@ function GoalList(props) {
     <div>
       <ul className="goal-list">
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
-        <form className="addGoal" onSubmit={props.onGoalAdded}>
+        <Form className="addGoal" onSubmit={props.onGoalAdded}>
           <input className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
-          <button>Add Goal</button>
-        </form>
+          <Button type="submit">Add Goal</Button>
+        </Form>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
     </div>
@@ -40,25 +44,39 @@ class GoalItem extends React.Component {
 
   render() {
     const editMode = (  
-      <form className="editGoal" onSubmit={(event) => {
+      <Form className="editGoal" onSubmit={(event) => {
         this.setState({ editing: !this.state.editing });
         this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
       }}>
-        <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
-        <button>Update</button>
-      </form>
+        <Form.Row className="goal-row">
+          <Col>
+            <Form.Control type="text" size="sm" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
+          </Col>
+          <Col>
+            <Button size="sm" type="submit">Update</Button>
+          </Col>
+        </Form.Row>
+        {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
+      </Form>
     );
 
     const viewMode = (
-      <p>
-        <input type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
-            this.props.onGoalCheck(event.target.checked, this.props.goal);
-          }}/>
-            {this.state.goaltext}
-            {' '}
-        <button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</button>
-        <button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</button>
-      </p>
+      <div className="home-goal-list">
+        <Form.Row className="goals-form-row">
+          {/* <Form.Group> */}
+            <Col>
+            <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
+                this.props.onGoalCheck(event.target.checked, this.props.goal);
+              }} label={this.state.goaltext}/>
+            </Col>
+                {/* {this.state.goaltext} */}
+            <Col>
+            <Button className="edit" size="sm" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
+            <Button className="remove" size="sm" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
+            </Col>
+          {/* </Form.Group> */}
+        </Form.Row>
+      </div>
     );
 
     return (

@@ -87,4 +87,18 @@ function secondsToHms(d) {
   return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
 }
 
-export { Layout, GoalList, secondsToHms };
+function getTodaysDate() {
+  var d = new Date();
+  var year = d.getFullYear().toString();
+  var month = (d.getMonth() + 1);
+  var day = d.getDate();
+  if(month < 10) {
+      month = '0' + month;
+  }
+  if(day < 10) {
+      day = '0' + day;
+  }
+  return(year.concat("-", month, "-", day));
+}
+
+export { Layout, GoalList, secondsToHms, getTodaysDate };

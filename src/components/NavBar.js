@@ -3,6 +3,7 @@ import {withRouter} from 'react-router-dom';
 import auth0Client from '../Auth';
 import Button from 'react-bootstrap/Button';
 import NavBar from 'react-bootstrap/Navbar';
+import '../App.css';
 
 function AuthNavBar(props) {
 	const signOut = () => {

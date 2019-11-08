@@ -5,6 +5,8 @@ import Moment from 'moment';
 import "./Home.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 
@@ -195,7 +197,7 @@ class Timers extends React.Component {
                         <Timer name="Research" updateTimers={this.updateTimers} category="research" />
                         <Timer name={this.state.customName} updateTimers={this.updateTimers} updateCustomName={this.updateCustomName} category="custom" />
                     </div>
-                    <div style={{ display: "inline-block", width: '30%', verticalAlign: 'top' }}>
+                    <div style={{ display: "inline-block", verticalAlign: 'top' }}>
                         <table className="timers-table">
                             <tbody>
                                 <tr>
@@ -273,30 +275,30 @@ class Timer extends React.Component {
 
     render() {
         const editTimeMode = (
-            <form onSubmit={() => this.setState({ editingTime: false })}>
+            <Form onSubmit={() => this.setState({ editingTime: false })}>
                 <p>
-                    Enter Time in Minutes:
+                    Enter Time in Minutes:{' '}
                     <input type="number" step="1" value={this.state.goal / 60 } onChange={(event) => this.setState({ goal: event.target.value * 60 })} />
                 </p>
-                <button>Save</button>
-            </form>
+                <Button type="submit">Save</Button>
+            </Form>
         );
 
         const editNameMode = (
-            <form onSubmit={() => this.setState({ editingName: false })}>
+            <Form onSubmit={() => this.setState({ editingName: false })}>
                 <p>
-                    What Are You Timing?
+                    What Are You Timing?{' '}
                     <input type="text" onChange={(event) => this.props.updateCustomName(event.target.value) } />
                 </p>
-                <button>Save</button>
-            </form>
+                <Button type="submit">Save</Button>
+            </Form>
         );
         
-        const startB = this.state.active ? null : (<button onClick={this.startTimer}>start</button>);
-        const stopB = this.state.active ? (<button onClick={this.stopTimer}>pause</button>) : null;
-        const resetB = this.state.active ? null : (<button onClick={this.resetTimer}>submit this time</button>);
-        const editTimeB = this.state.active ? null : (<button onClick={() => this.setState({ editingTime: true })}>enter time</button>);
-        const editNameB = this.state.active ? null : (<button onClick={() => this.setState({ editingName: true })}>change name</button>);
+        const startB = this.state.active ? null : (<Button onClick={this.startTimer}>start</Button>);
+        const stopB = this.state.active ? (<Button onClick={this.stopTimer}>pause</Button>) : null;
+        const resetB = this.state.active ? null : (<Button onClick={this.resetTimer}>submit this time</Button>);
+        const editTimeB = this.state.active ? null : (<Button onClick={() => this.setState({ editingTime: true })}>enter time</Button>);
+        const editNameB = this.state.active ? null : (<Button onClick={() => this.setState({ editingName: true })}>change name</Button>);
 
         const viewMode = (
             <div>
@@ -364,17 +366,17 @@ class Reflections extends React.Component {
                 <p>
                     {this.state.reflectionText}
                 </p>
-                <button className="editReflection" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</button>
+                <Button className="editRefelection" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</Button>
             </div>
         );
 
         const editMode = (
-            <form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
+            <Form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
                 <div className="reflections">
-                    <input id="reflectionField" value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
+                    <Form.Control as="textarea" rows="5" value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
                 </div>
-                <button>Submit</button>
-            </form>
+                <Button type="submit">Submit</Button>
+            </Form>
         );
 
         return (

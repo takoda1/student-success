@@ -64,7 +64,7 @@ React.js, Express.js, Node.js, Postgres
 The ADRs are in the folder `adr`, which is in the root directory of the repository.  
 
 # 5. Contributing
-For new developers, developers will need to get access to the heroku (email jingjing.jacobson@gmail.com, takoda.ren@gmail.com or perryh@cs.unc.edu for access). Developers can then fork this github repository and connect the new repository to be deployed to the heroku project.  
+For new developers, developers will need to get access to the heroku (email jingjing.jacobson@gmail.com, takoda.ren@gmail.com or perryh@live.unc.edu for access). Developers can then fork this github repository and connect the new repository to be deployed to the heroku project.  
 More info can be found at the project website: http://comp523teamb.web.unc.edu/
 
 # 6. Authors  

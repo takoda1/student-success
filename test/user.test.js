@@ -45,8 +45,8 @@ describe('USER API', () => {
             .then((res) => {
                 res.should.have.status(200)
                 res.body.should.be.a('array')
-                //initial insertion plus current insertion
-                res.body.length.should.equal(2)
+                //initial insertion from init.sql plus current insertion plus test user
+                res.body.length.should.equal(3)
             })
     })
 
@@ -82,7 +82,7 @@ describe('USER API', () => {
             .get('/userByGroup/1')
             .then((res) => {
                 res.should.have.status(200)
-                res.body.length.should.equal(2) //init.sql inserts a user with group id 1 in, so init.sql user+ the user in this test
+                res.body.length.should.equal(3) //init.sql inserts a user with group id 1 in, so init.sql user+ the user in this test + another test user
             })
     })
 

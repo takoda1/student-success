@@ -12,10 +12,10 @@ const getUsers = (request, response) => {
 const addUser = (request, response) => {
     
     const { firstname, lastname, email, groupid } = request.body;
-    if (firstname != null && lastname != null && email != null) {
+    if (firstname != null && lastname != null && email != null && !isNaN(groupid)) {
         pool.query('INSERT INTO users (firstname, lastname, email, groupid) VALUES ($1, $2, $3, $4)', [firstname, lastname, email, groupid], (error) => {
             if (error) {
-                throw error
+                response.status(400).send(error)
             }
             response.status(201).send('User added!')
         })

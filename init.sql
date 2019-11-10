@@ -25,9 +25,6 @@ CREATE TABLE goals (
 	completed BOOLEAN NOT NULL
 );
 
-INSERT INTO goals (userId, goalDate, goalText, completed)
-VALUES ('1', '2019-09-14', 'TEST', TRUE), ('1', '2019-09-14', 'TEST2', FALSE);
-
 CREATE TABLE timers (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id),
@@ -37,9 +34,6 @@ CREATE TABLE timers (
 	customtime INT
 );
 
-INSERT INTO timers (userId, timerdate, researchtime, writingtime, customtime)
-VALUES ('1', '2019-09-14', '45', '1000', '11'), ('1', '2019-09-15', '22233', '223', '4454');
-
 CREATE TABLE reflections (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id),
@@ -47,5 +41,9 @@ CREATE TABLE reflections (
 	reflectiontext VARCHAR(1000)
 );
 
-INSERT INTO reflections (userid, reflectiondate, reflectiontext)
-VALUES ('1', '2019-09-14', 'I LOVE ESSAYS -- SAID NO ONE EVER');
+CREATE TABLE groupchat (
+	id SERIAL PRIMARY KEY,
+	groupid INTEGER REFERENCES groups(id),
+	chattext VARCHAR(1000),
+	chatdate VARCHAR(1000)
+);

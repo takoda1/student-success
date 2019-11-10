@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 
@@ -276,20 +277,28 @@ class Timer extends React.Component {
     render() {
         const editTimeMode = (
             <Form onSubmit={() => this.setState({ editingTime: false })}>
-                <p>
-                    Enter Time in Minutes:{' '}
-                    <input type="number" step="1" value={this.state.goal / 60 } onChange={(event) => this.setState({ goal: event.target.value * 60 })} />
-                </p>
+                <Form.Row>
+                    <Col>
+                        <Form.Label>Enter Time in Minutes: </Form.Label>
+                    </Col>
+                    <Col>
+                        <Form.Control type="number" value={this.state.goal / 60 } onChange={(event) => this.setState({ goal: event.target.value * 60 })} />
+                    </Col>
+                </Form.Row>
                 <Button type="submit">Save</Button>
             </Form>
         );
 
         const editNameMode = (
             <Form onSubmit={() => this.setState({ editingName: false })}>
-                <p>
-                    What Are You Timing?{' '}
-                    <input type="text" onChange={(event) => this.props.updateCustomName(event.target.value) } />
-                </p>
+                <Form.Row>
+                    <Col>
+                        <Form.Label>What Are You Timing?</Form.Label>
+                    </Col>
+                    <Col>
+                        <Form.Control type="text" onChange={(event) => this.props.updateCustomName(event.target.value) } />
+                    </Col>
+                </Form.Row>
                 <Button type="submit">Save</Button>
             </Form>
         );

@@ -112,6 +112,9 @@ Reflections:
 Groups:
 {id: int, groupname: string}
 
+Groupchat:
+{id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string}
+
 ## Current endpoints:
 
 ### Users
@@ -189,12 +192,6 @@ Deletes the reflection specified by its unique id
 
 ### Groups
 
-app.get('/group/:groupname', groupQueries.getGroup)
-app.get('/groups', groupQueries.getGroups)
-app.get('/grou/:id', groupQueries.getGroupById)
-app.post('/group', groupQueries.addGroup)
-app.delete('/group/:id', groupQueries.deleteGroup) 
-
 GET /group/:groupname    Gets the group with specified groupname
 
 GET /groups     Gets all groups
@@ -204,3 +201,9 @@ GET /grou/:id		No, that is not a typo. Gets a single group by provided id
 POST /group			Posts a single group with body {groupname: string}
 
 DELETE /group/:id	Deletes a singel group with provided id
+
+### Groupchat
+
+GET /groupchat/:groupid     Gets all groupchat messages for a single group
+
+POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string}

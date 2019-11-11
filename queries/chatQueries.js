@@ -22,15 +22,15 @@ Expects: request.body to have json:
 }
 */
 const addChat = (request, response) => {
-    const { groupid, chattext, chatdate } = request.body;
-
-    if (!isNaN(groupid) && chattext != null && chatdate != null) {
-        pool.query('INSERT INTO groupchat (groupid, chattext, chatdate) VALUES ($1, $2, $3)', [groupid, chattext, chatdate], (error) => {
+    const { groupid, chattext, chatdate, userid, username } = request.body;
+    
+    if (!isNaN(groupid) && chattext != null && chatdate != null && !isNaN(userid) && username != null) {
+        pool.query('INSERT INTO groupchat (groupid, chattext, chatdate, userid, username) VALUES ($1, $2, $3, $4, $5)', [groupid, chattext, chatdate, userid, username], (error) => {
             response.status(201).json({ status: 'success', message: 'Chat added' })
         })
     }
     else {
-        response.status(400).send("Error: Either userid or goaldate fields do not exist or are named incorrectly or are null")
+        response.status(400).send("Error: Either groupid, chattext, chatdate, userid, username fields do not exist or are named incorrectly or are null")
     }
 
 }

@@ -45,7 +45,9 @@ CREATE TABLE groupchat (
 	id SERIAL PRIMARY KEY,
 	groupid INTEGER REFERENCES groups(id),
 	chattext VARCHAR(1000),
-	chatdate VARCHAR(1000)
+	chatdate VARCHAR(1000),
+	userid INTEGER REFERENCES users(id),
+	username VARCHAR(100)
 );
 
 CREATE TABLE forum (

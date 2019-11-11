@@ -47,3 +47,21 @@ CREATE TABLE groupchat (
 	chattext VARCHAR(1000),
 	chatdate VARCHAR(1000)
 );
+
+CREATE TABLE forum (
+	id SERIAL PRIMARY KEY,
+	title VARCHAR(500),
+	body VARCHAR(8000),
+	userid INTEGER REFERENCES users(id),
+	username VARCHAR(200),
+	postdate VARCHAR(200)
+);
+
+CREATE TABLE forumcomment (
+	id SERIAL PRIMARY KEY,
+	body VARCHAR(8000),
+	userid INTEGER REFERENCES users(id),
+	postid INTEGER REFERENCES forum(id),
+	username VARCHAR(200),
+	commentdate VARCHAR(200)
+);

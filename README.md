@@ -115,6 +115,9 @@ Groups:
 Groupchat:
 {id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string}
 
+Forum:
+{id: int, title: string, body: string, userid: int, username: string, postdate: string}
+
 ## Current endpoints:
 
 ### Users
@@ -207,3 +210,18 @@ DELETE /group/:id	Deletes a singel group with provided id
 GET /groupchat/:groupid     Gets all groupchat messages for a single group
 
 POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string}
+
+### Forum
+
+GET /forumPosts       Gets all forum posts
+
+GET /forum/:id		Gets a forum post by its id
+
+PUT /forum/:id		Updates a forum post by its id, requires body of {title: string, body: string}
+
+POST /forum			Posts a forum post, requires body of  {title: string, body: string, userid: int, username: string, postdate: string}
+
+DELETE /forum/:id	Deletes a forum post by its id 
+
+
+### Forum comments/replies

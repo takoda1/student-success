@@ -14,20 +14,22 @@ describe('Chat API', () => {
     const chat = {
         groupid: 1,
         chattext: 'ASDF',
-        chatdate: 'November 10th 2019, 12:09:51 pm'
+        chatdate: 'November 10th 2019, 12:09:51 pm',
+        userid: 1,
+        username: "ABC"
     }
 
-    it('posts a chat with body {groupid, chattext, chatdate}', () => {
+    it('posts a chat with body {groupid, chattext, chatdate, userid, username }', () => {
 
         return chai.request(server)
             .post('/groupchat')
-            .send(chat) //send the js goal object to be posted
+            .send(chat) //send the js chat object to be posted
             .then((res) => {
                 res.should.have.status(201)
             })
     })
 
-    it('gets all goals for a goalid', () => {
+    it('gets all chats for a groupid', () => {
 
         return chai.request(server)
             .get('/groupchat/' + chat.groupid)

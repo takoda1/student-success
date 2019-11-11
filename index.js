@@ -7,6 +7,7 @@ const goalQueries = require('./queries/goalQueries')
 const timerQueries = require('./queries/timerQueries')
 const reflectionQueries = require('./queries/reflectionQueries')
 const groupQueries = require('./queries/groupQueries')
+const chatQueries = require('./queries/chatQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -35,6 +36,7 @@ app.get('/users', userQueries.getUsers)
 app.get('/user/:id', userQueries.getUser)
 app.get('/userByEmail/:email', userQueries.getUserByEmail)
 app.get('/user/:firstname/:lastname', userQueries.getUserByName)
+app.get('/userByGroup/:groupid', userQueries.getUserByGroup)
 app.post('/user', userQueries.addUser)
 app.delete('/user/:id', userQueries.deleteUser)
 
@@ -57,9 +59,13 @@ app.put('/reflection/:id', reflectionQueries.putReflection)
 app.delete('/reflection/:id', reflectionQueries.deleteReflection)
 
 app.get('/group/:groupname', groupQueries.getGroup)
+app.get('/groups', groupQueries.getGroups)
 app.get('/grou/:id', groupQueries.getGroupById)
 app.post('/group', groupQueries.addGroup)
 app.delete('/group/:id', groupQueries.deleteGroup) 
+
+app.get('/groupchat/:groupid', chatQueries.getAllChats)
+app.post('/groupchat', chatQueries.addChat)
 
 app.get('/quit', (req, res) => {
     res.send('Closing..')

@@ -8,6 +8,7 @@ import {
 import { Home } from './Home';
 import { History } from './History';
 import { Admin } from './Admin';
+import { Group } from './Group';
 import './App.css';
 import NavBar from "./components/NavBar";
 //import { useAuth0 } from "./react-auth0-spa";
@@ -73,10 +74,13 @@ class App extends Component {
                         <Route path="/history">
                             <History user={this.state.user} />
                         </Route>
+                        <Route path="/group">
+                            <Group user={this.state.user} />
+                        </Route>
                         <Route path="/admin"><Admin user={this.state.user} /></Route>
                         <Route path="/profile" component={Profile} />
                         </div>
-                    ) : (<p>You are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
+                    ) : (<p>Loading... If this takes a while, you are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
                 }
                 <Route exact path='/callback' component={Callback} />
                 

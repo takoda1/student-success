@@ -11,6 +11,7 @@ class Admin extends React.Component {
             firstField: "",
             lastField: "",
             emailField: "",
+            groupField: 0,
         }
 
         this.addUser = this.addUser.bind(this);
@@ -25,7 +26,7 @@ class Admin extends React.Component {
     async addUser(event) {
         event.preventDefault();
 
-        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField });
+        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid: this.state.groupField});
         const currentUsers = (await axios.get("/users")).data;
         
         this.setState({
@@ -33,6 +34,7 @@ class Admin extends React.Component {
             firstField: "",
             lastField: "",
             emailField: "",
+            groupField: 0,
         });
     }
 

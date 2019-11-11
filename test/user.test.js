@@ -18,6 +18,13 @@ describe('USER API', () => {
         groupid: 1
     }
 
+    var user2 = {
+        firstname: "2",
+        lastname: "2",
+        email: "2@2.com",
+        groupid: 1
+    }
+
     var userId = ''
 
     it('posts a user with body {firstname, lastname, email, groupid}', () => {
@@ -38,8 +45,8 @@ describe('USER API', () => {
             .then((res) => {
                 res.should.have.status(200)
                 res.body.should.be.a('array')
-                //initial insertion plus current insertion
-                res.body.length.should.equal(2)
+                //initial insertion from init.sql plus current insertion plus test user
+                res.body.length.should.equal(3)
             })
     })
 
@@ -67,6 +74,15 @@ describe('USER API', () => {
                 for (var key in user) {
                     chai.expect(res.body[0].key).to.equal(user.key)
                 }
+            })
+    })
+
+    it('Gets multiple users based on their groupid', () => {
+        return chai.request(server)
+            .get('/userByGroup/1')
+            .then((res) => {
+                res.should.have.status(200)
+                res.body.length.should.equal(3) //init.sql inserts a user with group id 1 in, so init.sql user+ the user in this test + another test user
             })
     })
 

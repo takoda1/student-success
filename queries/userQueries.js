@@ -12,10 +12,10 @@ const getUsers = (request, response) => {
 const addUser = (request, response) => {
     
     const { firstname, lastname, email, groupid } = request.body;
-    if (firstname != null && lastname != null && email != null) {
+    if (firstname != null && lastname != null && email != null && !isNaN(groupid)) {
         pool.query('INSERT INTO users (firstname, lastname, email, groupid) VALUES ($1, $2, $3, $4)', [firstname, lastname, email, groupid], (error) => {
             if (error) {
-                throw error
+                response.status(400).send(error)
             }
             response.status(201).send('User added!')
         })
@@ -36,6 +36,19 @@ const getUser = (request, response) => {
     }
     else {
         response.status(400).json({ "Error": "Parameter not a number" })
+    }
+}
+
+const getUserByGroup = (request, response) => {
+    const groupid = parseInt(request.params.groupid)
+    if (!isNaN(groupid)) {
+        pool.query('SELECT * FROM users WHERE groupid = $1', [groupid], (error, result) => {
+            if (error) { throw error }
+            response.status(200).json(result.rows)
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter groupid is not a number" })
     }
 }
 
@@ -76,5 +89,6 @@ module.exports = {
     getUser,
     getUserByName,
     getUserByEmail,
+    getUserByGroup,
     deleteUser,
 }

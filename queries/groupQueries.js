@@ -15,6 +15,15 @@ const getGroup = (request, response) => {
     })
 }
 
+const getGroups = (request, response) =>{
+    pool.query('SELECT * FROM groups ', (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows);
+    })
+}
+
 const addGroup = (request, response) => {
 
     const groupname = request.body.groupname
@@ -61,6 +70,7 @@ const deleteGroup = (request, response) => {
 
 module.exports = {
     getGroup,
+    getGroups,
     addGroup,
     getGroupById,
     deleteGroup

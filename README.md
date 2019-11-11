@@ -1,7 +1,29 @@
-# Setting up the API for development
+# 0. Software for Student Success
+This webapp is meant to be used for senior honors students working on their honors thesis to help them stay organized and motivated throughout the writing process. The app also allows students to collaborate and interact with other students in their class.
 
-Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup if you are on mac.
+# 1. Getting started
 
+## Prerequisites
+
+### Project-wide
+- Install nodejs https://nodejs.org/en/download/
+- Obtain a .env file from a past developer, or it should look like this:
+DB_USER=<user>
+DB_PASSWORD=<password>
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=<database name>
+PORT=3005
+
+- Fork the project https://github.com/takoda1/student-success, then clone it
+-`cd student-success`
+
+### For the API
+
+Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3) 
+
+
+The following commands are boiled down what the tutorial above accomplishes
 
 1. Install postgresql
 2. Run the postgresql service
@@ -9,31 +31,51 @@ Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for post
 4. Log in as this new user rather than the default login
 5. Have a database created with name defined in .env. (there is a line that says DB_DATABASE=....)
 6. Have the user connect to the database \c <databasename> and run the sql commands in init.sql to setup the tables.
-7. Run npm i
-8. Run node index.js
-9. Install postman to make requests, or use curl.
 
-## Future notes
-Run the react app on process.env.port (provided/populated by heroku) and run the api on
-another port; have the react app talk to the api using the api endpoints.
+## Installing
+- `npm install`
+- Install postman if you would like to make manual requests
 
-## Heroku deployment
+## Running locally
+- Change src/auth_config.json environment to "development" instead of production
+- `npm start`
 
-Currently, deploys to master on the repo takoda1/student-success automatically deploy to heroku.
+## Warranty
+On 11/8/2019, commit number 173, on a windows machine, these steps pulled up a local version of the app.
 
-To deploy the app yourself, create a heroku account, create a new dyno, and connect your cloned/forked github repository
-to 
+# 2. Testing
+`npm test` to run backend/api tests.  
+`cypress open` to run frontend cypress tests.
 
-## Download Font Awesome with npm
-$ npm i --save @fortawesome/fontawesome-svg-core
+# 3. Deployment  
+The app is deployed to heroku, and can be accessed here: https://student-success.herokuapp.com/.  
 
-$ npm i --save @fortawesome/free-solid-svg-icons
+- The production system lives on heroku. To get access to the project, email Takoda: takoda.ren@gmail.com
+- No staging or pre-production environments exist
+- Once you have access to the project, you will notice that there is an add-on: Heroku postgres.
+- To connect to this database, install the heroku CLI first
+- Then, run `heroku login`
+- Then run heroku `pg:psql postgresql-shaped-80610 --app student-success` to connect to the database to run commands.
+- If the database is empty, run init.sql with `cat init.sql | pg:psql postgresql-shaped-80610 --app student-success`
+- Continuous deployment is enabled, it is connected to github.com/takoda1/student-success. This can be changed to whatever repository when you are added as a collaborator to heroku.
 
-$ npm i --save @fortawesome/react-fontawesome
+# 4. Technologies Used
+React.js, Express.js, Node.js, Postgres  
+The ADRs are in the folder `adr`, which is in the root directory of the repository.  
 
-## Tests
+# 5. Contributing
+For new developers, developers will need to get access to the heroku (email jingjing.jacobson@gmail.com, takoda.ren@gmail.com or perryh@live.unc.edu for access). Developers can then fork this github repository and connect the new repository to be deployed to the heroku project.  
+More info can be found at the project website: http://comp523teamb.web.unc.edu/
 
-`npm test` to run tests.
+# 6. Authors  
+Primary authors of this project are: Perry Healy, JingJing Jacobson, and Takoda Ren
+
+# 7. License
+This repository has an MIT license. More details can be found in the LICENSE.md file.  
+
+# 8. Acknowledgements
+We would like to give acknowledgements to Dr. Jeff Terrell at the University of North Carolina at Chapel Hill for giving us the help, resources, and knowledge that we needed to complete this project, as well as John Dinger, for being our project management mentor throughout this project.
+
 
 # Developer section
 
@@ -70,6 +112,9 @@ Reflections:
 Groups:
 {id: int, groupname: string}
 
+Groupchat:
+{id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string}
+
 ## Current endpoints:
 
 ### Users
@@ -79,6 +124,8 @@ GET /users   Returns all users
 GET /user/:id    Returns user with specified id
 
 GET /userByEmail/:email		Returns the user with specified email
+
+GET /userByGroup/:groupid     Returns the user(s) with specified groupid
 
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
@@ -143,3 +190,20 @@ Updates/puts the reflection specified by its unique id with new reflectiontext v
 DELETE /reflection/:id
 Deletes the reflection specified by its unique id
 
+### Groups
+
+GET /group/:groupname    Gets the group with specified groupname
+
+GET /groups     Gets all groups
+
+GET /grou/:id		No, that is not a typo. Gets a single group by provided id
+
+POST /group			Posts a single group with body {groupname: string}
+
+DELETE /group/:id	Deletes a singel group with provided id
+
+### Groupchat
+
+GET /groupchat/:groupid     Gets all groupchat messages for a single group
+
+POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string}

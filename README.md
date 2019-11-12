@@ -33,7 +33,7 @@ The following commands are boiled down what the tutorial above accomplishes
 6. Have the user connect to the database \c <databasename> and run the sql commands in init.sql to setup the tables.
 
 ## Installing
-- `npm install`
+- `npm install` 
 - Install postman if you would like to make manual requests
 
 ## Running locally

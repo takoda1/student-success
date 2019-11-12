@@ -209,7 +209,7 @@ DELETE /group/:id	Deletes a singel group with provided id
 
 GET /groupchat/:groupid     Gets all groupchat messages for a single group
 
-POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string}
+POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string, userid: int, username: string}
 
 ### Forum
 

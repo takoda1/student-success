@@ -18,7 +18,7 @@ PORT=3005
 - Fork the project https://github.com/takoda1/student-success, then clone it
 -`cd student-success`
 
-### For the API
+### For the API 
 
 Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3) 
 

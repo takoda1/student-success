@@ -3,10 +3,8 @@ import './Group.css';
 import axios from 'axios';
 import auth0Client from './Auth';
 import { getTodaysDate, CheckboxGoals } from './shared';
-import { relativeTimeRounding } from 'moment';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
 
 const today = getTodaysDate();
 

@@ -1,0 +1,39 @@
+.group-body {
+    display: grid;
+    grid-template-columns: 50vw 50vw;
+    grid-template-areas:
+    "goals chat";
+}
+.shared-goals {
+    padding: 10px;
+}
+.shared-goals h2 {
+    text-align: center;
+}
+.group-goals {
+    grid-area: goals;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: auto;
+    grid-row-gap: 15px;
+}
+.group-chat {
+    grid-area: chat;
+    padding: 10px;
+}
+.group-chat h2 {
+    text-align: center;
+}
+.group-goal-list {
+    width: 90%;
+    height: 100%;
+    justify-self: center;
+    background-color: #A6C4FF;
+    padding: 0.75em 2em 2em 2em;
+    border-radius: 10px;
+}
+.group-messages {
+    padding-bottom: 1em;
+    height: 60vh;
+    overflow: scroll;
+}

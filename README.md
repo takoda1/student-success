@@ -3,7 +3,7 @@ This webapp is meant to be used for senior honors students working on their hono
 
 # 1. Getting started
 
-## Prerequisites
+## Prerequisites 
 
 ### Project-wide
 - Install nodejs https://nodejs.org/en/download/

@@ -5,7 +5,7 @@ import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortaw
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import { getTodaysDate, secondsToHms } from './shared';
+import { getTodaysDate, secondsToHms, Goals, CheckboxGoals } from './shared';
 
 const today = new Date();
 
@@ -101,29 +101,6 @@ class Calendar extends Component {
       }
 }
 
-class Goals extends Component {
-      render() {
-        return(
-            <div className="history-goal-list">
-                <h2>My Goals</h2><br/>
-                <CheckboxGoals goals={this.props.goals} />
-            </div>
-        );
-      }
-    }
-
-class CheckboxGoals extends Component {
-    render () {
-        if(this.props.goals.length !== 0){
-            const listGoals = this.props.goals.map((goal) =>
-            <li key={goal.id}> <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> {goal.goaltext}</li> );
-            return(<div className="history-goals">{listGoals}</div>);
-        }
-        else{
-            return(<div className="history-goals">No goals.</div>);
-        }
-    }
-}
 
 class Timers extends Component {
       render() {

@@ -35,15 +35,26 @@ class Group extends Component {
             groupGoals.push(theseGoals);
         }
         this.setState({ groupGoals, groupName, messages });
+
+        setInterval(() => {
+            // this.checkForNewMessages();
+        }, 1000);
+    }
+
+    checkForNewMessages() {
+        const messages = (axios.get(`groupchat/${this.props.user.groupid}`)).data;
+        this.setState({ messages });
+        // if(this.state.messages != undefined && newMessages.length != this.state.messages.length) {
+        //     this.forceUpdate();
+        // }
     }
 
     onMessageTyped(event) {
         this.setState({ newMessageText: event.target.value });
     }
     async onMessageSent(event) {
-        console.log(this.props.user.groupid);
         event.preventDefault();
-        const newMessage = { groupid: 1, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
+        const newMessage = { groupid: this.props.user.groupid, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
         await axios.post('/groupchat', newMessage);
         const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
         this.setState({ messages, newMessageText: '' });
@@ -71,6 +82,13 @@ class Group extends Component {
 }
 
 class GroupGoals extends Component {
+    
+    // async componentDidMount() {
+    //     setInterval(() => {
+    //         this.forceUpdate();
+    //     }, 1000);
+    // }
+
     render() {
         const listUserGoals = this.props.groupGoals.map((user) =>
             <div className="group-goals-grid" key={user.userId}>

@@ -45,8 +45,13 @@ class Admin extends React.Component {
         
     }
 
-    async editUser(id, first, last, email, group) {
-        await axios.put('/user')
+    async editUser(id, firstname, lastname, email, groupid) {
+        await axios.put(`/user/${id}`, { firstname, lastname, email, groupid });
+        const currentUsers = (await axios.get("/users")).data;
+            
+        this.setState({
+            currentUsers,
+        });
     }
 
     async addGroup(event) {
@@ -185,12 +190,12 @@ class UserView extends React.Component {
         const viewModal = (
             <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                 <Modal.Header>
-                    <Modal.Title>{this.props.user.firstname} {this.props.user.lastname}</Modal.Title>
+                    <Modal.Title>User Info: <Button onClick={() => this.setState({editing: true})}>Edit</Button></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Modal.Title>User Info: <Button onClick={() => this.setState({editing: true})}>Edit</Button></Modal.Title>
+                    <p>Name: {this.props.user.firstname} {this.props.user.lastname}</p>
                     <p>Email: {this.props.user.email}</p>
-                    Group Id: {this.props.user.groupid}
+                    <p>Group Id: {this.props.user.groupid}</p>
                 </Modal.Body>
                 <Modal.Body>
                     Shared With You:
@@ -210,7 +215,10 @@ class UserView extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                     <Modal.Title>User Info: <Button onClick={() => this.setState({editing: false})}>Back</Button></Modal.Title>
-                    <Form onSubmit={() => this.props.editUser(this.props.user.id, this.state.firstField, this.state.lastField, this.state.emailField, this.state.groupField)}>
+                    <Form onSubmit={(e) => {
+                        e.preventDefault();
+                        this.props.editUser(this.props.user.id, this.state.firstField, this.state.lastField, this.state.emailField, this.state.groupField);
+                    }}>
                         <Form.Row>
                             <Col>
                                 <Form.Label>First Name: </Form.Label>
@@ -234,7 +242,7 @@ class UserView extends React.Component {
                                 <Form.Label>Group Id: </Form.Label>
                             </Col>
                             <Col>
-                                <Form.Control value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
+                                <Form.Control type="number" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
                             </Col>
                         </Form.Row>
                         <Button type="submit">Save Changes</Button>

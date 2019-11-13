@@ -20,6 +20,7 @@ class Admin extends React.Component {
         }
 
         this.addUser = this.addUser.bind(this);
+        this.editUser = this.editUser.bind(this);
         this.addGroup = this.addGroup.bind(this);
     }
 
@@ -42,6 +43,10 @@ class Admin extends React.Component {
             groupField: 0,
         });
         
+    }
+
+    async editUser(id, first, last, email, group) {
+        await axios.put('/user')
     }
 
     async addGroup(event) {
@@ -240,7 +245,7 @@ class UserView extends React.Component {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => this.setState({show: false})}>
-                        Close
+                        Close (without saving)
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -250,7 +255,8 @@ class UserView extends React.Component {
             <li>
                 {`${this.props.user.firstname} ${this.props.user.lastname} - ${this.props.user.email} - Group #${this.props.user.groupid}`}
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
-                <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
+                {this.state.editing ? editModal : viewModal}
+                {/* <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
                         <Modal.Title>{this.props.user.firstname} {this.props.user.lastname}</Modal.Title>
                     </Modal.Header>
@@ -267,7 +273,7 @@ class UserView extends React.Component {
                             Close
                         </Button>
                     </Modal.Footer>
-                </Modal>
+                </Modal> */}
             </li>
         )
     }

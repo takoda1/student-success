@@ -38,6 +38,7 @@ app.get('/user/:id', userQueries.getUser)
 app.get('/userByEmail/:email', userQueries.getUserByEmail)
 app.get('/user/:firstname/:lastname', userQueries.getUserByName)
 app.get('/userByGroup/:groupid', userQueries.getUserByGroup)
+app.put('/user/:id', userQueries.putUser)
 app.post('/user', userQueries.addUser)
 app.delete('/user/:id', userQueries.deleteUser)
 

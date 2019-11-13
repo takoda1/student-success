@@ -26,6 +26,25 @@ const addUser = (request, response) => {
     
 }
 
+const putUser = (request, response) => {
+
+    const { firstname, lastname, email, groupid } = request.body
+    const id = parseInt(request.params.id)
+
+    if (!isNaN(id) && firstname != null && lastname != null && email != null && !isNaN(groupid)) {
+        pool.query('UPDATE users SET firstname = $2, lastname = $3, email = $4, groupid = $5 WHERE id = $1', [id, firstname, lastname, email, groupid], (error) => {
+            if (error) {
+                response.status(400).send(error)
+            }
+            response.status(201).send('User updated!')
+        })
+    }
+    else {
+        response.status(400).send('Error: fields in body likely named incorrectly, at least one of them is undefined, or id is not a number/undefined')
+    }
+
+}
+
 const getUser = (request, response) => {
     const id = parseInt(request.params.id)
     if (!isNaN(id)) {
@@ -87,6 +106,7 @@ module.exports = {
     getUsers,
     addUser,
     getUser,
+    putUser,
     getUserByName,
     getUserByEmail,
     getUserByGroup,

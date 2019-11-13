@@ -132,7 +132,9 @@ GET /userByGroup/:groupid     Returns the user(s) with specified groupid
 
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
-POST /user   (Requires json body of {firstname: string, lastname: string, email: string})
+PUT /user/:id			Updates the user given its id with body of {firstname: string, lastname: string, email: string, groupid: int}
+
+POST /user   (Requires json body of {firstname: string, lastname: string, email: string, groupid: int})
 Posts user with specified values
 
 DELETE /user/:id	Deletes user with specified id
@@ -209,7 +211,7 @@ DELETE /group/:id	Deletes a singel group with provided id
 
 GET /groupchat/:groupid     Gets all groupchat messages for a single group
 
-POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string}
+POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string, userid: int, username: string}
 
 ### Forum
 

@@ -18,7 +18,7 @@ describe('USER API', () => {
         groupid: 1
     }
 
-    var user2 = {
+    var userUpdate = {
         firstname: "2",
         lastname: "2",
         email: "2@2.com",
@@ -84,6 +84,22 @@ describe('USER API', () => {
                 res.should.have.status(200)
                 res.body.length.should.equal(3) //init.sql inserts a user with group id 1 in, so init.sql user+ the user in this test + another test user
             })
+    })
+
+    it('Updates a single user based on their id', () => {
+
+        return chai.request(server)
+            .put('/user/' + userId)
+            .send(userUpdate)
+            .then((res) => {
+                res.should.have.status(201)
+                return chai.request(server).get('/user/' + userId).then((result) => {
+                    for (var key in userUpdate) {
+                        chai.expect(result.body[0].key).to.equal(userUpdate.key)
+                    }
+                })
+            })
+
     })
 
     it('Deletes a single user based on the user\'s id', () => {

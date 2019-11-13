@@ -1,3 +1,16 @@
+# Table of contents
+* [0. Software for Student Success](#0-software-for-student-success)
+* [1. Getting started](#1-getting-started)
+* [2. Testing](#2-testing)
+* [3. Deployment](#3-deployment)
+* [4. Technologies used](#4-technologies-used)
+* [5. Contributing](#5-contributing)
+* [6. Authors](#6-authors)
+* [7. License](#7-license)
+* [8. Acknowledgements](#8-acknowledgements)
+* [Developer section](#developer-section)
+* [Future notes](#future-notes)
+
 # 0. Software for Student Success
 This webapp is meant to be used for senior honors students working on their honors thesis to help them stay organized and motivated throughout the writing process. The app also allows students to collaborate and interact with other students in their class.
 
@@ -132,7 +145,9 @@ GET /userByGroup/:groupid     Returns the user(s) with specified groupid
 
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
-POST /user   (Requires json body of {firstname: string, lastname: string, email: string})
+PUT /user/:id			Updates the user given its id with body of {firstname: string, lastname: string, email: string, groupid: int}
+
+POST /user   (Requires json body of {firstname: string, lastname: string, email: string, groupid: int})
 Posts user with specified values
 
 DELETE /user/:id	Deletes user with specified id
@@ -225,3 +240,15 @@ DELETE /forum/:id	Deletes a forum post by its id
 
 
 ### Forum comments/replies
+
+
+## FUTURE NOTES
+
+Link to trello page that contains nice to have/future iteration notes: https://trello.com/b/aSzSg5tc/comp-523-software-for-student-success
+
+
+The main notes:
+- A user will receive a reminder if they haven't logged in for the day (Complicated given the structure of how a web app works)
+- A user can set goals for the future as well as that day
+- Allow the app to use persistent google oauth logins.
+- Maybe allow toggling of groupchat page to show timers and reflections, in addition to goals, we were thinking not to do this because students may not want their timers or reflections to be public to their group.

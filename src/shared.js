@@ -23,7 +23,7 @@ function GoalList(props) {
       <ul className="goal-list">
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <Form className="addGoal" onSubmit={props.onGoalAdded}>
-          <input className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
+          <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
           <Button type="submit">Add Goal</Button>
         </Form>
       </ul>
@@ -95,6 +95,30 @@ function GoalsCompleted(props) {
   );
 }
 
+class Goals extends React.Component {
+    render() {
+      return(
+          <div className="history-goal-list">
+              <h2>Goals</h2><br/>
+              <CheckboxGoals goals={this.props.goals} />
+          </div>
+      );
+    }
+}
+
+class CheckboxGoals extends React.Component {
+  render () {
+      if(this.props.goals.length !== 0){
+          const listGoals = this.props.goals.map((goal) =>
+          <li key={goal.id}> <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> {goal.goaltext}</li> );
+          return(<div className="history-goals">{listGoals}</div>);
+      }
+      else{
+          return(<div className="history-goals">No goals.</div>);
+      }
+  }
+}
+
 function secondsToHms(d) {
   d = Number(d);
 
@@ -119,4 +143,4 @@ function getTodaysDate() {
   return(year.concat("-", month, "-", day));
 }
 
-export { Layout, GoalList, secondsToHms, getTodaysDate };
+export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals };

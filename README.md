@@ -3,7 +3,7 @@ This webapp is meant to be used for senior honors students working on their hono
 
 # 1. Getting started
 
-## Prerequisites
+## Prerequisites 
 
 ### Project-wide
 - Install nodejs https://nodejs.org/en/download/
@@ -18,7 +18,7 @@ PORT=3005
 - Fork the project https://github.com/takoda1/student-success, then clone it
 -`cd student-success`
 
-### For the API
+### For the API 
 
 Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3) 
 
@@ -33,7 +33,7 @@ The following commands are boiled down what the tutorial above accomplishes
 6. Have the user connect to the database \c <databasename> and run the sql commands in init.sql to setup the tables.
 
 ## Installing
-- `npm install`
+- `npm install` 
 - Install postman if you would like to make manual requests
 
 ## Running locally
@@ -114,6 +114,9 @@ Groups:
 
 Groupchat:
 {id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string}
+
+Forum:
+{id: int, title: string, body: string, userid: int, username: string, postdate: string}
 
 ## Current endpoints:
 
@@ -206,4 +209,19 @@ DELETE /group/:id	Deletes a singel group with provided id
 
 GET /groupchat/:groupid     Gets all groupchat messages for a single group
 
-POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string}
+POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string, userid: int, username: string}
+
+### Forum
+
+GET /forumPosts       Gets all forum posts
+
+GET /forum/:id		Gets a forum post by its id
+
+PUT /forum/:id		Updates a forum post by its id, requires body of {title: string, body: string}
+
+POST /forum			Posts a forum post, requires body of  {title: string, body: string, userid: int, username: string, postdate: string}
+
+DELETE /forum/:id	Deletes a forum post by its id 
+
+
+### Forum comments/replies

@@ -131,6 +131,9 @@ Groupchat:
 Forum:
 {id: int, title: string, body: string, userid: int, username: string, postdate: string}
 
+Notes:
+{ id: int, userid: int, notedate: "yyyy-mm-dd", notetext: string }
+
 ## Current endpoints:
 
 ### Users
@@ -238,6 +241,19 @@ POST /forum			Posts a forum post, requires body of  {title: string, body: string
 
 DELETE /forum/:id	Deletes a forum post by its id 
 
+### Notes
+
+GET /note/:userid/:date		Gets a note for a userid and given date (yyyy-mm-dd), to be used on Home page to get a user's note for the day
+
+GET /note/:id		Gets a note by its unique id
+
+GET /noteByDate/:date		Gets all notes for a specified date (yyyy-mm-dd format)  To be used on admin page to get all notes from students for the day
+
+POST /note			Posts a note with body { userid: int, notedate: "yyyy-mm-dd", notetext: string }
+
+PUT /note/:id		Updates a note with specified id with body {notetext: string}
+
+DELETE /note/:id	Deletes a note with specified id
 
 ### Forum comments/replies
 

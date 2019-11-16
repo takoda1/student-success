@@ -67,3 +67,10 @@ CREATE TABLE forumcomment (
 	username VARCHAR(200),
 	commentdate VARCHAR(200)
 );
+
+CREATE TABLE notes (
+	id SERIAL PRIMARY KEY,
+	userid INTEGER REFERENCES users(id),
+	notedate VARCHAR(200),
+	notetext VARCHAR(8000)
+);

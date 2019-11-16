@@ -9,6 +9,7 @@ const reflectionQueries = require('./queries/reflectionQueries')
 const groupQueries = require('./queries/groupQueries')
 const chatQueries = require('./queries/chatQueries')
 const forumQueries = require('./queries/forumQueries')
+const noteQueries = require('./queries/noteQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -74,6 +75,13 @@ app.get('/forum/:id', forumQueries.getPost)
 app.put('/forum/:id', forumQueries.putPost)
 app.post('/forum', forumQueries.addPost)
 app.delete('/forum/:id', forumQueries.deletePost) 
+
+app.get('/note/:userid/:date', noteQueries.getNote)
+app.get('/note/:id', noteQueries.getNoteById)
+app.get('/noteByDate/:date', noteQueries.getAllNotesByDate)
+app.post('/note', noteQueries.addNote)
+app.put('/note/:id', noteQueries.putNote)
+app.delete('/note/:id', noteQueries.deleteNote)
 
 app.get('/quit', (req, res) => {
     res.send('Closing..')

@@ -273,7 +273,7 @@ If you want to create your own auth0 account to function with this app, follow t
 `function (user, context, callback) {
   user.app_metadata = user.app_metadata || {};
   //replace these emails with your desired admin emails
-  var emails = ['jjacob20@live.unc.edu', 'perryh@cs.unc.edu', 'dingerjnc@gmail.com', 'takoda@cs.unc.edu', 'jcooleyf@live.unc.edu'];
+  var emails = ['jjacob20@live.unc.edu', 'perryh@cs.unc.edu', 'takoda@cs.unc.edu'];
   for(var i = 0; i < emails.length; i++){
     if(user.email === emails[i]){
       user.app_metadata.role = 'admin';

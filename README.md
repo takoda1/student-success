@@ -9,6 +9,7 @@
 * [7. License](#7-license)
 * [8. Acknowledgements](#8-acknowledgements)
 * [Developer section](#developer-section)
+* [Auth0](#auth0)
 * [Future notes](#future-notes)
 
 # 0. Software for Student Success
@@ -257,6 +258,45 @@ DELETE /note/:id	Deletes a note with specified id
 
 ### Forum comments/replies
 
+## Auth0
+
+https://auth0.com/blog/role-based-access-control-rbac-and-react-apps/
+
+If you want to create your own auth0 account to function with this app, follow these steps:
+- Create an auth0 account
+- Create a new single-page application (click of a button when creating a new auth0 app)
+- Copy the domain and clientid (under settings) and put it in src/auth_config.json
+- Add `http://localhost:3005/callback, https://student-success.herokuapp.com/callback` to ALLOWED CALLBACK URLS under application settings in auth0
+- Add `http://localhost:3005, https://student-success.herokuapp.com` to ALLOWED WEB ORIGINS and ALLOWED LOGOUT URLS under application settings in auth0
+- Save the changes
+- Add this snippet of code to an empty rule (Rules are on the left sidebar on the auth0 dashboard) : 
+`function (user, context, callback) {
+  user.app_metadata = user.app_metadata || {};
+  //replace these emails with your desired admin emails
+  var emails = ['jjacob20@live.unc.edu', 'perryh@cs.unc.edu', 'dingerjnc@gmail.com', 'takoda@cs.unc.edu', 'jcooleyf@live.unc.edu'];
+  for(var i = 0; i < emails.length; i++){
+    if(user.email === emails[i]){
+      user.app_metadata.role = 'admin';
+      break;
+    }
+    else{
+      user.app_metadata.role = 'user';
+    }
+  }
+  
+	if (!user.email || !user.email_verified) {
+    return callback(null, user, context);
+  }
+ 
+  auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+    .then(() => {
+      context.idToken['https://student-success.herokuapp.com/role'] = user.app_metadata.role;
+      callback(null, user, context);
+    })
+    .catch((err) => {
+      callback(err);
+    });
+}`
 
 ## FUTURE NOTES
 

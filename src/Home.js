@@ -1,4 +1,4 @@
-import { Layout, GoalList, secondsToHms } from './shared';
+import { Layout, GoalList, secondsToHms, delimiter } from './shared';
 import React from 'react';
 import axios from 'axios';
 import Moment from 'moment';
@@ -339,7 +339,7 @@ class Reflections extends React.Component {
 
         this.state = {
             reflection: {},
-            reflectionText: "",
+            reflectionQuestions: ["", "", ""],
             editing: false,
             doneToday: true,
         }
@@ -350,7 +350,7 @@ class Reflections extends React.Component {
     async componentDidMount() {
         const reflection = (await axios.get(`/reflection/${this.props.user.id}/${todayDate}`)).data[0];
         if (reflection) {
-            this.setState({ reflection, doneToday: true, reflectionText: reflection.reflectiontext });
+            this.setState({ reflection, doneToday: true, reflectionQuestions: reflection.reflectiontext.split(delimiter) });
         } else {
             this.setState({ doneToday: false });
         }
@@ -359,9 +359,9 @@ class Reflections extends React.Component {
     async onReflectionSubmitted(event) {
         event.preventDefault();
         if (this.state.doneToday) {
-            await axios.put(`/reflection/${this.state.reflection.id}`, { reflectiontext: this.state.reflectionText });
+            await axios.put(`/reflection/${this.state.reflection.id}`, { reflectiontext: this.state.reflectionQuestions.join(delimiter) });
         } else {
-            await axios.post(`/reflection`, { userid: this.props.user.id, reflectiondate: todayDate, reflectiontext: this.state.reflectionText });
+            await axios.post(`/reflection`, { userid: this.props.user.id, reflectiondate: todayDate, reflectiontext: this.state.reflectionQuestions.join(delimiter) });
             this.setState({ doneToday: true });
         }
 
@@ -372,8 +372,17 @@ class Reflections extends React.Component {
     render() {
         const viewMode = (
             <div className="reflections">
+                <p>1. What obstacles did you encounter, if any?</p>
                 <p>
-                    {this.state.reflectionText}
+                    {this.state.reflectionQuestions[0]}
+                </p>
+                <p>2. What are some opportunities for improvement?</p>
+                <p>
+                    {this.state.reflectionQuestions[1]}
+                </p>
+                <p>3. Any wins for the day worth recording?</p>
+                <p>
+                    {this.state.reflectionQuestions[2]}
                 </p>
                 <Button className="editRefelection" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</Button>
             </div>
@@ -382,9 +391,16 @@ class Reflections extends React.Component {
         const editMode = (
             <Form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
                 <div className="reflections">
-                    <Form.Control as="textarea" rows="5" value={this.state.reflectionText} onChange={(event) => this.setState({ reflectionText: event.target.value })} />
+                    <p>1. What obstacles did you encounter, if any?</p>
+                    <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[0]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 0, 1) })} />
+                    <br/>
+                    <p>2. What are some opportunities for improvement?</p>
+                    <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[1]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 1, 2) })} />
+                    <br/>
+                    <p>3. Any wins for the day worth recording?</p>
+                    <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[2]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 2) })} />
                 </div>
-                <Button type="submit">Submit</Button>
+                <Button type="submit">Save</Button>
             </Form>
         );
 
@@ -392,9 +408,6 @@ class Reflections extends React.Component {
             <div>
                 <h3>Today's Reflections</h3>
                 <p>Some guiding questions:</p>
-                <p>1. What obstacles did you encounter, if any?</p>
-                <p>2. What are some opportunities for improvement?</p>
-                <p>3. Any wins for the day worth recording?</p>
                 {this.state.editing ? editMode : viewMode}
             </div>
         );

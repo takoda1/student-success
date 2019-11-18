@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Group.css';
 import axios from 'axios';
 import auth0Client from './Auth';
-import { getTodaysDate, CheckboxGoals } from './shared';
+import { getTodaysDate, CheckboxGoals, secondsToHms, delimiter } from './shared';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
@@ -14,13 +14,17 @@ class Group extends Component {
 
         this.state = {
             groupGoals: [],
+            groupTimers: [],
+            groupReflections: [],
             groupName: '',
             messages: [],
-            newMessageText: ''
+            newMessageText: '',
+            selectedView: 'goals'
         };
 
         this.onMessageTyped = this.onMessageTyped.bind(this);
         this.onMessageSent = this.onMessageSent.bind(this);
+        this.onInputSelected = this.onInputSelected.bind(this);
     }
 
     async componentDidMount() {
@@ -28,22 +32,35 @@ class Group extends Component {
         const groupName = (await axios.get(`/grou/${this.props.user.groupid}/`)).data[0].groupname;
         const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
         var groupGoals = [];
+        var groupTimers = [];
+        var groupReflections = [];
         
         for(var i=0; i < groupUsers.length; i++) {
             var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${today}`)).data;
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, goals: thisGoals};
             groupGoals.push(theseGoals);
+
+            var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${today}`)).data;
+            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, timers: thisTimers};
+            groupTimers.push(theseTimers);
+
+            var thisReflections = (await axios.get(`/reflection/${groupUsers[i].id}/${today}`)).data;
+            var theseReflections = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, reflections: thisReflections};
+            groupReflections.push(theseReflections);
         }
-        this.setState({ groupGoals, groupName, messages });
+
+        this.setState({ groupGoals, groupTimers, groupReflections, groupName, messages });
 
         setInterval(() => {
+            // const messages = (axios.get(`groupchat/${this.props.user.groupid}`)).data;
+            // this.setState({ messages });
             // this.checkForNewMessages();
-        }, 1000);
+        }, 5000);
     }
 
     checkForNewMessages() {
         const messages = (axios.get(`groupchat/${this.props.user.groupid}`)).data;
-        this.setState({ messages });
+        // this.setState({ messages });
         // if(this.state.messages != undefined && newMessages.length != this.state.messages.length) {
         //     this.forceUpdate();
         // }
@@ -60,12 +77,24 @@ class Group extends Component {
         this.setState({ messages, newMessageText: '' });
     }
 
+    onInputSelected(value) {
+        this.setState({selectedView: value});
+    }
+
     render() {
         return(
             <div className="group-body">
                 <div className="shared-goals">
-                    <h2>Today's Shared Goals for Group {this.props.user.groupid} </h2>
-                    <GroupGoals groupGoals={this.state.groupGoals}/>
+                    <Form>
+                        <Form.Label>What kind of group data would you like to see?</Form.Label>
+                        <Form.Control className="form-control-select" as="select" onChange={(e) => this.onInputSelected(e.target.value)}>
+                            <option value={"goals"}>Goals</option>
+                            <option value={"timers"}>Timers</option>
+                            <option value={"reflections"}>Reflections</option>
+                        </Form.Control>
+                    </Form>
+                    <br/>
+                    <GroupData groupGoals={this.state.groupGoals} groupTimers={this.state.groupTimers} groupReflections={this.state.groupReflections} selectedView={this.state.selectedView} groupId={this.props.user.groupid} />
                 </div>
                 <div className="group-chat">
                     <h2>Group Chat</h2>
@@ -74,30 +103,59 @@ class Group extends Component {
                     <Form.Control type="text" value={this.state.newMessageText} onChange={this.onMessageTyped} placeholder="Type your message here" />
                         <Button variant="primary" type="submit">Send!</Button>
                     </Form>
-                    {/* <ChatTextBox user={this.props.user} onMessageTyped={this.onMessageTyped} /> */}
                 </div>
             </div>
         );
     }
 }
 
-class GroupGoals extends Component {
-    
-    // async componentDidMount() {
-    //     setInterval(() => {
-    //         this.forceUpdate();
-    //     }, 1000);
-    // }
+class GroupData extends Component {
 
     render() {
         const listUserGoals = this.props.groupGoals.map((user) =>
-            <div className="group-goals-grid" key={user.userId}>
-            <Goals goals={user.goals} userName={user.firstName} /> </div>);
-        return(
-            <div className="group-goals">
+            <div key={user.userId}><Goals goals={user.goals} userName={user.firstName} /> </div>);
+
+        const listUserTimers = this.props.groupTimers.map((user) =>
+            <div key={user.userId}><Timers timers={user.timers} userName={user.firstName} /></div>);
+
+        const listUserRefelections = this.props.groupReflections.map((user) =>
+            <div key={user.userId}><Reflections reflections={user.reflections} userName={user.firstName} /></div>);
+        
+        const goalsView = (
+            <div className="group-data">
                 { listUserGoals }
             </div>
         );
+        const timersView = (
+            <div className="group-data">
+                 { listUserTimers }
+            </div>
+        );
+
+        const reflectionsView = (
+            <div className="group-data">
+                { listUserRefelections }
+            </div>
+        )
+
+        if(this.props.selectedView === 'goals') {
+            return[
+                <h2>Today's Shared Goals for Group {this.props.groupId} </h2>,
+                goalsView
+            ]
+        }
+        else if(this.props.selectedView === 'timers') {
+            return[
+                <h2>Today's Shared Timers for Group {this.props.groupId} </h2>,
+                timersView
+            ]
+        }
+        else {
+            return[
+                <h2>Today's Shared Reflections for Group {this.props.groupId} </h2>,
+                reflectionsView
+            ]
+        }
     }
 }
 
@@ -105,7 +163,7 @@ class GroupGoals extends Component {
 class Goals extends Component {
       render() {
         return(
-            <div className="group-goal-list">
+            <div className="group-data-item">
                 <h2>{this.props.userName}'s Goals</h2><br/>
                 <CheckboxGoals goals={this.props.goals} />
             </div>
@@ -113,50 +171,102 @@ class Goals extends Component {
       }
   }
 
+  class Timers extends Component {
+      render() {
+        if(this.props.timers.length > 0) {
+            return(
+                <div className="group-data-item">
+                    <h2>{this.props.userName}'s Timers</h2><br/>
+                    <ul className="history-timers-list">
+                        <li>Writing: {secondsToHms(this.props.timers[0].writingtime)}</li>
+                        <li>Research: {secondsToHms(this.props.timers[0].researchtime)}</li>
+                        <li>Custom: {secondsToHms(this.props.timers[0].customtime)}</li>
+                    </ul>
+                </div>
+            );
+        }
+        else {
+            return(
+                <div className="group-data-item">
+                    <h2>{this.props.userName}'s Timers</h2><br/>
+                    <div className="no-timers">No timers.</div>
+                </div>
+            );
+        }
+      }
+  }
+
+  class Reflections extends Component {
+    render() {
+        if(this.props.reflections.length > 0 && this.props.reflections[0].reflectiontext.length > 0 && this.props.reflections[0].reflectiontext != ")(}){("){
+            const reflectionSplit = this.props.reflections[0].reflectiontext.split(delimiter);
+            
+            return(
+                <div className="group-data-item">
+                    <h2>{this.props.userName}'s Reflection</h2><br/>
+                    <ol>
+                        <li>{reflectionSplit[0]}</li>
+                        <li>{reflectionSplit[1]}</li>
+                        <li>{reflectionSplit[2]}</li>
+                    </ol>
+                    
+                    {/* <p>
+                        1. {reflectionSplit[0]}
+                    </p>
+                    <p>
+                        2. {reflectionSplit[1]}
+                    </p>
+                    <p>
+                        3. {reflectionSplit[2]}
+                    </p> */}
+                </div>
+            );
+        }
+        else{
+            return(
+                <div className="group-data-item">
+                    <h2>{this.props.userName}'s Reflection</h2><br/>
+                    <p>No reflection.</p>
+                </div>
+            );
+        }
+        
+    }
+  }
+
 class GroupMessages extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            messages: this.props.messages
+        };
+
     }
+
+    // componentDidMount() {
+    //     setInterval(() => {
+    //         this.checkNewMessages();
+    //     }, 5000);
+    // }
+
+    checkNewMessages() {
+        const messages = (axios.get(`groupchat/${this.props.user.groupid}`)).data;
+        console.log(messages);
+        this.setState({ messages });
+    }
+
     render() {
         const listGroupMessages = this.props.messages.map((msg) =>
             <div className="group-message" key={msg.id}>{msg.username}: {msg.chattext} </div>);
         return(
-            <div className="group-messages">
+            <div className="group-messages" id="group-messages">
                 { listGroupMessages }
             </div>
         );
     }
 }
 
-class ChatTextBox extends Component {
-    constructor(props) {
-        
-        super(props);
-        this.state = {
-            userId: 1,
-            newMessage: ''
-        }
-
-        this.onMessageSent = this.onMessageSent.bind(this);
-    }
-
-    async onMessageSent(event) {
-        event.preventDefault();
-        await axios.post(`/groupchat`, {groupid: this.props.user.groupid, chattext: event.target.value, chatdate: today, userid: this.props.user.id, username: this.props.user.firstName});
-    }
-
-    render() {
-        return(
-            <div>
-                <Form>
-                    <Form.Control type="text" value={this.props.newMessage} onChange={this.props.onMessageTyped} placeholder="Type your message here" />
-                    <Button variant="primary" type="submit">Send!</Button>
-                </Form>
-            </div>
-        );
-    }
-}
 
 
 export { Group };

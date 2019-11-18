@@ -5,7 +5,7 @@ import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortaw
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import { getTodaysDate, secondsToHms, Goals, CheckboxGoals } from './shared';
+import { getTodaysDate, secondsToHms, Goals, CheckboxGoals, delimiter } from './shared';
 
 const today = new Date();
 
@@ -130,11 +130,18 @@ class Timers extends Component {
 class Reflections extends Component {
     render() {
         if(this.props.reflections){
+            const reflectionSplit = this.props.reflections.reflectiontext.split(delimiter);
             return(
                 <div className="history-reflections">
                     <h2>Reflection</h2><br/>
                     <p>
-                        {this.props.reflections.reflectiontext}
+                        1. {reflectionSplit[0]}
+                    </p>
+                    <p>
+                        2. {reflectionSplit[1]}
+                    </p>
+                    <p>
+                        3. {reflectionSplit[2]}
                     </p>
                 </div>
             );

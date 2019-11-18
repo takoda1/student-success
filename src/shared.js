@@ -4,6 +4,8 @@ import Form from 'react-bootstrap/Form';
 import './Home.css';
 import Col from 'react-bootstrap/Col';
 
+const delimiter = ")(}){(";
+
 const layoutStyle = {
   padding: 20,
   border: '1px solid #DDD'
@@ -143,4 +145,4 @@ function getTodaysDate() {
   return(year.concat("-", month, "-", day));
 }
 
-export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals };
+export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals, delimiter };

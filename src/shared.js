@@ -25,8 +25,14 @@ function GoalList(props) {
       <ul className="goal-list">
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <Form className="addGoal" onSubmit={props.onGoalAdded}>
-          <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
-          <Button type="submit">Add Goal</Button>
+          <Form.Row>
+            <Col>
+              <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
+            </Col>
+            <Col>
+              <Button type="submit">Add Goal</Button>
+            </Col>
+          </Form.Row>
         </Form>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
@@ -52,10 +58,10 @@ class GoalItem extends React.Component {
       }}>
         <Form.Row className="goal-row">
           <Col>
-            <Form.Control type="text" size="sm" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
+            <Form.Control type="text" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
           </Col>
           <Col>
-            <Button size="sm" type="submit">Update</Button>
+            <Button type="submit">Update</Button>
           </Col>
         </Form.Row>
         {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
@@ -65,18 +71,15 @@ class GoalItem extends React.Component {
     const viewMode = (
       <div className="home-goal-list">
         <Form.Row className="goals-form-row">
-          {/* <Form.Group> */}
             <Col>
             <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
                 this.props.onGoalCheck(event.target.checked, this.props.goal);
               }} label={this.state.goaltext}/>
             </Col>
-                {/* {this.state.goaltext} */}
             <Col>
-            <Button className="edit" size="sm" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
-            <Button className="remove" size="sm" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
+              <Button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
+              <Button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
             </Col>
-          {/* </Form.Group> */}
         </Form.Row>
       </div>
     );

@@ -129,11 +129,11 @@ class Timers extends Component {
 
 class Reflections extends Component {
     render() {
-        if(this.props.reflections){
+        if(this.props.reflections && this.props.reflections.reflectiontext.length > 0 && this.props.reflections.reflectiontext != ")(}){(" && this.props.reflections.reflectiontext != ")(}){()(}){("){
             const reflectionSplit = this.props.reflections.reflectiontext.split(delimiter);
             return(
                 <div className="history-reflections">
-                    <h2>Reflection</h2><br/>
+                    <h2>Reflections</h2><br/>
                     <p>
                         1. {reflectionSplit[0]}
                     </p>

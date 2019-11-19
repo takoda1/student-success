@@ -15,7 +15,9 @@ const getPost = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -32,7 +34,9 @@ const addPost = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).json({ status: 'success', message: 'Forum post added' })
+            else {
+                response.status(201).json({ status: 'success', message: 'Forum post added' })
+            }
         })
     }
     else {
@@ -50,7 +54,9 @@ const putPost = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send('Forum post updated')
+            else {
+                response.status(201).send('Forum post updated')
+            }
         });
     }
     else {
@@ -65,7 +71,9 @@ const deletePost = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM forum WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`Forum post deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`Forum post deleted with ID: ${id}`)
+            }
         })
     }
     else {

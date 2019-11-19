@@ -5,7 +5,12 @@ const getAllChats = (request, response) => {
 
     if (!isNaN(groupid)) {
         pool.query('SELECT * FROM groupchat WHERE groupid = $1', [groupid], (error, results) => {
-            response.status(200).json(results.rows);
+            if (error) {
+                throw error
+            }
+            else {
+                response.status(200).json(results.rows)
+            }
         })
     }
     else {
@@ -26,7 +31,12 @@ const addChat = (request, response) => {
     
     if (!isNaN(groupid) && chattext != null && chatdate != null && !isNaN(userid) && username != null) {
         pool.query('INSERT INTO groupchat (groupid, chattext, chatdate, userid, username) VALUES ($1, $2, $3, $4, $5)', [groupid, chattext, chatdate, userid, username], (error) => {
-            response.status(201).json({ status: 'success', message: 'Chat added' })
+            if (error) {
+                throw error
+            }
+            else {
+                response.status(201).json({ status: 'success', message: 'Chat added' })
+            }
         })
     }
     else {

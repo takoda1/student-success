@@ -11,7 +11,9 @@ const getNote = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows)
+            else {
+                response.status(200).json(results.rows)
+            }
         })
     }
     else {
@@ -25,7 +27,9 @@ const getNoteById = (request, response) => {
     if (!isNaN(id)) {
         pool.query('SELECT * FROM notes WHERE id = $1', [id], (error, results) => {
             if (error) { throw error }
-            response.status(200).json(results.rows)
+            else {
+                response.status(200).json(results.rows)
+            }
         })
     }
     else {
@@ -40,7 +44,9 @@ const getAllNotesByDate = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows)
+            else {
+                response.status(200).json(results.rows)
+            }
         })
     }
     else {
@@ -64,7 +70,9 @@ const addNote = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).json({ status: 'success', message: 'Note added' })
+            else {
+                response.status(201).json({ status: 'success', message: 'Note added' })
+            }
         })
     }
     else {
@@ -88,7 +96,9 @@ const putNote = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send('Note updated')
+            else {
+                response.status(201).send('Note updated')
+            }
         });
     }
     else {
@@ -107,7 +117,9 @@ const deleteNote = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM notes WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`Note deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`Note deleted with ID: ${id}`)
+            }
         })
     }
     else {

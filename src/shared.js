@@ -26,7 +26,7 @@ function GoalList(props) {
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <Form className="addGoal" onSubmit={props.onGoalAdded}>
           <Form.Row>
-            <Col>
+            <Col className="goal-input">
               <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
             </Col>
             <Col>
@@ -57,7 +57,7 @@ class GoalItem extends React.Component {
         this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
       }}>
         <Form.Row className="goal-row">
-          <Col>
+          <Col className="goal-input">
             <Form.Control type="text" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
           </Col>
           <Col>
@@ -71,7 +71,7 @@ class GoalItem extends React.Component {
     const viewMode = (
       <div className="home-goal-list">
         <Form.Row className="goals-form-row">
-            <Col>
+            <Col className="goal-check-col">
             <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
                 this.props.onGoalCheck(event.target.checked, this.props.goal);
               }} label={this.state.goaltext}/>

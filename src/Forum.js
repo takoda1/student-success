@@ -105,8 +105,10 @@ class ActivePost extends Component {
                 <div className="active-post">
                     <h3>{this.props.post.title}</h3>
                     <p>{this.props.post.body}</p>
+                    <p className="active-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
                 </div>
                 <div className="post-replies">
+                    <h4>Comments:</h4>
                     {this.state.comments.map((comment) => <p>TODO</p>)}
                 </div>
             </div>

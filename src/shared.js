@@ -145,4 +145,9 @@ function getTodaysDate() {
   return(year.concat("-", month, "-", day));
 }
 
-export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals, delimiter };
+function fixDateWithYear(d) {
+  var res = d.split("-");
+  return(res[1].concat("/", res[2], "/", res[0].slice(-2)));
+}
+
+export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals, delimiter, fixDateWithYear };

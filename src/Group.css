@@ -50,7 +50,18 @@
 }
 .group-message {
     word-wrap: break-word;
+    background-color: #D8EBF4;
+    /* border: solid 1px black; */
+    padding: 0.5em;
+    margin-top: 0.5em;
+    border-radius: 10px;
 }
 .form-control-select {
     width: 40% !important;
+}
+.blockquote-footer {
+    text-align: right;
+}
+.message-date {
+    font-size: 1.25em;
 }

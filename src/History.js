@@ -5,7 +5,7 @@ import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortaw
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import { getTodaysDate, secondsToHms, Goals, CheckboxGoals, delimiter } from './shared';
+import { getTodaysDate, secondsToHms, Goals, delimiter, fixDateWithYear } from './shared';
 
 const today = new Date();
 
@@ -198,11 +198,6 @@ class Completed extends Component {
 function fixDate(d) {
     var res = d.split("-");
     return(res[1].concat("/", res[2]));
-}
-
-function fixDateWithYear(d) {
-    var res = d.split("-");
-    return(res[1].concat("/", res[2], "/", res[0]));
 }
 
 function formatDate(date){

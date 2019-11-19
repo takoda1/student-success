@@ -78,13 +78,7 @@ class App extends Component {
                         <Route path="/group">
                             <Group user={this.state.user} />
                         </Route>
-                        {
-                            auth0Client.getProfile()[config.roleUrl] === 'admin' ? (
-                            <div>
-                                <Route path="/admin"><Admin user={this.state.user} /></Route>
-                            </div>
-                            ) : (<p>You are not an admin, contact your administrator or takoda.ren@gmail.com</p>)
-                        }
+                        <Route path="/admin"><Admin user={this.state.user} /></Route>
                         </div>
                     ) : (<p>Loading... If this takes a while, you are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
                 }

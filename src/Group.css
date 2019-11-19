@@ -40,10 +40,13 @@
     font-size: 1.25em;
     margin-left: -1em;
 }
-#group-messages {
+.group-messages {
     padding-bottom: 1em;
     height: 60vh;
-    overflow: scroll;
+    max-height: 60vh;
+    overflow-y: scroll;
+    /* position: absolute; */
+    /* bottom: 0; */
 }
 .group-message {
     word-wrap: break-word;

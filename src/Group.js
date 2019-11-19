@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './Group.css';
 import axios from 'axios';
 import auth0Client from './Auth';
-import { getTodaysDate, CheckboxGoals, secondsToHms, delimiter } from './shared';
+import { getTodaysDate, CheckboxGoals, secondsToHms, delimiter, fixDateWithYear } from './shared';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
@@ -113,13 +113,13 @@ class GroupData extends Component {
 
     render() {
         const listUserGoals = this.props.groupGoals.map((user) =>
-            <div key={user.userId}><Goals goals={user.goals} userName={user.firstName} /> </div>);
+            <div key={"goals-" + user.userId}><Goals goals={user.goals} userName={user.firstName} /> </div>);
 
         const listUserTimers = this.props.groupTimers.map((user) =>
-            <div key={user.userId}><Timers timers={user.timers} userName={user.firstName} /></div>);
+            <div key={"timers-" + user.userId}><Timers timers={user.timers} userName={user.firstName} /></div>);
 
         const listUserRefelections = this.props.groupReflections.map((user) =>
-            <div key={user.userId}><Reflections reflections={user.reflections} userName={user.firstName} /></div>);
+            <div key={"reflections-" + user.userId}><Reflections reflections={user.reflections} userName={user.firstName} /></div>);
         
         const goalsView = (
             <div className="group-data">
@@ -251,8 +251,13 @@ class GroupMessages extends Component {
     }
 
     render() {
+
+        var dates = [];
         const listGroupMessages = this.props.messages.map((msg) =>
-            <div className="group-message" key={msg.id}>{msg.username}: {msg.chattext} </div>);
+            <div>
+                <span className="message-date"><b>{!dates.includes(msg.chatdate)? (dates.push(msg.chatdate), fixDateWithYear(msg.chatdate)) : false}</b></span> 
+                <div className="group-message" key={msg.id}><b>{msg.username}</b>: {msg.chattext} </div>
+            </div>);
         return(
             <div className="group-messages" id="group-messages">
                 { listGroupMessages }

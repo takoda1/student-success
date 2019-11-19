@@ -134,7 +134,7 @@ class Home extends React.Component {
 class Goals extends React.Component {
     render() {
         return (
-            <div style={{ display: "inline-block", width: '40%', verticalAlign: 'top'}}>
+            <div style={{ display: "inline-block", width: '35%', verticalAlign: 'top'}}>
                 <h3>Today's Goals</h3>
                 <div style={{ marginRight: 15, paddingRight: 25, borderRight: '2px solid #DDD' }}>
                     <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>

@@ -1,0 +1,46 @@
+.forum-body {
+    display: grid;
+    grid-template-columns: 20vw 80vw;
+    grid-template-areas:
+    "list active";
+}
+.post-list {
+    grid-area: list;
+    display: grid;
+    grid-template-rows: auto;
+    padding: 10px;
+}
+.post-preview {
+    background: #D8EBF4;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+}
+.post-preview:hover {
+    background: #A6C4FF;
+}
+.active-container {
+    background: #A6C4FF;
+    grid-area: active;
+    padding: 10px;
+}
+.active-container h4 {
+    padding: 20px;
+}
+.active-post {
+    background: #D8EBF4;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+    height: 90%;
+}
+.active-post h3 {
+    padding: 15px;
+}
+.active-post p {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+.active-info {
+    text-align: right;
+}

@@ -36,7 +36,19 @@ class Home extends React.Component {
     }
 
     checkTotalGoals() {
-        const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ?
+        if(this.state.goals.length === 0) {
+            const goalsCompleted = (
+                <div>
+                    <p style={{ display:"inline-block" }}> You haven't recorded any goals for today yet! </p> 
+                </div>
+            );
+
+            this.setState(() => {
+                return { goalsCompleted };
+            });
+        }
+        else {
+            const goalsCompleted = this.state.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ?
             (
                 <div>
                     <FontAwesomeIcon icon={faCheckCircle} />
@@ -52,9 +64,11 @@ class Home extends React.Component {
             
             );
 
-        this.setState(() => {
-            return { goalsCompleted };
-        });
+            this.setState(() => {
+                return { goalsCompleted };
+            });
+        }
+        
     }
 
     async onGoalCheck(completed, goal) {

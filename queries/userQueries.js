@@ -5,7 +5,9 @@ const getUsers = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(200).json(results.rows);
+        else {
+            response.status(200).json(results.rows);
+        }
     })
 }
 
@@ -17,7 +19,9 @@ const addUser = (request, response) => {
             if (error) {
                 response.status(400).send(error)
             }
-            response.status(201).send('User added!')
+            else {
+                response.status(201).send('User added!')
+            }
         })
     }
     else {
@@ -36,7 +40,9 @@ const putUser = (request, response) => {
             if (error) {
                 response.status(400).send(error)
             }
-            response.status(201).send('User updated!')
+            else {
+                response.status(201).send('User updated!')
+            }
         })
     }
     else {
@@ -50,7 +56,9 @@ const getUser = (request, response) => {
     if (!isNaN(id)) {
         pool.query('SELECT * FROM users WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).json(result.rows);
+            else {
+                response.status(200).json(result.rows);
+            }
         })
     }
     else {
@@ -63,7 +71,9 @@ const getUserByGroup = (request, response) => {
     if (!isNaN(groupid)) {
         pool.query('SELECT * FROM users WHERE groupid = $1', [groupid], (error, result) => {
             if (error) { throw error }
-            response.status(200).json(result.rows)
+            else{
+                response.status(200).json(result.rows)
+            }
         })
     }
     else {
@@ -76,7 +86,9 @@ const getUserByName = (request, response) => {
     const lastname = request.params.lastname
     pool.query('SELECT * FROM users WHERE firstname = $1 AND lastname = $2', [firstname, lastname], (error, result) => {
         if (error) { throw error }
-        response.status(200).json(result.rows)
+        else {
+            response.status(200).json(result.rows)
+        }
     })
 }
 
@@ -94,7 +106,9 @@ const deleteUser = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM users WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`User deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`User deleted with ID: ${id}`)
+            }
         })
     }
     else {

@@ -11,7 +11,9 @@ const getGoals = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -27,7 +29,9 @@ const getGoal = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -53,7 +57,9 @@ const addGoal = (request, response) => {
                 if (error) {
                     throw error
                 }
-                response.status(201).json({ status: 'success', message: 'Goal added' })
+                else {
+                    response.status(201).json({ status: 'success', message: 'Goal added' })
+                }
             })
         }
         else {
@@ -77,7 +83,9 @@ const putGoal = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send('Goal updated')
+            else {
+                response.status(201).send('Goal updated')
+            }
         });
     }
     else {
@@ -92,7 +100,9 @@ const deleteGoal = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM goals WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`Goal deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`Goal deleted with ID: ${id}`)
+            }
         })
     }
     else {

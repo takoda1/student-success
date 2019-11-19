@@ -209,16 +209,6 @@ class Goals extends Component {
                         <li>{reflectionSplit[1]}</li>
                         <li>{reflectionSplit[2]}</li>
                     </ol>
-                    
-                    {/* <p>
-                        1. {reflectionSplit[0]}
-                    </p>
-                    <p>
-                        2. {reflectionSplit[1]}
-                    </p>
-                    <p>
-                        3. {reflectionSplit[2]}
-                    </p> */}
                 </div>
             );
         }
@@ -244,6 +234,10 @@ class GroupMessages extends Component {
 
     }
 
+    componentDidUpdate() {
+        const messagesDiv = document.getElementById('group-messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
     // componentDidMount() {
     //     setInterval(() => {
     //         this.checkNewMessages();

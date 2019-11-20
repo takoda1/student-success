@@ -135,6 +135,7 @@ class Home extends React.Component {
                                     <Timers user={this.props.user} />
                                 </div>
                                 <Reflections user={this.props.user} />
+                                <Note user={this.props.user} />
                             </div>
                         )
                     }
@@ -425,6 +426,67 @@ class Reflections extends React.Component {
                 {this.state.editing ? editMode : viewMode}
             </div>
         );
+    }
+}
+
+class Note extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            note: {},
+            noteText: "",
+            editing: false,
+            doneToday: true,
+        }
+        
+        this.updateNote = this.updateNote.bind(this);
+    }
+
+    async componentDidMount() {
+        const note = (await axios.get(`/note/${this.props.user.id}/${todayDate}`)).data[0];
+        if (note) {
+            this.setState({ note, doneToday: true, noteText: note.notetext });
+        } else {
+            this.setState({ doneToday: false })
+        }
+    }
+
+    async updateNote(event) {
+        event.preventDefault();
+        
+        if (this.state.doneToday) {
+            await axios.put(`/note/${this.state.note.id}`, { notetext: this.state.noteText });
+        } else {
+            await axios.post(`/note`, { userid: this.props.user.id, notedate: todayDate, notetext: this.state.noteText });
+            this.setState({ doneToday: true });
+        }
+
+        const note = (await axios.get(`/note/${this.props.user.id}/${todayDate}`)).data[0];
+        this.setState({ note, editing: false });
+    }
+
+    render() {
+        const viewMode = (
+            <div>
+                <p>{ this.state.noteText }</p>
+                <Button onClick={() => this.setState({ editing: true })}>Edit</Button>
+            </div>
+        )
+
+        const editMode = (
+            <Form onSubmit={this.updateNote}>
+                <Form.Control as="textarea" rows="5" value={this.state.noteText} onChange={(event) => this.setState({ noteText: event.target.value })}></Form.Control>
+                <Button type="submit">Save Note</Button>
+            </Form>
+        )
+
+        return (
+            <div>
+                <h3>Notes for Your Professor:</h3>
+                { this.state.editing ? editMode : viewMode }
+            </div>
+        )
     }
 }
 

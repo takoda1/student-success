@@ -3,7 +3,10 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
+import auth0Client from './Auth';
+import config from './auth_config.json';
 
 class Admin extends React.Component {
     constructor(props) {
@@ -66,69 +69,99 @@ class Admin extends React.Component {
     render() {
         return (
             <div>
-                <h1>Admin</h1>
-                <div>
-                    <div className="userList">
-                        <h3>Users:</h3>
-                        <ul>
-                            { this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} />)}
-                        </ul>
-                    </div>
+            {
+                auth0Client.getProfile()[config.roleUrl] === 'admin' ? (
+                    <div>
+                        <h1>Admin</h1>
+                        <Row className="justify-content-center text-center">
 
-                    <Form onSubmit={this.addUser}>
-                        <Form.Row>
-                            <Col>
-                                <Form.Label>First Name: </Form.Label>
+                            <Col md={10}>
+
+                                <br />
+
+                                <h2>Groups</h2>
+                                <Row>
+                                    <Col>
+                                        <h3>Groups list:</h3>
+                                        <ul>
+                                            {this.state.currentGroups.map((group) => <GroupView group={group} key={group.id} />)}
+                                        </ul>
+                                    </Col>
+                                    <Col>
+                                        <Form onSubmit={this.addGroup}>
+                                            <Form.Row>
+                                                <Col>
+                                                    <Form.Label>Group Name: </Form.Label>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Control value={this.state.groupNameField} onChange={(event) => this.setState({ groupNameField: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <br />
+                                            <Button type="submit">Add Group</Button>
+                                        </Form>
+                                    </Col>
+                                </Row>
+
+                                <br />
+
+                                <h2>Users</h2>
+                                <Row>
+                                    <Col md={6}>
+                                        <div className="userList">
+                                            <h3>Users list:</h3>
+                                            <ul>
+                                                {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} />)}
+                                            </ul>
+                                        </div>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Form onSubmit={this.addUser}>
+                                            <Form.Row>
+                                                <Col>
+                                                    <Form.Label>First Name: </Form.Label>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Control value={this.state.firstField} onChange={(event) => this.setState({ firstField: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col>
+                                                    <Form.Label>Last Name: </Form.Label>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Control value={this.state.lastField} onChange={(event) => this.setState({ lastField: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col>
+                                                    <Form.Label>Email: </Form.Label>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Control value={this.state.emailField} onChange={(event) => this.setState({ emailField: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col>
+                                                    <Form.Label>Group: </Form.Label>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Control type="number" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <br />
+                                            <Button type="submit">Add User</Button>
+                                        </Form>
+                                    </Col>
+                                </Row>
+
+
+
                             </Col>
-                            <Col>
-                                <Form.Control value={this.state.firstField} onChange={(event) => this.setState({ firstField: event.target.value })} />
-                            </Col>
-                        </Form.Row>
-                        <Form.Row>
-                            <Col>
-                                <Form.Label>Last Name: </Form.Label>
-                            </Col>
-                            <Col>
-                                <Form.Control value={this.state.lastField} onChange={(event) => this.setState({ lastField: event.target.value })} />
-                            </Col>
-                        </Form.Row>
-                        <Form.Row>
-                            <Col>
-                                <Form.Label>Email: </Form.Label>
-                            </Col>
-                            <Col>
-                                <Form.Control value={this.state.emailField} onChange={(event) => this.setState({ emailField: event.target.value })} />
-                            </Col>
-                        </Form.Row>
-                        <Form.Row>
-                            <Col>
-                                <Form.Label>Group: </Form.Label>
-                            </Col>
-                            <Col>
-                                <Form.Control type="number" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
-                            </Col>
-                        </Form.Row>
-                        <Button type="submit">Add User</Button>
-                    </Form>
-                </div>
-                <div>
-                    <h3>Groups</h3>
-                    <ul>
-                        { this.state.currentGroups.map((group) => <GroupView group={group} key={ group.id } />)}
-                    </ul>
-                    <Form onSubmit={this.addGroup}>
-                        <Form.Row>
-                            <Col>
-                                <Form.Label>Group Name: </Form.Label>
-                            </Col>
-                            <Col>
-                                <Form.Control value={this.state.groupNameField} onChange={(event) => this.setState({ groupNameField: event.target.value })} />
-                            </Col>
-                        </Form.Row>
-                        <Button type="submit">Add Group</Button>
-                    </Form>
-                </div>
-                
+                        </Row>
+                        </div>
+                    ) : (<p>You are not an admin.</p>)
+            }
             </div>
         );
     }

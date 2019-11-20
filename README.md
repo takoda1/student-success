@@ -9,11 +9,12 @@
 * [7. License](#7-license)
 * [8. Acknowledgements](#8-acknowledgements)
 * [Developer section](#developer-section)
+* [Auth0](#auth0)
 * [Future notes](#future-notes)
 
 # 0. Software for Student Success
 This webapp is meant to be used for senior honors students working on their honors thesis to help them stay organized and motivated throughout the writing process. The app also allows students to collaborate and interact with other students in their class.
-
+ 
 # 1. Getting started
 
 ## Prerequisites 
@@ -109,7 +110,7 @@ In a react component:
 ## Tables
 
 Users:
-{id: int, firstname: string, lastname: string, email: string, group: foreignKey(groups: id)}
+{id: int, firstname: string, lastname: string, email: string, groupid: foreignKey(groups: id), hidetimer: boolean, hidereflection: boolean, classid: foreignKey(classes: id)}
 
 
 Goals:
@@ -131,6 +132,12 @@ Groupchat:
 Forum:
 {id: int, title: string, body: string, userid: int, username: string, postdate: string}
 
+Notes:
+{ id: int, userid: int, notedate: "yyyy-mm-dd", notetext: string }
+
+Classes:
+{ id: int, classname: string }
+
 ## Current endpoints:
 
 ### Users
@@ -145,9 +152,9 @@ GET /userByGroup/:groupid     Returns the user(s) with specified groupid
 
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
-PUT /user/:id			Updates the user given its id with body of {firstname: string, lastname: string, email: string, groupid: int}
+PUT /user/:id			Updates the user given its id with body of {firstname: string, lastname: string, email: string, groupid: int, hidetimer: boolean, hidereflection: boolean, classid: int}
 
-POST /user   (Requires json body of {firstname: string, lastname: string, email: string, groupid: int})
+POST /user   (Requires json body of {firstname: string, lastname: string, email: string, groupid: int, classid: int})
 Posts user with specified values
 
 DELETE /user/:id	Deletes user with specified id
@@ -218,7 +225,7 @@ GET /grou/:id		No, that is not a typo. Gets a single group by provided id
 
 POST /group			Posts a single group with body {groupname: string}
 
-DELETE /group/:id	Deletes a singel group with provided id
+DELETE /group/:id	Deletes a single group with provided id
 
 ### Groupchat
 
@@ -238,9 +245,74 @@ POST /forum			Posts a forum post, requires body of  {title: string, body: string
 
 DELETE /forum/:id	Deletes a forum post by its id 
 
+### Notes
+
+GET /note/:userid/:date		Gets a note for a userid and given date (yyyy-mm-dd), to be used on Home page to get a user's note for the day
+
+GET /note/:id		Gets a note by its unique id
+
+GET /noteByDate/:date		Gets all notes for a specified date (yyyy-mm-dd format)  To be used on admin page to get all notes from students for the day
+
+POST /note			Posts a note with body { userid: int, notedate: "yyyy-mm-dd", notetext: string }
+
+PUT /note/:id		Updates a note with specified id with body {notetext: string}
+
+DELETE /note/:id	Deletes a note with specified id
+
+### Classes
+
+GET /class/:classname    Gets the class with specified classname
+
+GET /classes     Gets all classes
+
+GET /clas/:id		No, that is not a typo. Gets a single class by provided id
+
+POST /class			Posts a single class with body {classname: string}
+
+DELETE /class/:id	Deletes a single class with provided id
 
 ### Forum comments/replies
 
+## Auth0
+
+https://auth0.com/blog/role-based-access-control-rbac-and-react-apps/
+
+If you want to create your own auth0 account to function with this app, follow these steps:
+- Create an auth0 account
+- Create a new single-page application (click of a button when creating a new auth0 app)
+- Copy the domain and clientid (under settings) and put it in src/auth_config.json
+- Add `http://localhost:3005/callback, https://student-success.herokuapp.com/callback` to ALLOWED CALLBACK URLS under application settings in auth0
+- Add `http://localhost:3005, https://student-success.herokuapp.com` to ALLOWED WEB ORIGINS and ALLOWED LOGOUT URLS under application settings in auth0
+- Save the changes
+- Add this snippet of code to an empty rule (Rules are on the left sidebar on the auth0 dashboard) : 
+```function (user, context, callback) {
+  user.app_metadata = user.app_metadata || {};
+  //replace these emails with your desired admin emails
+  var emails = ['jjacob20@live.unc.edu', 'perryh@cs.unc.edu', 'takoda@cs.unc.edu'];
+  for(var i = 0; i < emails.length; i++){
+    if(user.email === emails[i]){
+      user.app_metadata.role = 'admin';
+      break;
+    }
+    else{
+      user.app_metadata.role = 'user';
+    }
+  }
+  
+	if (!user.email || !user.email_verified) {
+    return callback(null, user, context);
+  }
+ 
+  auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
+    .then(() => {
+      context.idToken['https://student-success.herokuapp.com/role'] = user.app_metadata.role;
+      callback(null, user, context);
+    })
+    .catch((err) => {
+      callback(err);
+    });
+}
+```
 
 ## FUTURE NOTES
 

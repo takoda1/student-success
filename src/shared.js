@@ -4,6 +4,8 @@ import Form from 'react-bootstrap/Form';
 import './Home.css';
 import Col from 'react-bootstrap/Col';
 
+const delimiter = ")(}){(";
+
 const layoutStyle = {
   padding: 20,
   border: '1px solid #DDD'
@@ -23,8 +25,14 @@ function GoalList(props) {
       <ul className="goal-list">
         {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <Form className="addGoal" onSubmit={props.onGoalAdded}>
-          <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
-          <Button type="submit">Add Goal</Button>
+          <Form.Row>
+            <Col className="goal-input">
+              <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
+            </Col>
+            <Col>
+              <Button type="submit">Add Goal</Button>
+            </Col>
+          </Form.Row>
         </Form>
       </ul>
       <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
@@ -49,11 +57,11 @@ class GoalItem extends React.Component {
         this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
       }}>
         <Form.Row className="goal-row">
-          <Col>
-            <Form.Control type="text" size="sm" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
+          <Col className="goal-input">
+            <Form.Control type="text" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
           </Col>
           <Col>
-            <Button size="sm" type="submit">Update</Button>
+            <Button type="submit">Update</Button>
           </Col>
         </Form.Row>
         {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
@@ -63,18 +71,15 @@ class GoalItem extends React.Component {
     const viewMode = (
       <div className="home-goal-list">
         <Form.Row className="goals-form-row">
-          {/* <Form.Group> */}
-            <Col>
+            <Col className="goal-check-col">
             <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
                 this.props.onGoalCheck(event.target.checked, this.props.goal);
               }} label={this.state.goaltext}/>
             </Col>
-                {/* {this.state.goaltext} */}
             <Col>
-            <Button className="edit" size="sm" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
-            <Button className="remove" size="sm" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
+              <Button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
+              <Button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
             </Col>
-          {/* </Form.Group> */}
         </Form.Row>
       </div>
     );
@@ -143,4 +148,9 @@ function getTodaysDate() {
   return(year.concat("-", month, "-", day));
 }
 
-export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals };
+function fixDateWithYear(d) {
+  var res = d.split("-");
+  return(res[1].concat("/", res[2], "/", res[0].slice(-2)));
+}
+
+export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals, delimiter, fixDateWithYear };

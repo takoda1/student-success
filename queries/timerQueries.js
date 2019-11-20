@@ -13,7 +13,9 @@ const getTimer = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -33,7 +35,9 @@ const getTimerById = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -62,7 +66,9 @@ const addTimer = (request, response) => {
                 if (error) {
                     throw error
                 }
-                response.status(201).json({ status: 'success', message: 'Timer added' })
+                else {
+                    response.status(201).json({ status: 'success', message: 'Timer added' })
+                }
             })
         }
         else {
@@ -90,7 +96,9 @@ const putTimer = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send('Timer updated')
+            else {
+                response.status(201).send('Timer updated')
+            }
         });
     }
     else {
@@ -109,7 +117,9 @@ const deleteTimer = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM timers WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`Timer deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`Timer deleted with ID: ${id}`)
+            }
         })
     }
     else {

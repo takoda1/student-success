@@ -11,7 +11,9 @@ const getGroup = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(200).json(results.rows);
+        else {
+            response.status(200).json(results.rows);
+        }
     })
 }
 
@@ -20,7 +22,9 @@ const getGroups = (request, response) =>{
         if (error) {
             throw error
         }
-        response.status(200).json(results.rows);
+        else {
+            response.status(200).json(results.rows);
+        }
     })
 }
 
@@ -33,7 +37,9 @@ const addGroup = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send('Group added!')
+            else {
+                response.status(201).send('Group added!')
+            }
         })
     }
     else {
@@ -47,7 +53,9 @@ const getGroupById = (request, response) => {
     if (!isNaN(id)) {
         pool.query('SELECT * FROM groups WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).json(result.rows);
+            else {
+                response.status(200).json(result.rows);
+            }
         })
     }
     else {
@@ -60,7 +68,9 @@ const deleteGroup = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM groups WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`Group deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`Group deleted with ID: ${id}`)
+            }
         })
     }
     else {

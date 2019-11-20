@@ -13,7 +13,9 @@ const getReflection = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -33,7 +35,9 @@ const getReflectionById = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(200).json(results.rows);
+            else {
+                response.status(200).json(results.rows);
+            }
         })
     }
     else {
@@ -60,7 +64,9 @@ const addReflection = (request, response) => {
                 if (error) {
                     throw error
                 }
-                response.status(201).json({ status: 'success', message: 'Reflection added' })
+                else {
+                    response.status(201).json({ status: 'success', message: 'Reflection added' })
+                }
             })
         }
         else {
@@ -88,7 +94,9 @@ const putReflection = (request, response) => {
             if (error) {
                 throw error
             }
-            response.status(201).send('Reflection updated')
+            else {
+                response.status(201).send('Reflection updated')
+            }
         });
     }
     else {
@@ -107,7 +115,9 @@ const deleteReflection = (request, response) => {
     if (!isNaN(id)) {
         pool.query('DELETE FROM reflections WHERE id = $1', [id], (error, result) => {
             if (error) { throw error }
-            response.status(200).send(`Reflection deleted with ID: ${id}`)
+            else {
+                response.status(200).send(`Reflection deleted with ID: ${id}`)
+            }
         })
     }
     else {

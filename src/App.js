@@ -9,14 +9,13 @@ import { Home } from './Home';
 import { History } from './History';
 import { Admin } from './Admin';
 import { Group } from './Group';
+import { Forum } from './Forum';
 import './App.css';
 import NavBar from "./components/NavBar";
-//import { useAuth0 } from "./react-auth0-spa";
 import auth0Client from './Auth';
 import Button from 'react-bootstrap/Button';
+import config from './auth_config.json';
 
-
-import Profile from "./components/Profile";
 import Callback from './Callback';
 
 class App extends Component {
@@ -58,7 +57,10 @@ class App extends Component {
                         <NavButton name="History" path="/history" />
                         <NavButton name="Group" path="/group" />
                         <NavButton name="Forum" path="/forum" />
-                        <NavButton name="Admin" path="/admin" />
+                        {
+                            (this.state.user && auth0Client.getProfile()[config.roleUrl] === 'admin') && 
+                            <NavButton name="Admin" path="/admin" />
+                        }
                     </div>
                 </nav>
 
@@ -77,8 +79,16 @@ class App extends Component {
                         <Route path="/group">
                             <Group user={this.state.user} />
                         </Route>
-                        <Route path="/admin"><Admin user={this.state.user} /></Route>
-                        <Route path="/profile" component={Profile} />
+                        <Route path="/forum">
+                            <Forum user={this.state.user} />
+                        </Route>
+                        {
+                            auth0Client.getProfile()[config.roleUrl] === 'admin' ? (
+                            <div>
+                                <Route path="/admin"><Admin user={this.state.user} /></Route>
+                            </div>
+                            ) : (<Route path="/admin"><p>You are not an admin, contact your administrator or takoda.ren@gmail.com</p></Route>)
+                        }
                         </div>
                     ) : (<p>Loading... If this takes a while, you are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
                 }

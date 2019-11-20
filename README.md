@@ -110,7 +110,7 @@ In a react component:
 ## Tables
 
 Users:
-{id: int, firstname: string, lastname: string, email: string, group: foreignKey(groups: id)}
+{id: int, firstname: string, lastname: string, email: string, groupid: foreignKey(groups: id), hidetimer: boolean, hidereflection: boolean, classid: foreignKey(classes: id)}
 
 
 Goals:
@@ -135,6 +135,9 @@ Forum:
 Notes:
 { id: int, userid: int, notedate: "yyyy-mm-dd", notetext: string }
 
+Classes:
+{ id: int, classname: string }
+
 ## Current endpoints:
 
 ### Users
@@ -149,9 +152,9 @@ GET /userByGroup/:groupid     Returns the user(s) with specified groupid
 
 GET /user/:firstName/:lastName	Returns user with provided firstname and lastname
 
-PUT /user/:id			Updates the user given its id with body of {firstname: string, lastname: string, email: string, groupid: int}
+PUT /user/:id			Updates the user given its id with body of {firstname: string, lastname: string, email: string, groupid: int, hidetimer: boolean, hidereflection: boolean, classid: int}
 
-POST /user   (Requires json body of {firstname: string, lastname: string, email: string, groupid: int})
+POST /user   (Requires json body of {firstname: string, lastname: string, email: string, groupid: int, classid: int})
 Posts user with specified values
 
 DELETE /user/:id	Deletes user with specified id
@@ -222,7 +225,7 @@ GET /grou/:id		No, that is not a typo. Gets a single group by provided id
 
 POST /group			Posts a single group with body {groupname: string}
 
-DELETE /group/:id	Deletes a singel group with provided id
+DELETE /group/:id	Deletes a single group with provided id
 
 ### Groupchat
 
@@ -255,6 +258,18 @@ POST /note			Posts a note with body { userid: int, notedate: "yyyy-mm-dd", notet
 PUT /note/:id		Updates a note with specified id with body {notetext: string}
 
 DELETE /note/:id	Deletes a note with specified id
+
+### Classes
+
+GET /class/:classname    Gets the class with specified classname
+
+GET /classes     Gets all classes
+
+GET /clas/:id		No, that is not a typo. Gets a single class by provided id
+
+POST /class			Posts a single class with body {classname: string}
+
+DELETE /class/:id	Deletes a single class with provided id
 
 ### Forum comments/replies
 

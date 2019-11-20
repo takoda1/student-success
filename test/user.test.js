@@ -15,14 +15,18 @@ describe('USER API', () => {
         firstname: "Test",
         lastname: "BOI",
         email: "A@A.com",
-        groupid: 1
+        groupid: 1,
+        classid: 1
     }
 
     var userUpdate = {
         firstname: "2",
         lastname: "2",
         email: "2@2.com",
-        groupid: 1
+        groupid: 1,
+        classid:1,
+        hidetimer: false,
+        hidereflection: true
     }
 
     var userId = ''
@@ -46,7 +50,7 @@ describe('USER API', () => {
                 res.should.have.status(200)
                 res.body.should.be.a('array')
                 //initial insertion from init.sql plus current insertion plus test user
-                res.body.length.should.equal(3)
+                res.body.length.should.equal(2)
             })
     })
 
@@ -82,7 +86,7 @@ describe('USER API', () => {
             .get('/userByGroup/1')
             .then((res) => {
                 res.should.have.status(200)
-                res.body.length.should.equal(3) //init.sql inserts a user with group id 1 in, so init.sql user+ the user in this test + another test user
+                res.body.length.should.equal(2) //init.sql inserts a user with group id 1 in, so init.sql user+ the user in this test
             })
     })
 

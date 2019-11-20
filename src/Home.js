@@ -386,7 +386,7 @@ class Reflections extends React.Component {
 
     render() {
         const viewMode = (
-            <div className="reflections">
+            <div className="text-block">
                 <p>1. What obstacles did you encounter, if any?</p>
                 <p>
                     {this.state.reflectionQuestions[0]}
@@ -399,13 +399,13 @@ class Reflections extends React.Component {
                 <p>
                     {this.state.reflectionQuestions[2]}
                 </p>
-                <Button className="editRefelection" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</Button>
+                <Button className="editReflection" onClick={() => this.setState({ editing: !this.state.editing })}>Edit</Button>
             </div>
         );
 
         const editMode = (
             <Form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
-                <div className="reflections">
+                <div className="text-block">
                     <p>1. What obstacles did you encounter, if any?</p>
                     <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[0]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 0, 1) })} />
                     <br/>
@@ -468,14 +468,14 @@ class Note extends React.Component {
 
     render() {
         const viewMode = (
-            <div>
+            <div className="text-block">
                 <p>{ this.state.noteText }</p>
                 <Button onClick={() => this.setState({ editing: true })}>Edit</Button>
             </div>
         )
 
         const editMode = (
-            <Form onSubmit={this.updateNote}>
+            <Form className="text-block" onSubmit={this.updateNote}>
                 <Form.Control as="textarea" rows="5" value={this.state.noteText} onChange={(event) => this.setState({ noteText: event.target.value })}></Form.Control>
                 <Button type="submit">Save Note</Button>
             </Form>

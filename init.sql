@@ -18,7 +18,7 @@ CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
 	firstName VARCHAR(30),
 	lastName VARCHAR(30),
-	email VARCHAR(30),
+	email VARCHAR(100) UNIQUE,
 	groupid INTEGER REFERENCES groups(id),
 	hidetimer BOOLEAN,
 	hidereflection BOOLEAN,

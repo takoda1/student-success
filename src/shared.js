@@ -23,7 +23,7 @@ function GoalList(props) {
   return (
     <div>
       <ul className="goal-list">
-        {props.goals.map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
+        {props.goals.sort((a, b) => a.id > b.id).map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
         <Form className="addGoal" onSubmit={props.onGoalAdded}>
           <Form.Row>
             <Col className="goal-input">

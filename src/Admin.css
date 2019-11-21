@@ -1,0 +1,16 @@
+.text-block {
+    background-color: #A6C4FF;
+    padding: 0.75em .75em .75em .75em;
+    border-radius: 10px;
+}
+
+h3 {
+    text-align: left;
+    margin-top: 1em;
+    padding: 5px;
+}
+
+#bootstrap-overrides .row {
+    margin-left: 0em;
+    margin-right: 0em;
+}

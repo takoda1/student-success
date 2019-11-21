@@ -7,6 +7,10 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import auth0Client from './Auth';
 import config from './auth_config.json';
+import { getTodaysDate } from './shared';
+import './Admin.css'
+
+const todayDate = getTodaysDate();
 
 class Admin extends React.Component {
     constructor(props) {
@@ -68,27 +72,25 @@ class Admin extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="bootstrap-overrides">
             {
                 auth0Client.getProfile()[config.roleUrl] === 'admin' ? (
-                    <div>
-                        <h1>Admin</h1>
-                        <Row className="justify-content-center text-center">
-
-                            <Col md={10}>
-
+                    <div className="page">
+                        <Row >
+                            <Col >
                                 <br />
-
-                                <h2>Groups</h2>
                                 <Row>
                                     <Col>
                                         <h3>Groups list:</h3>
-                                        <ul>
-                                            {this.state.currentGroups.map((group) => <GroupView group={group} key={group.id} />)}
-                                        </ul>
+                                        <div className="text-block">
+                                            <ul>
+                                                {this.state.currentGroups.map((group) => <GroupView group={group} key={group.id} />)}
+                                            </ul>
+                                        </div>
                                     </Col>
                                     <Col>
-                                        <Form onSubmit={this.addGroup}>
+                                        <h3>New Group:</h3>
+                                        <Form onSubmit={this.addGroup} className="text-block" >
                                             <Form.Row>
                                                 <Col>
                                                     <Form.Label>Group Name: </Form.Label>
@@ -105,18 +107,18 @@ class Admin extends React.Component {
 
                                 <br />
 
-                                <h2>Users</h2>
                                 <Row>
                                     <Col md={6}>
-                                        <div className="userList">
-                                            <h3>Users list:</h3>
+                                        <h3>Users list:</h3>
+                                        <div className="text-block">
                                             <ul>
                                                 {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} />)}
                                             </ul>
                                         </div>
                                     </Col>
                                     <Col md={6}>
-                                        <Form onSubmit={this.addUser}>
+                                        <h3>New User:</h3>
+                                        <Form onSubmit={this.addUser} className="text-block" >
                                             <Form.Row>
                                                 <Col>
                                                     <Form.Label>First Name: </Form.Label>
@@ -141,7 +143,7 @@ class Admin extends React.Component {
                                                     <Form.Control value={this.state.emailField} onChange={(event) => this.setState({ emailField: event.target.value })} />
                                                 </Col>
                                             </Form.Row>
-                                            <Form.Row>
+                                            <Form.Row >
                                                 <Col>
                                                     <Form.Label>Group: </Form.Label>
                                                 </Col>
@@ -155,8 +157,12 @@ class Admin extends React.Component {
                                     </Col>
                                 </Row>
 
-
-
+                                <Row>
+                                    <Col>
+                                        <h3>Notes for You:</h3>
+                                        <Notes currentUsers={this.state.currentUsers} />
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
                         </div>
@@ -251,6 +257,7 @@ class UserView extends React.Component {
                     <Form onSubmit={(e) => {
                         e.preventDefault();
                         this.props.editUser(this.props.user.id, this.state.firstField, this.state.lastField, this.state.emailField, this.state.groupField);
+                        this.setState({ show: false })
                     }}>
                         <Form.Row>
                             <Col>
@@ -265,6 +272,8 @@ class UserView extends React.Component {
                             <Col>
                                 <Form.Control value={this.state.lastField} onChange={(event) => this.setState({ lastField: event.target.value })} />
                             </Col>
+                        </Form.Row>
+                        <Form.Row>
                             <Col>
                                 <Form.Label>Email Address: </Form.Label>
                             </Col>
@@ -297,25 +306,39 @@ class UserView extends React.Component {
                 {`${this.props.user.firstname} ${this.props.user.lastname} - ${this.props.user.email} - Group #${this.props.user.groupid}`}
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 {this.state.editing ? editModal : viewModal}
-                {/* <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
-                    <Modal.Header>
-                        <Modal.Title>{this.props.user.firstname} {this.props.user.lastname}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Modal.Title>User Info: <Button onClick={() => this.setState({editing: true})}>Edit</Button></Modal.Title>
-                        <p>Email: {this.props.user.email}</p>
-                        Group Id: {this.props.user.groupid}
-                    </Modal.Body>
-                    <Modal.Body>
-                        Shared With You:
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => this.setState({show: false})}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal> */}
             </li>
+        )
+    }
+}
+
+class Notes extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            notes: [],
+        }
+    }
+
+    async componentDidMount() {
+        const notes = (await axios.get(`/noteByDate/${todayDate}`)).data;
+        this.setState({ notes });
+    }
+
+    render() {
+        return (
+            <Row id="notes">
+                { this.state.notes.map((note) => {
+                    const user = (this.props.currentUsers.filter((u) => u.id === note.userid))[0];
+
+                    return user ? (
+                        <Row className="text-block" key={note.id}>
+                            <Col><h5>{user.firstname} {user.lastname}:</h5></Col>
+                            <Col><p>{note.notetext}</p></Col>
+                        </Row>
+                    ) : null;
+                })}
+            </Row>
         )
     }
 }

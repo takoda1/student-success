@@ -35,6 +35,9 @@ button:hover {
 .goals-form-row {
   margin-top: 10px;
 }
+.goals-form-row label {
+  margin-bottom: 5px !important;
+}
 .timers {
   width: 100%;
   background-color: #A6C4FF;

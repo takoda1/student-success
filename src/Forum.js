@@ -29,8 +29,7 @@ class Forum extends Component {
         this.setState({ forumPosts });
     }
 
-    async onPost(event) {
-        event.preventDefault();
+    async onPost() {
         const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: todayDate };
         await axios.post('/forum', newPost);
         const forumPosts = (await axios.get(`/forumPosts`)).data;
@@ -38,30 +37,57 @@ class Forum extends Component {
     }
 
     render() {
+        let dates = [];
+
         return(
             <div className="forum-body">
-                <div className="post-list">
-                    <Button onClick={() => this.setState({ makingPost: true })}>+ New Post</Button>
-                    <Modal id="new-post" size="lg" show={this.state.makingPost} onHide={() => this.setState({makingPost: false})}>
-                        <Modal.Header>
-                            <Modal.Title>New Post:</Modal.Title>
-                        </Modal.Header>
-                        <Form onSubmit={this.onPost}>
-                            <Form.Row>
-                                <Form.Label>Title: </Form.Label>
-                                <Form.Control value={this.state.newPostTitle} onChange={(event) => this.setState({ newPostTitle: event.target.value })} />
-                            </Form.Row>
-                            <Form.Row>
-                                <Form.Label>Body: </Form.Label>
-                                <Form.Control value={this.state.newPostText} onChange={(event) => this.setState({ newPostText: event.target.value })} />
-                            </Form.Row>
-                            <Button variant="primary" type="submit">Post</Button>
-                            <Button variant="secondary" onClick={() => this.setState({makingPost: false})}>
-                                Cancel
-                            </Button>
-                        </Form>
-                    </Modal>
-                    {this.state.forumPosts.map((post) => <Post key={post.id} post={post} onClick={(e) => this.setState({ activePost: post })} />)}
+                <div className="sidebar">
+                    <div className="post-button">
+                        <Button onClick={() => this.setState({ makingPost: true })}>+ New Post</Button>
+                        <Modal id="new-post" size="lg" show={this.state.makingPost} onHide={() => this.setState({makingPost: false})}>
+                            <Modal.Header>
+                                <Modal.Title>New Post:</Modal.Title>
+                            </Modal.Header>
+                            <Form onSubmit={(event) => {
+                                event.preventDefault()
+                                this.setState({makingPost: false});
+                                this.onPost();
+                            }}>
+                                <Form.Row>
+                                    <Form.Label>Title: </Form.Label>
+                                    <Form.Control value={this.state.newPostTitle} onChange={(event) => this.setState({ newPostTitle: event.target.value })} />
+                                </Form.Row>
+                                <Form.Row>
+                                    <Form.Label>Body: </Form.Label>
+                                    <Form.Control value={this.state.newPostText} onChange={(event) => this.setState({ newPostText: event.target.value })} />
+                                </Form.Row>
+                                <Button variant="primary" type="submit">Post</Button>
+                                <Button variant="secondary" onClick={() => this.setState({makingPost: false})}>
+                                    Cancel
+                                </Button>
+                            </Form>
+                        </Modal>
+                    </div>
+                    <br />
+                    <div className="post-list">
+                        {this.state.forumPosts.map((post) => {
+                            let date = null ;
+                            if (!dates.includes(post.postdate)) {
+                                date = <h4>{post.postdate}</h4>;
+                                dates.push(post.postdate);
+                                return (
+                                    <div key={post.id} className="post-date">
+                                        { date }
+                                        <Post date={date} post={post} onClick={(e) => this.setState({ activePost: post })} />
+                                    </div>
+                                )
+                            }
+
+                            return (
+                                <Post key={post.id} date={date} post={post} onClick={(e) => this.setState({ activePost: post })} />
+                            )
+                        })}
+                    </div>
                 </div>
                 <div className="active-container">
                     { this.state.activePost ? (
@@ -78,7 +104,7 @@ function Post(props) {
             <div className="post-preview" onClick={props.onClick}>
                 <h5>{ props.post.title }</h5>
                 <h6>{ props.post.username }</h6>
-                <p>{ props.post.body.slice(0, 25) }</p>
+                <p>{ props.post.body.length > 62 ? `${props.post.body.slice(0, 62)}...` : props.post.body }</p>
             </div>
         );
 };
@@ -101,7 +127,7 @@ class ActivePost extends Component {
         this.setState({ comments });
     }
 
-    async componentWillUpdate() {
+    async componentDidUpdate() {
         const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
         this.setState({ comments });
     }
@@ -122,7 +148,7 @@ class ActivePost extends Component {
 
     render() {
         return (
-            <div className="active-container">
+            <div >
                 <div className="active-post">
                     <h3>{this.props.post.title}</h3>
                     <p>{this.props.post.body}</p>
@@ -132,9 +158,9 @@ class ActivePost extends Component {
                     <h4>Comments:</h4>
                     {this.state.comments.map((comment) => {
                         return (
-                            <div className="comment-block">
+                            <div className="comment-block" key={comment.id}>
                                 <p>{comment.body}</p>
-                                <p className="author-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
+                                <p className="author-info">{`${comment.username}, ${comment.commentdate}`}</p>
                             </div>
                         )
                     })}

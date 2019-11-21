@@ -15,7 +15,7 @@ describe('Forum API', () => {
         title: "THIs is a title",
         body: "This is the body",
         userid: 1,
-        username: "Harvey",
+        username: "HH",
         postdate: "2019-09-09 10:00 am"
     }
 
@@ -31,6 +31,7 @@ describe('Forum API', () => {
             })
     })
 
+
     it('gets all posts', () => {
 
         return chai.request(server)
@@ -39,7 +40,7 @@ describe('Forum API', () => {
                 postId = res.body[0].id
                 res.should.have.status(200)
                 res.body.should.be.a('array')
-                res.body.length.should.equal(1)
+                res.body.length.should.equal(2)
                 for (var key in post) {
                     chai.expect(res.body[0].key).to.equal(post.key)
                 }

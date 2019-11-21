@@ -273,6 +273,16 @@ DELETE /class/:id	Deletes a single class with provided id
 
 ### Forum comments/replies
 
+GET /comment/:id		Gets the comment with specified id
+
+GET /commentsByPost/:postid		Gets all comments associated to a provided postid
+
+POST /comment		Requires body of {body: string, userid: int, postid: int, username: string, commentdate: string}
+
+PUT /comment/:id	updates comment with provided id and requires body of {body: string, commentdate: string} 
+
+DELETE /comment/:id		Deletes the comment with the associated id
+
 ## Auth0
 
 https://auth0.com/blog/role-based-access-control-rbac-and-react-apps/
@@ -299,9 +309,9 @@ If you want to create your own auth0 account to function with this app, follow t
     }
   }
   
-	if (!user.email || !user.email_verified) {
+if (!user.email || !user.email_verified) {
     return callback(null, user, context);
-  }
+}
  
   auth0.users.updateAppMetadata(user.user_id, user.app_metadata)
     .then(() => {

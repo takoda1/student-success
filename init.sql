@@ -70,6 +70,9 @@ CREATE TABLE forum (
 	postdate VARCHAR(200)
 );
 
+INSERT INTO forum (id, title, body, userid, username, postdate)
+VALUES (1, 'a title', 'a body', 1, 'A username', '2019-09-09');
+
 CREATE TABLE forumcomment (
 	id SERIAL PRIMARY KEY,
 	body VARCHAR(8000),

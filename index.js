@@ -11,6 +11,7 @@ const chatQueries = require('./queries/chatQueries')
 const forumQueries = require('./queries/forumQueries')
 const noteQueries = require('./queries/noteQueries')
 const classQueries = require('./queries/classQueries')
+const commentQueries = require('./queries/commentQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -88,7 +89,13 @@ app.get('/class/:classname', classQueries.getClass)
 app.get('/classes', classQueries.getClasses)
 app.get('/clas/:id', classQueries.getClassById) //why won't /class/:id work?? Anything other than /class works
 app.post('/class', classQueries.addClass)
-app.delete('/class/:id', classQueries.deleteClass) 
+app.delete('/class/:id', classQueries.deleteClass)
+
+app.get('/comment/:id', commentQueries.getComment)
+app.get('/commentsByPost/:postid', commentQueries.getCommentsByPost)
+app.post('/comment', commentQueries.addComment)
+app.put('/comment/:id', commentQueries.putComment)
+app.delete('/comment/:id', commentQueries.deleteComment)
 
 app.get('/quit', (req, res) => {
     res.send('Closing..')

@@ -1,19 +1,20 @@
 .forum-body {
     display: grid;
     grid-template-columns: 20vw 80vw;
-    grid-template-areas:
-    "list active";
+    grid-template-areas: "list active";
 }
-.post-list {
-    grid-area: list;
-    display: grid;
-    grid-template-rows: auto;
+.sidebar {
     padding: 10px;
+    grid-area: list;
 }
 .post-preview {
     background: #D8EBF4;
     border-radius: 10px;
     padding: 10px;
+    margin: 10px;
+    overflow: hidden;
+}
+h4 {
     margin: 10px;
 }
 .post-preview:hover {
@@ -53,7 +54,7 @@
 }
 .reply-container {
     padding: 20px;
-    margin: -20px;
+    margin: -10px;
     margin-top: 20px;
     background: rgb(28, 83, 201);
 }

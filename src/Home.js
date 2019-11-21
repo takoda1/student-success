@@ -165,7 +165,9 @@ class Timers extends React.Component {
 
         this.state = {
             timers: {}, /* API call */
-            customName: "Custom"
+            customName: "Custom",
+            manualTime: 0,
+            manualCategory: "Writing",
         }
 
         this.updateTimers = this.updateTimers.bind(this);
@@ -214,7 +216,7 @@ class Timers extends React.Component {
                         <Timer name={this.state.customName} updateTimers={this.updateTimers} updateCustomName={this.updateCustomName} category="custom" />
                     </div>
                     <div style={{ display: "inline-block", verticalAlign: 'top' }}>
-                        <table className="timers-table">
+                        <table className="timers-table" >
                             <tbody>
                                 <tr>
                                     <th>Writing</th>
@@ -230,6 +232,23 @@ class Timers extends React.Component {
                                 </tr>
                             </tbody>
                         </table>
+                        <br />
+                        <Form className="text-block add-time" onSubmit={async (event) => {
+                            event.preventDefault();
+                            const time = Number.parseInt(this.state.manualTime) * 60;
+                            if (time) {
+                                await this.updateTimers(time, this.state.manualCategory.toLowerCase());
+                            }
+                        }}>
+                            <Form.Label>Enter Time Manually: </Form.Label>
+                            <Form.Control as="select" value={this.state.manualCategory} onChange={(event) => this.setState({ manualCategory: event.target.value })}>
+                                <option>Writing</option>
+                                <option>Research</option>
+                                <option>Custom</option>
+                            </Form.Control>
+                            <Form.Control placeholder="Enter time in minutes..." type="number" onChange={(event) => this.setState({manualTime: event.target.value})} />
+                            <Button type="submit">Add Time</Button>
+                        </Form>
                     </div>
                 </div>
             </div>

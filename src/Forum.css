@@ -32,7 +32,6 @@
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
-    height: 90%;
 }
 .active-post h3 {
     padding: 15px;
@@ -41,6 +40,23 @@
     padding-left: 25px;
     padding-right: 25px;
 }
-.active-info {
+.comment-block {
+    background: #D8EBF4;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+    margin-left: 5%;
+    width: 95%;
+}
+.author-info {
     text-align: right;
+}
+.reply-container {
+    padding: 20px;
+    margin: -20px;
+    margin-top: 20px;
+    background: rgb(28, 83, 201);
+}
+#new-post .form-row {
+    margin: 10px;
 }

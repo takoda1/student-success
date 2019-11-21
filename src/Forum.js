@@ -4,9 +4,10 @@ import axios from 'axios';
 import { getTodaysDate } from './shared';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 
-const today = getTodaysDate();
+const todayDate = getTodaysDate();
 
 class Forum extends Component {
     constructor(props) {
@@ -18,7 +19,6 @@ class Forum extends Component {
             makingPost: false,
             newPostTitle: '',
             newPostText: '',
-            newCommentText: '',
         };
 
         this.onPost = this.onPost.bind(this);
@@ -31,7 +31,7 @@ class Forum extends Component {
 
     async onPost(event) {
         event.preventDefault();
-        const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: today };
+        const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: todayDate };
         await axios.post('/forum', newPost);
         const forumPosts = (await axios.get(`/forumPosts`)).data;
         this.setState({ forumPosts, newPostTitle: '', newPostText: '', makingPost: false });
@@ -42,7 +42,7 @@ class Forum extends Component {
             <div className="forum-body">
                 <div className="post-list">
                     <Button onClick={() => this.setState({ makingPost: true })}>+ New Post</Button>
-                    <Modal show={this.state.makingPost} onHide={() => this.setState({makingPost: false})}>
+                    <Modal id="new-post" size="lg" show={this.state.makingPost} onHide={() => this.setState({makingPost: false})}>
                         <Modal.Header>
                             <Modal.Title>New Post:</Modal.Title>
                         </Modal.Header>
@@ -65,7 +65,7 @@ class Forum extends Component {
                 </div>
                 <div className="active-container">
                     { this.state.activePost ? (
-                        <ActivePost post={this.state.activePost} />
+                        <ActivePost post={this.state.activePost} user={this.props.user} />
                     ) : (<p>Select a post to view, or create your own!</p>) }
                 </div>
             </div>
@@ -73,18 +73,15 @@ class Forum extends Component {
     }
 }
 
-class Post extends Component {
-
-    render() {
+function Post(props) {
         return(
-            <div className="post-preview" onClick={this.props.onClick}>
-                <h5>{ this.props.post.title }</h5>
-                <h6>{ this.props.post.username }</h6>
-                <p>{ this.props.post.body.slice(0, 25) }</p>
+            <div className="post-preview" onClick={props.onClick}>
+                <h5>{ props.post.title }</h5>
+                <h6>{ props.post.username }</h6>
+                <p>{ props.post.body.slice(0, 25) }</p>
             </div>
         );
-    }
-}
+};
 
 class ActivePost extends Component {
     constructor(props) {
@@ -92,11 +89,35 @@ class ActivePost extends Component {
         
         this.state = {
             comments: [],
+            newCommentText: "",
         }
+
+        this.onReply = this.onReply.bind(this);
     }
 
     async componentDidMount() {
+        await this.props.post;
+        const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
+        this.setState({ comments });
+    }
 
+    async componentWillUpdate() {
+        const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
+        this.setState({ comments });
+    }
+
+    async onReply(event) {
+        event.preventDefault();
+        const reply = {
+            body: this.state.newCommentText, 
+            userid: this.props.user.id, 
+            postid: this.props.post.id, 
+            username: `${this.props.user.firstname} ${this.props.user.lastname}`, 
+            commentdate: todayDate
+        };
+        await axios.post(`/comment`, reply);
+        const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
+        this.setState({ comments, newCommentText: "" });
     }
 
     render() {
@@ -105,11 +126,26 @@ class ActivePost extends Component {
                 <div className="active-post">
                     <h3>{this.props.post.title}</h3>
                     <p>{this.props.post.body}</p>
-                    <p className="active-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
+                    <p className="author-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
                 </div>
                 <div className="post-replies">
                     <h4>Comments:</h4>
-                    {this.state.comments.map((comment) => <p>TODO</p>)}
+                    {this.state.comments.map((comment) => {
+                        return (
+                            <div className="comment-block">
+                                <p>{comment.body}</p>
+                                <p className="author-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
+                            </div>
+                        )
+                    })}
+                </div>
+                <div className="reply-container">
+                    <Form onSubmit={this.onReply}>
+                        <Form.Row>
+                            <Col><Form.Control value={this.state.newCommentText} onChange={(event) => this.setState({ newCommentText: event.target.value })} /></Col>
+                            <Col><Button type="submit">Reply</Button></Col>
+                        </Form.Row>
+                    </Form>
                 </div>
             </div>
         );

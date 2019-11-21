@@ -55,6 +55,9 @@ button:hover {
 .timers-table th {
   padding: 7px;
 }
+.add-time {
+  width: 17vw;
+}
 .text-block {
   background-color: #A6C4FF;
   padding: 0.75em .75em .75em .75em;

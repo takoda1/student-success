@@ -63,13 +63,12 @@ class App extends Component {
                         }
                     </div>
                 </nav>
-
+                <Route exact path="/">
+                    <Redirect to="/index"></Redirect>
+                </Route>
                 {
                     this.state.user ? (
                         <div>
-                        <Route exact path="/">
-                            <Redirect to="/index"></Redirect>
-                        </Route>
                         <Route path="/index">
                             <Home user={this.state.user} />
                         </Route>
@@ -90,7 +89,25 @@ class App extends Component {
                             ) : (<Route path="/admin"><p>You are not an admin, contact your administrator or takoda.ren@gmail.com</p></Route>)
                         }
                         </div>
-                    ) : (<p>Loading... If this takes a while, you are either not signed in or not a verified user. Please either login or contact your administrator.</p> )
+                    ) : (
+                            <div>
+                                <Route path="/index">
+                                    <LoadingText />
+                                </Route>
+                                <Route path="/history">
+                                    <LoadingText />
+                                </Route>
+                                <Route path="/group">
+                                    <LoadingText />
+                                </Route>
+                                <Route path="/forum">
+                                    <LoadingText />
+                                </Route>
+                                <Route path="/admin">
+                                    <LoadingText />
+                                </Route>
+                            </div>
+                        )
                 }
                 <Route exact path='/callback' component={Callback} />
                 
@@ -103,5 +120,11 @@ function NavButton(props) {
   return (
       <Button className="nav-button" href={props.path} size="lg">{props.name}</Button>
   );
+}
+
+function LoadingText(props) {
+    return (
+        <p>Loading... If this takes a while, you are either not signed in or not a verified user--check your email for the verification email. Please either login or contact your administrator.</p>
+    );
 }
 export default withRouter(App);

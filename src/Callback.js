@@ -6,12 +6,11 @@ class Callback extends Component {
     async componentDidMount() {
         this.forceUpdate();
         await auth0Client.handleAuthentication();
-        this.props.history.replace('/');
     }
 
     render() {
         return (
-            <p>Loading profile...</p>
+            <h1>You are now logged in! Please click on the page you wish to navigate to.</h1>
         );
     }
 }

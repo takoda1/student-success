@@ -134,7 +134,7 @@ class ActivePost extends Component {
                         return (
                             <div className="comment-block">
                                 <p>{comment.body}</p>
-                                <p className="author-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
+                                <p className="author-info">{`${comment.username}, ${comment.postdate}`}</p>
                             </div>
                         )
                     })}

@@ -170,7 +170,7 @@ class Admin extends React.Component {
                                 </Row>
 
                                 <Row>
-                                    <Col>
+                                    <Col >
                                         <h3>New Notes for You:</h3>
                                         <Notes currentUsers={this.state.currentUsers} />
                                     </Col>
@@ -202,8 +202,8 @@ class GroupView extends React.Component {
 
     render() {
         return (
-            <li>
-                Group #{ this.props.group.id }: { this.props.group.groupname } 
+            <div>
+                Group #{ this.props.group.id }: { this.props.group.groupname }  
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
@@ -218,7 +218,7 @@ class GroupView extends React.Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </li>
+            </div>
         )
     }
 }
@@ -249,9 +249,6 @@ class UserView extends React.Component {
                     <p>Email: {this.props.user.email}</p>
                     <p>Group Id: {this.props.user.groupid}</p>
                     <p>Class Id: {this.props.user.classid}</p>
-                </Modal.Body>
-                <Modal.Body>
-                    Shared With You:
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => this.setState({show: false})}>
@@ -316,9 +313,6 @@ class UserView extends React.Component {
                         <Button type="submit">Save Changes</Button>
                     </Form>
                 </Modal.Body>
-                <Modal.Body>
-                    Shared With You:
-                </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => this.setState({show: false, editing: false})}>
                         Close (without saving)
@@ -353,18 +347,18 @@ class Notes extends React.Component {
 
     render() {
         return (
-            <Row id="notes">
-                { this.state.notes.map((note) => {
+            <div>
+                { this.state.notes.length === 0 ? <p className="text-block" >No Notes Today :)</p> : this.state.notes.map((note) => {
                     const user = (this.props.currentUsers.filter((u) => u.id === note.userid))[0];
 
                     return user ? (
                         <Row className="text-block" key={note.id}>
-                            <Col><h5>{user.firstname} {user.lastname}:</h5></Col>
+                            <Col id="note-name" sm={2}><h5>{user.firstname} {user.lastname}:</h5></Col>
                             <Col><p>{note.notetext}</p></Col>
                         </Row>
                     ) : null;
                 })}
-            </Row>
+            </div>
         )
     }
 }

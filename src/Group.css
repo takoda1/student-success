@@ -41,7 +41,7 @@
     margin-left: -1em;
 }
 #group-reflections {
-    height: 30vh !important;
+    max-height: 33vh !important;
     overflow: scroll;
 }
 .group-messages {

@@ -233,6 +233,14 @@ class Goals extends Component {
                 </div>
             );
         }
+        else if(this.props.hide === true) {
+            return(
+                <div className="group-data-item">
+                    <h2>{this.props.userName}'s Timers</h2><br/>
+                    <div className="no-timers">Has elected to not share their timers.</div>
+                </div>
+            );
+        }
         else {
             return(
                 <div className="group-data-item">

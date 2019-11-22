@@ -1,6 +1,6 @@
 CREATE TABLE classes (
 	id SERIAL PRIMARY KEY,
-	classname VARCHAR(1000)
+	classname TEXT
 );
 
 INSERT INTO classes (classname)
@@ -8,7 +8,7 @@ VALUES ('A CLASS');
 
 CREATE TABLE groups (
 	id SERIAL PRIMARY KEY,
-	groupname VARCHAR(1000)
+	groupname TEXT
 );
 
 INSERT INTO groups (groupname)
@@ -16,9 +16,9 @@ VALUES ('GROUP FOR EATING EATING EATING');
 
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
-	firstName VARCHAR(30),
-	lastName VARCHAR(30),
-	email VARCHAR(100) UNIQUE,
+	firstName TEXT,
+	lastName TEXT,
+	email TEXT UNIQUE,
 	groupid INTEGER REFERENCES groups(id),
 	hidetimer BOOLEAN,
 	hidereflection BOOLEAN,
@@ -32,7 +32,7 @@ CREATE TABLE goals (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id),
 	goaldate DATE NOT NULL,
-	goaltext VARCHAR(70),
+	goaltext TEXT,
 	completed BOOLEAN NOT NULL
 );
 
@@ -49,25 +49,25 @@ CREATE TABLE reflections (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id),
 	reflectiondate DATE NOT NULL,
-	reflectiontext VARCHAR(1000)
+	reflectiontext TEXT
 );
 
 CREATE TABLE groupchat (
 	id SERIAL PRIMARY KEY,
 	groupid INTEGER REFERENCES groups(id),
-	chattext VARCHAR(1000),
-	chatdate VARCHAR(1000),
+	chattext TEXT,
+	chatdate TEXT,
 	userid INTEGER REFERENCES users(id),
-	username VARCHAR(100)
+	username TEXT
 );
 
 CREATE TABLE forum (
 	id SERIAL PRIMARY KEY,
-	title VARCHAR(500),
-	body VARCHAR(8000),
+	title TEXT,
+	body TEXT,
 	userid INTEGER REFERENCES users(id),
-	username VARCHAR(200),
-	postdate VARCHAR(200)
+	username TEXT,
+	postdate TEXT
 );
 
 INSERT INTO forum (id, title, body, userid, username, postdate)
@@ -75,16 +75,16 @@ VALUES (1, 'a title', 'a body', 1, 'A username', '2019-09-09');
 
 CREATE TABLE forumcomment (
 	id SERIAL PRIMARY KEY,
-	body VARCHAR(8000),
+	body TEXT,
 	userid INTEGER REFERENCES users(id),
 	postid INTEGER REFERENCES forum(id),
-	username VARCHAR(200),
-	commentdate VARCHAR(200)
+	username TEXT,
+	commentdate TEXT
 );
 
 CREATE TABLE notes (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id),
-	notedate VARCHAR(200),
-	notetext VARCHAR(8000)
+	notedate TEXT,
+	notetext TEXT
 );

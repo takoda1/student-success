@@ -129,7 +129,7 @@ class Timers extends Component {
 
 class Reflections extends Component {
     render() {
-        if(this.props.reflections && this.props.reflections.reflectiontext.length > 0 && this.props.reflections.reflectiontext != ")(}){(" && this.props.reflections.reflectiontext != ")(}){()(}){("){
+        if(this.props.reflections && this.props.reflections.reflectiontext.length > 0 && this.props.reflections.reflectiontext !== ")(}){(" && this.props.reflections.reflectiontext !== ")(}){()(}){("){
             const reflectionSplit = this.props.reflections.reflectiontext.split(delimiter);
             return(
                 <div className="history-reflections">

@@ -34,16 +34,20 @@
 }
 
 .group-data-item p {
-    font-size: 1.25em;
+    font-size: 1em;
 }
 .group-data-item ol {
-    font-size: 1.25em;
+    font-size: 1em;
     margin-left: -1em;
+}
+#group-reflections {
+    height: 30vh !important;
+    overflow: scroll;
 }
 .group-messages {
     padding-bottom: 1em;
-    height: 60vh;
-    max-height: 60vh;
+    height: 67vh;
+    max-height: 67vh;
     overflow-y: scroll;
     /* position: absolute; */
     /* bottom: 0; */
@@ -55,6 +59,9 @@
     padding: 0.5em;
     margin-top: 0.5em;
     border-radius: 10px;
+}
+#group-chat-button {
+    margin: 0 0 0 5px !important;
 }
 .form-control-select {
     width: 40% !important;

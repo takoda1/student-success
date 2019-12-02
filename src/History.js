@@ -40,7 +40,7 @@ class History extends Component {
             timers,
             reflections,
         });
-        var chart = this.chart;
+        // var chart = this.chart;
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
         var startWeek = Moment(allTimers[0].timerdate).week();
         var thisWeek = startWeek;
@@ -87,7 +87,7 @@ class History extends Component {
             }
             
         }
-        chart.render();
+        // chart.render();
     }
 
     async onDayClicked(date) {
@@ -119,46 +119,46 @@ class History extends Component {
     }
 
     render() {
-        const options = {
-			animationEnabled: true,
-			exportEnabled: true,
-			theme: "light2", // "light1", "dark1", "dark2"
-			title:{
-                text: "Total Time Per Week"
-			},
-			axisY: {
-				title: "Total Weekly Hours",
-				includeZero: false
-			},
-			axisX: {
-				title: "Week of Year",
-                prefix: "W",
-                includeZero: false,
-				interval: 1
-			},
-			data: [{
-                type: "line",
-                name: "Writing Timers",
-                showInLegend: true,
-				toolTipContent: "Week {x}: {y}hrs",
-				dataPoints: writingDataPoints
-            },
-            {
-                type: "line",
-                name: "Research Timers",
-                showInLegend: true,
-                toolTipContent: "Week {x}: {y}hrs",
-                dataPoints: researchDataPoints
-            },
-            {
-                type: "line",
-                name: "Custom Timers",
-                showInLegend: true,
-                toolTipContent: "Week {x}: {y}hrs",
-                dataPoints: customDataPoints
-            }]
+        // const options = {
+		// 	animationEnabled: true,
+		// 	exportEnabled: true,
+		// 	theme: "light2", // "light1", "dark1", "dark2"
+		// 	title:{
+        //         text: "Total Time Per Week"
+		// 	},
+		// 	axisY: {
+		// 		title: "Total Weekly Hours",
+		// 		includeZero: false
+		// 	},
+		// 	axisX: {
+		// 		title: "Week of Year",
+        //         prefix: "W",
+        //         includeZero: false,
+		// 		interval: 1
+		// 	},
+		// 	data: [{
+        //         type: "line",
+        //         name: "Writing Timers",
+        //         showInLegend: true,
+		// 		toolTipContent: "Week {x}: {y}hrs",
+		// 		dataPoints: writingDataPoints
+        //     },
+        //     {
+        //         type: "line",
+        //         name: "Research Timers",
+        //         showInLegend: true,
+        //         toolTipContent: "Week {x}: {y}hrs",
+        //         dataPoints: researchDataPoints
+        //     },
+        //     {
+        //         type: "line",
+        //         name: "Custom Timers",
+        //         showInLegend: true,
+        //         toolTipContent: "Week {x}: {y}hrs",
+        //         dataPoints: customDataPoints
+        //     }]
             
-		}
+		// }
         return(
             <div><br/>
                     <div>
@@ -171,7 +171,7 @@ class History extends Component {
                             <Reflections reflections={this.state.reflections} />
                         </div>
                     </div><br/>
-                    <CanvasJSChart options = {options} onRef={ref => this.chart = ref} />
+                    {/* <CanvasJSChart options = {options} onRef={ref => this.chart = ref} /> */}
             </div>
         );
     }

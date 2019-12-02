@@ -54,12 +54,21 @@ class History extends Component {
         // var chart = this.chart;
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
         var startWeek = Moment(allTimers[0].timerdate).week();
+        // for(var i=0; i<allTimers.length; i++) {
+        //     console.log(startWeek, Moment(allTimers[i].timderdate).week());
+        //     if(Moment(allTimers[i].timderdate).week() < startWeek) {
+        //         startWeek = Moment(allTimers[i].timderdate).week();
+        //     }
+        // }
+        // console.log(startWeek);
         var thisWeek = startWeek;
         var xAxis = []
         var writing = 0;
         var research = 0;
         var custom = 0;
         for(var i=0; i<allTimers.length; i++) {
+            console.log('timerdate for this data point is: ' + Moment(allTimers[i].timerdate).week());
+            console.log('thisWeek is: ' + thisWeek);
             if(Moment(allTimers[i].timerdate).week() === thisWeek) {
                 writing += allTimers[i].writingtime;
                 research += allTimers[i].researchtime;
@@ -119,7 +128,7 @@ class History extends Component {
               },
               labels: {
                 formatter: function (value) {
-                  return 'Week' + value;
+                  return 'Week ' + value;
                 }
               }
             },

@@ -7,8 +7,8 @@ import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Moment from 'moment';
 import { getTodaysDate, secondsToHms, Goals, delimiter, fixDateWithYear } from './shared';
-import CanvasJSReact from './canvasjs.react';
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+// import CanvasJSReact from './canvasjs.react';
+// var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const today = new Date();
 var writingDataPoints = [];

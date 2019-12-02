@@ -7,8 +7,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Moment from 'moment';
 import { getTodaysDate, secondsToHms, Goals, delimiter, fixDateWithYear } from './shared';
-// import CanvasJSReact from './canvasjs.react';
-// var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+import Chart from 'react-apexcharts'
 
 const today = new Date();
 var writingDataPoints = [];
@@ -25,6 +24,18 @@ class History extends Component {
             reflections: '',
             selectedDate: getTodaysDate(),
             week: getCurrentWeek(today),
+            options: {
+                chart: {
+                  id: 'Timer Stats'
+                },
+                xaxis: {
+                  categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+                }
+              },
+            series: [{
+                name: 'series-1',
+                data: [30, 40, 45, 50, 49, 60, 70, 91]
+              }]
         };
 
         this.onDayClicked = this.onDayClicked.bind(this);
@@ -44,6 +55,7 @@ class History extends Component {
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
         var startWeek = Moment(allTimers[0].timerdate).week();
         var thisWeek = startWeek;
+        var xAxis = []
         var writing = 0;
         var research = 0;
         var custom = 0;
@@ -53,33 +65,42 @@ class History extends Component {
                 research += allTimers[i].researchtime;
                 custom += allTimers[i].customtime;
                 if(i === allTimers.length -1) {
-                    writingDataPoints.push({
-                        x: thisWeek - startWeek + 1,
-                        y: writing/3600
-                    });
-                    researchDataPoints.push({
-                        x: thisWeek - startWeek + 1,
-                        y: research/3600
-                    });
-                    customDataPoints.push({
-                        x: thisWeek - startWeek + 1,
-                        y: custom/3600
-                    });
+                    writingDataPoints.push(writing/3600);
+                    researchDataPoints.push(research/3600);
+                    customDataPoints.push(custom/3600);
+                    xAxis.push(thisWeek-startWeek+1);
+
+                    // writingDataPoints.push({
+                    //     x: thisWeek - startWeek + 1,
+                    //     y: writing/3600
+                    // });
+                    // researchDataPoints.push({
+                    //     x: thisWeek - startWeek + 1,
+                    //     y: research/3600
+                    // });
+                    // customDataPoints.push({
+                    //     x: thisWeek - startWeek + 1,
+                    //     y: custom/3600
+                    // });
                 }
             }
             else {
-                writingDataPoints.push({
-                    x: thisWeek - startWeek + 1,
-                    y: writing/3600
-                });
-                researchDataPoints.push({
-                    x: thisWeek - startWeek + 1,
-                    y: research/3600
-                });
-                customDataPoints.push({
-                    x: thisWeek - startWeek + 1,
-                    y: custom/3600
-                });
+                writingDataPoints.push(writing/3600);
+                researchDataPoints.push(research/3600);
+                customDataPoints.push(custom/3600);
+                xAxis.push(thisWeek-startWeek+1);
+                // writingDataPoints.push({
+                //     x: thisWeek - startWeek + 1,
+                //     y: writing/3600
+                // });
+                // researchDataPoints.push({
+                //     x: thisWeek - startWeek + 1,
+                //     y: research/3600
+                // });
+                // customDataPoints.push({
+                //     x: thisWeek - startWeek + 1,
+                //     y: custom/3600
+                // });
                 thisWeek = Moment(allTimers[i].timerdate).week();
                 writing = 0;
                 research = 0;
@@ -87,6 +108,51 @@ class History extends Component {
             }
             
         }
+        var options= {
+            chart: {
+              id: 'Timer Stats'
+            },
+            xaxis: {
+              categories: xAxis,
+              title: {
+                  text: 'Week Number'
+              },
+              labels: {
+                formatter: function (value) {
+                  return 'Week' + value;
+                }
+              }
+            },
+            yaxis: {
+                decimalsInFloat: 2,
+                title: {
+                    text: 'Total Hours'
+                }
+            },
+            title: {
+                text: 'Timer Hours Per Week',
+                align: 'center',
+                style: {
+                    fontSize: '1.75em'
+                },
+                offsetY: 20
+            }
+          };
+          var series= [
+            {
+                name: 'Writing Timers',
+                data: writingDataPoints
+            },
+            {
+                name: "Research Timers",
+                data: researchDataPoints
+            },
+            {
+                name: "Custom Timers",
+                data: customDataPoints
+            }
+        ];
+        this.setState({options, series});
         // chart.render();
     }
 
@@ -119,6 +185,13 @@ class History extends Component {
     }
 
     render() {
+
+        // var chart = new ApexCharts(
+        //     document.querySelector("#chart"),
+        //     options
+        // );
+
+        // chart.render();
         // const options = {
 		// 	animationEnabled: true,
 		// 	exportEnabled: true,
@@ -170,7 +243,8 @@ class History extends Component {
                             <Timers timers={this.state.timers} />
                             <Reflections reflections={this.state.reflections} />
                         </div>
-                    </div><br/>
+                    </div><br/><br/>
+                    <Chart options={this.state.options} series={this.state.series} type="line" width={1000} />
                     {/* <CanvasJSChart options = {options} onRef={ref => this.chart = ref} /> */}
             </div>
         );

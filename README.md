@@ -188,6 +188,9 @@ and for a specified date in the format yyyy-mm-dd
 GET /timer/:id
 Returns a single timer referenced by the timer primary key id
 
+GET /timerByUser/:userid
+Returns multiple timers associated with the provided userid
+
 POST /timer    (Requires json/js body of {userid: number, timerdate: "yyyy-mm-dd", researchtime: int, writingtime: int, customtime: int})
 Posts a timer with specified values
 

@@ -46,6 +46,19 @@ describe('TIMER API', () => {
             })
     })
 
+    it('gets timers for a userid', () => {
+        return chai.request(server)
+            .get('/timerByUser/' + timer.userid)
+            .then((res) => {
+                res.should.have.status(200)
+                res.body.should.be.a('array')
+                res.body.length.should.equal(1)
+                for (var key in timer) {
+                    chai.expect(res.body[0].key).to.equal(timer.key)
+                }
+            })
+    })
+
     it('Gets a single timer based on the timer\'s id', () => {
         
         return chai.request(server)

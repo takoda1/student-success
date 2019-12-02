@@ -53,6 +53,7 @@ app.delete('/goal/:id', goalQueries.deleteGoal)
 
 app.get('/timer/:userid/:date', timerQueries.getTimer)
 app.get('/timer/:id', timerQueries.getTimerById)
+app.get('/timerByUser/:userid', timerQueries.getTimerByUserid)
 app.post('/timer', timerQueries.addTimer)
 app.put('/timer/:id', timerQueries.putTimer)
 app.delete('/timer/:id', timerQueries.deleteTimer)

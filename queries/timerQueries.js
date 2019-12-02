@@ -23,6 +23,23 @@ const getTimer = (request, response) => {
     }
 }
 
+const getTimerByUserid = (request, response) => {
+    const userid = parseInt(request.params.userid)
+    if (!isNaN(userid)) {
+        pool.query('SELECT * FROM timers WHERE userid = $1', [userid], (error, results) => {
+            if (error) {
+                throw error
+            }
+            else {
+                response.status(200).json(results.rows);
+            }
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter userid not a number" })
+    }
+}
+
 /*
 Requires param of id (unique identier for timer)
 */
@@ -130,6 +147,7 @@ const deleteTimer = (request, response) => {
 module.exports = {
     getTimer,
     getTimerById,
+    getTimerByUserid,
     putTimer,
     addTimer,
     deleteTimer

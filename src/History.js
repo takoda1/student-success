@@ -5,9 +5,15 @@ import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortaw
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import Moment from 'moment';
 import { getTodaysDate, secondsToHms, Goals, delimiter, fixDateWithYear } from './shared';
+import CanvasJSReact from './canvasjs.react';
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const today = new Date();
+var writingDataPoints = [];
+var researchDataPoints = [];
+var customDataPoints = [];
 
 class History extends Component {
     constructor(props) {
@@ -34,16 +40,61 @@ class History extends Component {
             timers,
             reflections,
         });
-        console.log(this.state.selectedDate);
+        var chart = this.chart;
+        const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
+        var startWeek = Moment(allTimers[0].timerdate).week();
+        var thisWeek = startWeek;
+        var writing = 0;
+        var research = 0;
+        var custom = 0;
+        for(var i=0; i<allTimers.length; i++) {
+            if(Moment(allTimers[i].timerdate).week() === thisWeek) {
+                writing += allTimers[i].writingtime;
+                research += allTimers[i].researchtime;
+                custom += allTimers[i].customtime;
+                if(i === allTimers.length -1) {
+                    writingDataPoints.push({
+                        x: thisWeek - startWeek + 1,
+                        y: writing/3600
+                    });
+                    researchDataPoints.push({
+                        x: thisWeek - startWeek + 1,
+                        y: research/3600
+                    });
+                    customDataPoints.push({
+                        x: thisWeek - startWeek + 1,
+                        y: custom/3600
+                    });
+                }
+            }
+            else {
+                writingDataPoints.push({
+                    x: thisWeek - startWeek + 1,
+                    y: writing/3600
+                });
+                researchDataPoints.push({
+                    x: thisWeek - startWeek + 1,
+                    y: research/3600
+                });
+                customDataPoints.push({
+                    x: thisWeek - startWeek + 1,
+                    y: custom/3600
+                });
+                thisWeek = Moment(allTimers[i].timerdate).week();
+                writing = 0;
+                research = 0;
+                custom = 0;
+            }
+            
+        }
+        chart.render();
     }
 
     async onDayClicked(date) {
-        console.log(date);
         this.setState({selectedDate: date});
         const goals = (await axios.get(`/goals/${this.props.user.id}/${date}`)).data;
         const timers = (await axios.get(`/timer/${this.props.user.id}/${date}`)).data[0];
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
-
         this.setState({
             timers,
             goals,
@@ -68,6 +119,46 @@ class History extends Component {
     }
 
     render() {
+        const options = {
+			animationEnabled: true,
+			exportEnabled: true,
+			theme: "light2", // "light1", "dark1", "dark2"
+			title:{
+                text: "Total Time Per Week"
+			},
+			axisY: {
+				title: "Total Weekly Hours",
+				includeZero: false
+			},
+			axisX: {
+				title: "Week of Year",
+                prefix: "W",
+                includeZero: false,
+				interval: 1
+			},
+			data: [{
+                type: "line",
+                name: "Writing Timers",
+                showInLegend: true,
+				toolTipContent: "Week {x}: {y}hrs",
+				dataPoints: writingDataPoints
+            },
+            {
+                type: "line",
+                name: "Research Timers",
+                showInLegend: true,
+                toolTipContent: "Week {x}: {y}hrs",
+                dataPoints: researchDataPoints
+            },
+            {
+                type: "line",
+                name: "Custom Timers",
+                showInLegend: true,
+                toolTipContent: "Week {x}: {y}hrs",
+                dataPoints: customDataPoints
+            }]
+            
+		}
         return(
             <div><br/>
                     <div>
@@ -79,7 +170,8 @@ class History extends Component {
                             <Timers timers={this.state.timers} />
                             <Reflections reflections={this.state.reflections} />
                         </div>
-                    </div>
+                    </div><br/>
+                    <CanvasJSChart options = {options} onRef={ref => this.chart = ref} />
             </div>
         );
     }
@@ -224,7 +316,6 @@ function Last7Days (date) {
 function getDayofWeek(date) {
     let d = new Date(date);
     var n = d.getDay();
-    console.log(n.getDay);
 
     var mapDays = new Map([[6, "Sunday"], [0, "Monday"], [1, "Tuesday"], [2, "Wednesday"], [3, "Thursday"], [4, "Friday"], [5, "Saturday"]]);
     return(mapDays.get(n));

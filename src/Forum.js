@@ -25,7 +25,15 @@ class Forum extends Component {
     }
 
     async componentDidMount() {
-        const forumPosts = (await axios.get(`/forumPosts`)).data;
+        const allPosts = (await axios.get(`/forumPosts`)).data;        
+        const forumPosts = [];
+        for (const post of allPosts) {
+            const classId = (await axios.get(`/user/${post.userid}`)).data[0].classid;
+            if (classId === this.props.user.classid) {
+                forumPosts.push(post);
+            }
+        }
+
         this.setState({ forumPosts });
     }
 

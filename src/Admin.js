@@ -291,6 +291,8 @@ class UserView extends React.Component {
             }
         }
 
+        var maxY = Math.max(...writingDataPoints, ...researchDataPoints, ...customDataPoints);
+
         var options= {
             colors: ['#4B9CD3', '#13294B', '#6AC9D2'],
             chart: {
@@ -325,7 +327,10 @@ class UserView extends React.Component {
                     style: {
                         fontSize: '14px'
                     }
-                }
+                },
+                min: 0,
+                max: Math.ceil(maxY),
+                tickAmount: Math.ceil(maxY)
             },
             title: {
                 text: 'Timer Hours Per Week',

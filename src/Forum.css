@@ -1,3 +1,6 @@
+body {
+    height: 100vh !important;
+}
 .forum-body {
     display: grid;
     grid-template-columns: 20vw 80vw;
@@ -6,6 +9,8 @@
 .sidebar {
     padding: 10px;
     grid-area: list;
+    height: 85vh;
+    overflow: scroll;
 }
 .post-preview {
     background: #D8EBF4;
@@ -24,6 +29,8 @@ h4 {
     background: #A6C4FF;
     grid-area: active;
     padding: 10px;
+    height: 85vh;
+    overflow: scroll;
 }
 .active-container h4 {
     padding: 20px;

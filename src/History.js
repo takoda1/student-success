@@ -80,25 +80,48 @@ class History extends Component {
             }
             
         }
+
+        var maxY = Math.max(...writingDataPoints, ...researchDataPoints, ...customDataPoints);
+        console.log(maxY);
+
         var options= {
+            colors: ['#4B9CD3', '#13294B', '#6AC9D2'],
             chart: {
-              id: 'Timer Stats'
+              id: 'Timer Stats',
+              background:'#fff'
             },
             xaxis: {
               categories: xAxis,
               title: {
-                  text: 'Week Number'
+                  text: 'Week Number',
+                  style: {
+                      fontSize: '1em'
+                  }
               },
               labels: {
                 formatter: function (value) {
                   return 'Week ' + value;
+                },
+                style: {
+                    fontSize: '14px'
                 }
-              }
+              },
             },
             yaxis: {
-                decimalsInFloat: 2,
+                decimalsInFloat: 0,
                 title: {
-                    text: 'Total Hours'
+                    text: 'Total Hours',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                min: 0,
+                max: Math.ceil(maxY),
+                tickAmount: Math.ceil(maxY)+1,
+                labels: {
+                    style: {
+                        fontSize: '14px'
+                    }
                 }
             },
             title: {
@@ -107,7 +130,23 @@ class History extends Component {
                 style: {
                     fontSize: '1.75em'
                 },
-                offsetY: 20
+                offsetY: 30
+            },
+            tooltip: {
+                y: {
+                    formatter: function (value) {
+                        return value.toFixed(1) + ' hrs';
+                    }
+                }
+            },
+            legend: {
+                fontSize: '16px'
+            },
+            markers: {
+                size: 6,
+                hover: {
+                    sizeOffset: 2
+                }
             }
           };
           var series= [
@@ -168,7 +207,10 @@ class History extends Component {
                             <Reflections reflections={this.state.reflections} />
                         </div>
                     </div><br/><br/>
-                    <Chart options={this.state.options} series={this.state.series} type="line" width={1000} />
+                    <div className="history-graph">
+                        <Chart options={this.state.options} series={this.state.series} type="line" width={1000} />
+                    </div>
+                    
             </div>
         );
     }

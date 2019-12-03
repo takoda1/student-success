@@ -19,3 +19,23 @@ h3 {
     border-right: 1px dimgrey solid;
     margin-right: 10px;
 }
+.admin-graph-div {
+    padding: 1em;
+    justify-content: center;
+}
+.apexcharts-legend {
+    padding: 30px;
+    position: relative;
+}
+.apexcharts-yaxis {
+    margin-left: 20px !important;
+    padding: 5px !important;
+}
+.apexcharts-xaxis {
+    margin-bottom: 20px !important;
+    padding: 5px !important;
+}
+/* .admin-pg-graph {
+    padding: 1em;
+    margin-left: 1em;
+} */

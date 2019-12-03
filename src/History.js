@@ -24,18 +24,8 @@ class History extends Component {
             reflections: '',
             selectedDate: getTodaysDate(),
             week: getCurrentWeek(today),
-            options: {
-                chart: {
-                  id: 'Timer Stats'
-                },
-                xaxis: {
-                  categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-                }
-              },
-            series: [{
-                name: 'series-1',
-                data: [30, 40, 45, 50, 49, 60, 70, 91]
-              }]
+            options: {},
+            series: []
         };
 
         this.onDayClicked = this.onDayClicked.bind(this);
@@ -51,26 +41,14 @@ class History extends Component {
             timers,
             reflections,
         });
-        // var chart = this.chart;
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
         var startWeek = Moment(allTimers[0].timerdate).week();
-        // for(var i=0; i<allTimers.length; i++) {
-        //     console.log(startWeek, Moment(allTimers[i].timderdate).week());
-        //     if(Moment(allTimers[i].timderdate).week() < startWeek) {
-        //         startWeek = Moment(allTimers[i].timderdate).week();
-        //     }
-        // }
-        // console.log(startWeek);
-
-        console.log(Moment('2019-12-02T00:00:00.000Z').week());
         var thisWeek = startWeek;
         var xAxis = []
         var writing = 0;
         var research = 0;
         var custom = 0;
         for(var i=0; i<allTimers.length; i++) {
-            // console.log('timerdate for this data point is: ' + Moment(allTimers[i].timerdate).week());
-            // console.log('thisWeek is: ' + thisWeek);
             if(Moment(allTimers[i].timerdate).week() === thisWeek) {
                 writing += allTimers[i].writingtime;
                 research += allTimers[i].researchtime;
@@ -147,7 +125,6 @@ class History extends Component {
             }
         ];
         this.setState({options, series});
-        // chart.render();
     }
 
     async onDayClicked(date) {
@@ -179,53 +156,6 @@ class History extends Component {
     }
 
     render() {
-
-        // var chart = new ApexCharts(
-        //     document.querySelector("#chart"),
-        //     options
-        // );
-
-        // chart.render();
-        // const options = {
-		// 	animationEnabled: true,
-		// 	exportEnabled: true,
-		// 	theme: "light2", // "light1", "dark1", "dark2"
-		// 	title:{
-        //         text: "Total Time Per Week"
-		// 	},
-		// 	axisY: {
-		// 		title: "Total Weekly Hours",
-		// 		includeZero: false
-		// 	},
-		// 	axisX: {
-		// 		title: "Week of Year",
-        //         prefix: "W",
-        //         includeZero: false,
-		// 		interval: 1
-		// 	},
-		// 	data: [{
-        //         type: "line",
-        //         name: "Writing Timers",
-        //         showInLegend: true,
-		// 		toolTipContent: "Week {x}: {y}hrs",
-		// 		dataPoints: writingDataPoints
-        //     },
-        //     {
-        //         type: "line",
-        //         name: "Research Timers",
-        //         showInLegend: true,
-        //         toolTipContent: "Week {x}: {y}hrs",
-        //         dataPoints: researchDataPoints
-        //     },
-        //     {
-        //         type: "line",
-        //         name: "Custom Timers",
-        //         showInLegend: true,
-        //         toolTipContent: "Week {x}: {y}hrs",
-        //         dataPoints: customDataPoints
-        //     }]
-            
-		// }
         return(
             <div><br/>
                     <div>
@@ -239,7 +169,6 @@ class History extends Component {
                         </div>
                     </div><br/><br/>
                     <Chart options={this.state.options} series={this.state.series} type="line" width={1000} />
-                    {/* <CanvasJSChart options = {options} onRef={ref => this.chart = ref} /> */}
             </div>
         );
     }

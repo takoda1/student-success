@@ -27,17 +27,21 @@ class Admin extends React.Component {
             groupField: 0,
             classField: 0,
             groupNameField: "",
+            questions: {},
+            editingQuestions: false,
         }
 
         this.addUser = this.addUser.bind(this);
         this.editUser = this.editUser.bind(this);
         this.addGroup = this.addGroup.bind(this);
+        this.updateQuestions = this.updateQuestions.bind(this);
     }
 
     async componentDidMount() {
         const currentUsers = (await axios.get('/users')).data;
         const currentGroups = (await axios.get('/groups')).data;
-        this.setState({ currentUsers, currentGroups });
+        const questions = (await axios.get(`/question`)).data[0];
+        this.setState({ currentUsers, currentGroups, questions });
     }
 
     async addUser(event) {
@@ -76,7 +80,44 @@ class Admin extends React.Component {
         this.setState({ currentGroups });
     }
 
+    async updateQuestions(event) {
+        event.preventDefault();
+
+        await axios.put(`/question/${this.state.questions.id}`, this.state.questions);
+        const questions = (await axios.get(`/question`)).data[0];
+
+        this.setState({ questions, editingQuestions: false });
+    }
+
     render() {
+        let viewQuestions = (
+            <div>
+                <p>1. {this.state.questions.questionone}</p>
+                <p>2. {this.state.questions.questiontwo}</p>
+                <p>3. {this.state.questions.questionthree}</p>
+                <Button onClick={() => this.setState({ editingQuestions: true })} >Edit Questions</Button>
+            </div>
+        )
+
+        let editQuestions = (
+            <Form onSubmit={this.updateQuestions} >
+                <Form.Row>
+                    <Col sm={0} ><Form.Label>1. </Form.Label></Col>
+                    <Col><Form.Control value={this.state.questions.questionone} onChange={(event) => this.setState({ questions: {...this.state.questions, questionone: event.target.value } })} /></Col>
+                </Form.Row>
+                <Form.Row>
+                    <Col sm={0} ><Form.Label>2. </Form.Label></Col>
+                    <Col><Form.Control value={this.state.questions.questiontwo} onChange={(event) => this.setState({ questions: {...this.state.questions, questiontwo: event.target.value } })} /></Col>
+                </Form.Row>
+                <Form.Row>
+                    <Col sm={0} ><Form.Label>3. </Form.Label></Col>
+                    <Col><Form.Control value={this.state.questions.questionthree} onChange={(event) => this.setState({ questions: {...this.state.questions, questionthree: event.target.value } })} /></Col>
+                </Form.Row>
+
+                <Button type="submit">Save</Button>
+            </Form>
+        )
+
         return (
             <div id="bootstrap-overrides">
             {
@@ -170,6 +211,13 @@ class Admin extends React.Component {
                                         </Form>
                                     </Col>
                                 </Row>
+                                
+                                <Row>
+                                    <Col >
+                                        <h3>Current Reflection Questions:</h3>
+                                        { this.state.editingQuestions ? editQuestions : viewQuestions }
+                                    </Col>
+                                </Row>
 
                                 <Row>
                                     <Col >
@@ -177,6 +225,7 @@ class Admin extends React.Component {
                                         <Notes currentUsers={this.state.currentUsers} />
                                     </Col>
                                 </Row>
+
                             </Col>
                         </Row>
                         </div>

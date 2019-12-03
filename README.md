@@ -138,6 +138,12 @@ Notes:
 Classes:
 { id: int, classname: string }
 
+Reflectionquestions:
+{id: int, questionone: string, questiontwo: string, questionthree:string }
+
+Forumcomments:
+{id: int, body: string, userid: int, postid: int, username: string, commentdate: string}
+
 ## Current endpoints:
 
 ### Users
@@ -285,6 +291,12 @@ POST /comment		Requires body of {body: string, userid: int, postid: int, usernam
 PUT /comment/:id	updates comment with provided id and requires body of {body: string, commentdate: string} 
 
 DELETE /comment/:id		Deletes the comment with the associated id
+
+### Reflection questions
+
+GET /question		Gets the single set of questions already in the database (returns {id: int, questionone: string, questiontwo: string, questionthree:string})
+
+PUT /question/:id		Updates the question with given id with body {questionone: string, questiontwo: string, questionthree:string}
 
 ## Auth0
 

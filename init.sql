@@ -88,3 +88,13 @@ CREATE TABLE notes (
 	notedate TEXT,
 	notetext TEXT
 );
+
+CREATE TABLE reflectionquestion (
+	id SERIAL PRIMARY KEY,
+	questionone TEXT,
+	questiontwo TEXT,
+	questionthree TEXT
+);
+
+INSERT INTO reflectionquestion (questionone, questiontwo, questionthree)
+VALUES ('What obstacles did you encounter, if any?', 'What are some opportunities for improvement?', 'Any wins for the day worth recording?');

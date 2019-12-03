@@ -12,6 +12,7 @@ const forumQueries = require('./queries/forumQueries')
 const noteQueries = require('./queries/noteQueries')
 const classQueries = require('./queries/classQueries')
 const commentQueries = require('./queries/commentQueries')
+const questionQueries = require('./queries/questionQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -97,6 +98,9 @@ app.get('/commentsByPost/:postid', commentQueries.getCommentsByPost)
 app.post('/comment', commentQueries.addComment)
 app.put('/comment/:id', commentQueries.putComment)
 app.delete('/comment/:id', commentQueries.deleteComment)
+
+app.get('/question', questionQueries.getQuestion)
+app.put('/question/:id', questionQueries.putQuestion)
 
 app.get('/quit', (req, res) => {
     res.send('Closing..')

@@ -138,6 +138,12 @@ Notes:
 Classes:
 { id: int, classname: string }
 
+Reflectionquestions:
+{id: int, questionone: string, questiontwo: string, questionthree:string }
+
+Forumcomments:
+{id: int, body: string, userid: int, postid: int, username: string, commentdate: string}
+
 ## Current endpoints:
 
 ### Users

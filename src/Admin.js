@@ -21,12 +21,14 @@ class Admin extends React.Component {
         this.state = {
             currentUsers: [],
             currentGroups: [],
+            currentClasses: [],
             firstField: "",
             lastField: "",
             emailField: "",
             groupField: 0,
             classField: 0,
             groupNameField: "",
+            classNameField: "",
             questions: {},
             editingQuestions: false,
         }
@@ -34,14 +36,16 @@ class Admin extends React.Component {
         this.addUser = this.addUser.bind(this);
         this.editUser = this.editUser.bind(this);
         this.addGroup = this.addGroup.bind(this);
+        this.addClass = this.addClass.bind(this);
         this.updateQuestions = this.updateQuestions.bind(this);
     }
 
     async componentDidMount() {
         const currentUsers = (await axios.get('/users')).data;
         const currentGroups = (await axios.get('/groups')).data;
+        const currentClasses = (await axios.get('/classes')).data;
         const questions = (await axios.get(`/question`)).data[0];
-        this.setState({ currentUsers, currentGroups, questions });
+        this.setState({ currentUsers, currentGroups, currentClasses, questions });
     }
 
     async addUser(event) {
@@ -77,7 +81,16 @@ class Admin extends React.Component {
         await axios.post(`/group`, { groupname: this.state.groupNameField });
         const currentGroups = (await axios.get("/groups")).data;
 
-        this.setState({ currentGroups });
+        this.setState({ currentGroups, groupNameField: "" });
+    }
+
+    async addClass(event) {
+        event.preventDefault();
+
+        await axios.post(`/class`, { classname: this.state.classNameField });
+        const currentClasses = (await axios.get("/classes")).data;
+
+        this.setState({ currentClasses, classNameField: "" });
     }
 
     async updateQuestions(event) {
@@ -128,10 +141,37 @@ class Admin extends React.Component {
                                 <br />
                                 <Row>
                                     <Col>
+                                        <h3>Class list:</h3>
+                                        <div className="text-block">
+                                            <ul>
+                                                {this.state.currentClasses.map((aClass) => <ClassView class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
+                                            </ul>
+                                        </div>
+                                    </Col>
+                                    <Col>
+                                        <h3>New Class:</h3>
+                                        <Form onSubmit={this.addClass} className="text-block" >
+                                            <Form.Row>
+                                                <Col>
+                                                    <Form.Label>Class Name: </Form.Label>
+                                                </Col>
+                                                <Col>
+                                                    <Form.Control value={this.state.classNameField} onChange={(event) => this.setState({ classNameField: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <br />
+                                            <Button type="submit">Add Class</Button>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                                <br />
+
+                                <Row>
+                                    <Col>
                                         <h3>Groups list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentGroups.map((group) => <GroupView group={group} key={group.id} />)}
+                                                {this.state.currentGroups.map((group) => <GroupView group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -236,19 +276,45 @@ class Admin extends React.Component {
     }
 }
 
+class ClassView extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            show: false,
+        }
+    }
+
+    render() {
+        return (
+            <div>
+                Class #{ this.props.class.id }: { this.props.class.classname }  
+                <Button onClick={() => this.setState({show: true})}>View</Button> 
+                <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
+                    <Modal.Header>
+                        <Modal.Title>Class Members:</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => this.setState({show: false})}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
+        )
+    }
+}
+
 class GroupView extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             show: false,
-            members: [],
         }
-    }
-
-    async componentDidMount() {
-        const members = (await axios.get(`userByGroup/${this.props.group.id}`)).data;
-        this.setState({ members });
     }
 
     render() {
@@ -261,7 +327,7 @@ class GroupView extends React.Component {
                         <Modal.Title>Group Members:</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        {this.state.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
+                        {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({show: false})}>

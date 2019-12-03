@@ -19,6 +19,7 @@ class Home extends React.Component {
             goals: [], /* API call gets made in componentDidMount */
             newGoalText: '',
             goalsCompleted: "Loading...",
+            questions: {},
         };
 
         this.checkTotalGoals = this.checkTotalGoals.bind(this);
@@ -31,7 +32,8 @@ class Home extends React.Component {
 
     async componentDidMount() {
         const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
-        this.setState({ goals });
+        const questions = (await axios.get(`/question`)).data[0];
+        this.setState({ goals, questions });
         this.checkTotalGoals();
     }
 
@@ -134,7 +136,7 @@ class Home extends React.Component {
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} />
                                     <Timers user={this.props.user} />
                                 </div>
-                                <Reflections user={this.props.user} />
+                                <Reflections user={this.props.user} questions={this.state.questions} />
                                 <Note user={this.props.user} />
                             </div>
                         )
@@ -406,15 +408,15 @@ class Reflections extends React.Component {
     render() {
         const viewMode = (
             <div className="text-block">
-                <p>1. What obstacles did you encounter, if any?</p>
+                <p>1. {this.props.questions.questionone || "Loading Question 1..."}</p>
                 <p>
                     {this.state.reflectionQuestions[0]}
                 </p>
-                <p>2. What are some opportunities for improvement?</p>
+                <p>2. {this.props.questions.questiontwo || "Loading Question 2..."}</p>
                 <p>
                     {this.state.reflectionQuestions[1]}
                 </p>
-                <p>3. Any wins for the day worth recording?</p>
+                <p>3. {this.props.questions.questionthree || "Loading Question 3..."}</p>
                 <p>
                     {this.state.reflectionQuestions[2]}
                 </p>
@@ -425,13 +427,13 @@ class Reflections extends React.Component {
         const editMode = (
             <Form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
                 <div className="text-block">
-                    <p>1. What obstacles did you encounter, if any?</p>
+                    <p>{this.props.questions.questionone || "Loading Question 1..."}</p>
                     <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[0]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 0, 1) })} />
                     <br/>
-                    <p>2. What are some opportunities for improvement?</p>
+                    <p>{this.props.questions.questiontwo || "Loading Question 2..."}</p>
                     <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[1]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 1, 2) })} />
                     <br/>
-                    <p>3. Any wins for the day worth recording?</p>
+                    <p>{this.props.questions.questionthree || "Loading Question 3..."}</p>
                     <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[2]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 2) })} />
                 </div>
                 <Button type="submit">Save</Button>

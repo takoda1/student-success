@@ -8,7 +8,9 @@ import Modal from 'react-bootstrap/Modal';
 import auth0Client from './Auth';
 import config from './auth_config.json';
 import { getTodaysDate } from './shared';
-import './Admin.css'
+import './Admin.css';
+import Moment from 'moment';
+import Chart from 'react-apexcharts';
 
 const todayDate = getTodaysDate();
 
@@ -230,17 +232,115 @@ class UserView extends React.Component {
         this.state = {
             show: false,
             editing: false,
+            userid: this.props.user.id,
             firstField: this.props.user.firstname,
             lastField: this.props.user.lastname,
             emailField: this.props.user.email,
             groupField: this.props.user.groupid,
             classField: this.props.user.classid,
+            options: {},
+            series: []
         }
+    }
+
+    async componentDidMount() {
+        var writingDataPoints = [];
+        var researchDataPoints = [];
+        var customDataPoints = [];
+
+        const allTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
+
+        if (allTimers.length > 0) {
+            var startWeek = Moment(allTimers[0].timerdate).week();
+            var thisWeek = startWeek;
+            var xAxis = []
+            var writing = 0;
+            var research = 0;
+            var custom = 0;
+
+            for (var i = 0; i < allTimers.length; i++) {
+                if (Moment(allTimers[i].timerdate).week() === thisWeek) {
+                    writing += allTimers[i].writingtime;
+                    research += allTimers[i].researchtime;
+                    custom += allTimers[i].customtime;
+                    if (i === allTimers.length - 1) {
+                        writingDataPoints.push(writing / 3600);
+                        researchDataPoints.push(research / 3600);
+                        customDataPoints.push(custom / 3600);
+                        xAxis.push(thisWeek - startWeek + 1);
+                    }
+                } else {
+                    writingDataPoints.push(writing / 3600);
+                    researchDataPoints.push(research / 3600);
+                    customDataPoints.push(custom / 3600);
+                    xAxis.push(thisWeek - startWeek + 1);
+
+                    thisWeek = Moment(allTimers[i].timerdate).week();
+                    writing = 0;
+                    research = 0;
+                    custom = 0;
+
+                    if (i === allTimers.length - 1) {
+                        writingDataPoints.push(allTimers[i].writingtime / 3600);
+                        researchDataPoints.push(allTimers[i].researchtime / 3600);
+                        customDataPoints.push(allTimers[i].customtime / 3600);
+                        xAxis.push(thisWeek - startWeek + 1);
+                    }
+                }
+
+            }
+        }
+
+        var options= {
+            chart: {
+              id: 'Timer Stats'
+            },
+            xaxis: {
+              categories: xAxis,
+              title: {
+                  text: 'Week Number'
+              },
+              labels: {
+                formatter: function (value) {
+                  return 'Week ' + value;
+                }
+              }
+            },
+            yaxis: {
+                decimalsInFloat: 2,
+                title: {
+                    text: 'Total Hours'
+                }
+            },
+            title: {
+                text: 'Timer Hours Per Week',
+                align: 'center',
+                style: {
+                    fontSize: '1.75em'
+                },
+                offsetY: 20
+            }
+          };
+          var series= [
+            {
+                name: 'Writing Timers',
+                data: writingDataPoints
+            },
+            {
+                name: "Research Timers",
+                data: researchDataPoints
+            },
+            {
+                name: "Custom Timers",
+                data: customDataPoints
+            }
+        ];
+        this.setState({options, series});
     }
 
     render() {
         const viewModal = (
-            <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
+            <Modal size="lg" show={this.state.show} onHide={() => this.setState({show: false})}>
                 <Modal.Header>
                     <Modal.Title>User Info: <Button onClick={() => this.setState({editing: true})}>Edit</Button></Modal.Title>
                 </Modal.Header>
@@ -249,6 +349,12 @@ class UserView extends React.Component {
                     <p>Email: {this.props.user.email}</p>
                     <p>Group Id: {this.props.user.groupid}</p>
                     <p>Class Id: {this.props.user.classid}</p>
+                    <br/>
+                    <div className="admin-graph-div">
+                        <Chart className="admin-pg-graph" options={this.state.options} series={this.state.series} type="line" width='100%' />
+                    </div>
+                    
+                    <br/><br/>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => this.setState({show: false})}>

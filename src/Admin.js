@@ -390,6 +390,14 @@ class UserView extends React.Component {
                     customDataPoints.push(custom / 3600);
                     xAxis.push(thisWeek - startWeek + 1);
 
+                    while(Moment(allTimers[i].timerdate).week() > thisWeek+1) {
+                        writingDataPoints.push(0);
+                        researchDataPoints.push(0);
+                        customDataPoints.push(0);
+                        xAxis.push(thisWeek-startWeek+2);
+                        thisWeek += 1;
+                    }
+
                     thisWeek = Moment(allTimers[i].timerdate).week();
                     writing += allTimers[i].writingtime;
                     research += allTimers[i].researchtime;

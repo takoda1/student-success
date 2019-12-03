@@ -61,14 +61,16 @@ class History extends Component {
         //     }
         // }
         // console.log(startWeek);
+
+        console.log(Moment('2019-12-02T00:00:00.000Z').week());
         var thisWeek = startWeek;
         var xAxis = []
         var writing = 0;
         var research = 0;
         var custom = 0;
         for(var i=0; i<allTimers.length; i++) {
-            console.log('timerdate for this data point is: ' + Moment(allTimers[i].timerdate).week());
-            console.log('thisWeek is: ' + thisWeek);
+            // console.log('timerdate for this data point is: ' + Moment(allTimers[i].timerdate).week());
+            // console.log('thisWeek is: ' + thisWeek);
             if(Moment(allTimers[i].timerdate).week() === thisWeek) {
                 writing += allTimers[i].writingtime;
                 research += allTimers[i].researchtime;
@@ -78,19 +80,6 @@ class History extends Component {
                     researchDataPoints.push(research/3600);
                     customDataPoints.push(custom/3600);
                     xAxis.push(thisWeek-startWeek+1);
-
-                    // writingDataPoints.push({
-                    //     x: thisWeek - startWeek + 1,
-                    //     y: writing/3600
-                    // });
-                    // researchDataPoints.push({
-                    //     x: thisWeek - startWeek + 1,
-                    //     y: research/3600
-                    // });
-                    // customDataPoints.push({
-                    //     x: thisWeek - startWeek + 1,
-                    //     y: custom/3600
-                    // });
                 }
             }
             else {
@@ -98,22 +87,18 @@ class History extends Component {
                 researchDataPoints.push(research/3600);
                 customDataPoints.push(custom/3600);
                 xAxis.push(thisWeek-startWeek+1);
-                // writingDataPoints.push({
-                //     x: thisWeek - startWeek + 1,
-                //     y: writing/3600
-                // });
-                // researchDataPoints.push({
-                //     x: thisWeek - startWeek + 1,
-                //     y: research/3600
-                // });
-                // customDataPoints.push({
-                //     x: thisWeek - startWeek + 1,
-                //     y: custom/3600
-                // });
+        
                 thisWeek = Moment(allTimers[i].timerdate).week();
                 writing = 0;
                 research = 0;
                 custom = 0;
+
+                if(i === allTimers.length -1) {
+                    writingDataPoints.push(allTimers[i].writingtime/3600);
+                    researchDataPoints.push(allTimers[i].researchtime/3600);
+                    customDataPoints.push(allTimers[i].customtime/3600);
+                    xAxis.push(thisWeek-startWeek+1);
+                }
             }
             
         }

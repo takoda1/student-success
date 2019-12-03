@@ -67,9 +67,9 @@ class History extends Component {
                 xAxis.push(thisWeek-startWeek+1);
         
                 thisWeek = Moment(allTimers[i].timerdate).week();
-                writing = 0;
-                research = 0;
-                custom = 0;
+                writing += allTimers[i].writingtime;
+                research += allTimers[i].researchtime;
+                custom += allTimers[i].customtime;
 
                 if(i === allTimers.length -1) {
                     writingDataPoints.push(allTimers[i].writingtime/3600);

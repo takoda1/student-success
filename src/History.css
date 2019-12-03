@@ -113,3 +113,7 @@ h2 {
   color: #7681F0;
   transition: color .4s;
 }
+.history-graph {
+  display: flex;
+  justify-content: center;
+}

@@ -292,24 +292,39 @@ class UserView extends React.Component {
         }
 
         var options= {
+            colors: ['#4B9CD3', '#13294B', '#6AC9D2'],
             chart: {
               id: 'Timer Stats'
             },
             xaxis: {
               categories: xAxis,
               title: {
-                  text: 'Week Number'
+                  text: 'Week Number',
+                  style: {
+                      fontSize: '1em'
+                  }
               },
               labels: {
                 formatter: function (value) {
                   return 'Week ' + value;
+                },
+                style: {
+                    fontSize: '14px'
                 }
               }
             },
             yaxis: {
-                decimalsInFloat: 2,
+                decimalsInFloat: 0,
                 title: {
-                    text: 'Total Hours'
+                    text: 'Total Hours',
+                    style: {
+                        fontSize: '1em'
+                    }
+                },
+                labels: {
+                    style: {
+                        fontSize: '14px'
+                    }
                 }
             },
             title: {
@@ -319,6 +334,22 @@ class UserView extends React.Component {
                     fontSize: '1.75em'
                 },
                 offsetY: 20
+            },
+            tooltip: {
+                y: {
+                    formatter: function (value) {
+                        return value.toFixed(1) + ' hrs';
+                    }
+                }
+            },
+            legend: {
+                fontSize: '16px'
+            },
+            markers: {
+                size: 6,
+                hover: {
+                    sizeOffset: 2
+                }
             }
           };
           var series= [

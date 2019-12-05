@@ -100,7 +100,7 @@ class Group extends Component {
         const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: checked, hidereflection: notNull, classid: this.props.user.classid}
         await axios.put(`/user/${this.props.user.id}`, editUser);
         this.setState({ hideTimer: checked });
-        this.forceUpdate();
+        window.location.reload(false);
     }
 
     async onHideReflections(checked) {
@@ -115,7 +115,7 @@ class Group extends Component {
         await axios.put(`/user/${this.props.user.id}`, editUser);
         
         this.setState({ hideReflection: checked, hideTimer: getNewHideTimer });
-        this.forceUpdate();
+        window.location.reload(false);
 
     }
 

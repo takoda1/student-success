@@ -34,7 +34,7 @@ PORT=3005
 
 ### For the API 
 
-Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3) 
+Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3)  
 
 
 The following commands are boiled down what the tutorial above accomplishes

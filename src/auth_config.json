@@ -1,6 +1,6 @@
 {
-  "domain": "dev-212jhxms.auth0.com",
-  "clientId": "B1fFkPL0fNQgGsu8kx5fVF1rZAG9s5y5",
+  "domain": "dev-6qx1x460.auth0.com",
+  "clientId": "VMOCaokV3GbrOOL2xK13RJixTAfaYeYm",
   "env": "production",
   "roleUrl": "https://student-success.herokuapp.com/role"
 }

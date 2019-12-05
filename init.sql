@@ -12,7 +12,7 @@ CREATE TABLE groups (
 );
 
 INSERT INTO groups (groupname)
-VALUES ('GROUP FOR EATING EATING EATING');
+VALUES ('STANDARD GROUP');
 
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
@@ -30,7 +30,7 @@ VALUES ('TEST', 'TEST', 'TEST@TEST.com', 1, 1);
 
 CREATE TABLE goals (
 	id SERIAL PRIMARY KEY,
-	userid INTEGER REFERENCES users(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	goaldate DATE NOT NULL,
 	goaltext TEXT,
 	completed BOOLEAN NOT NULL
@@ -38,7 +38,7 @@ CREATE TABLE goals (
 
 CREATE TABLE timers (
 	id SERIAL PRIMARY KEY,
-	userid INTEGER REFERENCES users(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	timerdate DATE NOT NULL,
 	researchtime INT,
 	writingtime INT,
@@ -47,17 +47,17 @@ CREATE TABLE timers (
 
 CREATE TABLE reflections (
 	id SERIAL PRIMARY KEY,
-	userid INTEGER REFERENCES users(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	reflectiondate DATE NOT NULL,
 	reflectiontext TEXT
 );
 
 CREATE TABLE groupchat (
 	id SERIAL PRIMARY KEY,
-	groupid INTEGER REFERENCES groups(id),
+	groupid INTEGER REFERENCES groups(id) ON DELETE CASCADE,
 	chattext TEXT,
 	chatdate TEXT,
-	userid INTEGER REFERENCES users(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	username TEXT
 );
 
@@ -65,7 +65,7 @@ CREATE TABLE forum (
 	id SERIAL PRIMARY KEY,
 	title TEXT,
 	body TEXT,
-	userid INTEGER REFERENCES users(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	username TEXT,
 	postdate TEXT
 );
@@ -76,15 +76,15 @@ VALUES (1, 'a title', 'a body', 1, 'A username', '2019-09-09');
 CREATE TABLE forumcomment (
 	id SERIAL PRIMARY KEY,
 	body TEXT,
-	userid INTEGER REFERENCES users(id),
-	postid INTEGER REFERENCES forum(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	postid INTEGER REFERENCES forum(id) ON DELETE CASCADE,
 	username TEXT,
 	commentdate TEXT
 );
 
 CREATE TABLE notes (
 	id SERIAL PRIMARY KEY,
-	userid INTEGER REFERENCES users(id),
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	notedate TEXT,
 	notetext TEXT
 );

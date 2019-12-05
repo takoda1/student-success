@@ -9,7 +9,7 @@
 * [7. License](#7-license)
 * [8. Acknowledgements](#8-acknowledgements)
 * [Developer section](#developer-section)
-* [Auth0](#auth0)
+* [Auth0](#auth0) 
 * [Future notes](#future-notes)
 
 # 0. Software for Student Success

@@ -38,6 +38,9 @@ class Admin extends React.Component {
         this.addGroup = this.addGroup.bind(this);
         this.addClass = this.addClass.bind(this);
         this.updateQuestions = this.updateQuestions.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+        this.deleteGroup = this.deleteGroup.bind(this);
+        this.deleteClass = this.deleteClass.bind(this);
     }
 
     async componentDidMount() {
@@ -102,6 +105,63 @@ class Admin extends React.Component {
         this.setState({ questions, editingQuestions: false });
     }
 
+    async deleteUser(event, firstname, lastname, userid) {
+        event.preventDefault();
+        if(confirm("Are you sure you want to delete the user " + firstname + " " + lastname + "? All of their data will be deleted and it cannot be undone.")) {
+            await axios.delete(`/user/${userid}`);
+            const currentUsers = (await axios.get("/users")).data;
+            
+            this.setState({
+                currentUsers,
+            });
+        }
+        else {
+            // do nothing
+        }
+    }
+
+    async deleteGroup(event, groupid, groupname) {
+        event.preventDefault();
+        if(confirm("Are you sure you want to delete the group " + groupname + "? You will only be able to delete the group if it is empty, and it cannot be undone.")) {
+            if((await axios.get(`/userByGroup/${groupid}`)).data.length === 0) {
+                await axios.delete(`/group/${groupid}`);
+                const currentGroups = (await axios.get("/groups")).data;
+
+                this.setState({
+                    currentGroups,
+                });
+            }
+            else {
+                alert("Sorry, you cannot delete a group that currently has users in it. Please either delete those users or move them to a different group before proceeding.");
+            }
+        }
+        else {
+            // do nothing
+        }
+    }
+
+    async deleteClass(event, classid, classname) {
+        event.preventDefault();
+
+        if(confirm("Are you sure you want to delete the class " + classname + "? You will only be able to delete the class if it is empty, and it cannot be undone.")) {
+            if(this.state.currentUsers.filter((user) => user.classid === classid).length === 0) {
+                await axios.delete(`/class/${classid}`);
+                const currentClasses = (await axios.get("/classes")).data;
+
+                this.setState({
+                    currentClasses
+                });
+            }
+            else {
+                alert("Sorry, you cannot delete a class that currently has users in it. Please either delete those users or move them to a different class before proceeding.");
+            }
+            
+        }
+        else {
+            // do nothing
+        }
+    }
+
     render() {
         let viewQuestions = (
             <div>
@@ -144,7 +204,7 @@ class Admin extends React.Component {
                                         <h3>Class list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentClasses.map((aClass) => <ClassView class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
+                                                {this.state.currentClasses.map((aClass) => <ClassView deleteClass={this.deleteClass} class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -171,7 +231,7 @@ class Admin extends React.Component {
                                         <h3>Groups list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentGroups.map((group) => <GroupView group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
+                                                {this.state.currentGroups.map((group) => <GroupView deleteGroup={this.deleteGroup} group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -199,7 +259,7 @@ class Admin extends React.Component {
                                         <h3>Users list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} />)}
+                                                {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} deleteUser={this.deleteUser} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -292,7 +352,7 @@ class ClassView extends React.Component {
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
-                        <Modal.Title>Class Members:</Modal.Title>
+                        <Modal.Title>Class Members:</Modal.Title><Button onClick={() => this.props.deleteClass(event, this.props.class.id, this.props.class.classname)}>Delete Class</Button>
                     </Modal.Header>
                     <Modal.Body>
                         {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
@@ -324,7 +384,7 @@ class GroupView extends React.Component {
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
-                        <Modal.Title>Group Members:</Modal.Title>
+                        <Modal.Title>Group Members:</Modal.Title><Button onClick={() => this.props.deleteGroup(event, this.props.group.id, this.props.group.groupname)}>Delete Group</Button>
                     </Modal.Header>
                     <Modal.Body>
                         {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
@@ -501,7 +561,7 @@ class UserView extends React.Component {
         const viewModal = (
             <Modal size="lg" show={this.state.show} onHide={() => this.setState({show: false})}>
                 <Modal.Header>
-                    <Modal.Title>User Info: <Button onClick={() => this.setState({editing: true})}>Edit</Button></Modal.Title>
+                    <Modal.Title>User Info: <Button onClick={() => this.setState({editing: true})}>Edit</Button><Button onClick={() => this.props.deleteUser(event, this.state.firstField, this.state.lastField, this.state.userid)}>Delete User</Button></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p>Name: {this.props.user.firstname} {this.props.user.lastname}</p>

@@ -1,5 +1,5 @@
 import { Layout, GoalList, secondsToHms, delimiter } from './shared';
-import React from 'react';
+import React, { Fragment } from 'react';
 import axios from 'axios';
 import Moment from 'moment';
 import "./Home.css";
@@ -8,6 +8,7 @@ import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import soundfile from '../public/alarm.mp3';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 
@@ -170,6 +171,7 @@ class Timers extends React.Component {
             customName: "Custom",
             manualTime: 0,
             manualCategory: "Writing",
+            alarm: false
         }
 
         this.updateTimers = this.updateTimers.bind(this);
@@ -305,8 +307,12 @@ class Timer extends React.Component {
         this.setState({ time: 0 })
     }
 
+
     async timerFinished() {
+        const alarmAudio = document.getElementsByClassName("audio-sound")[0];
+        alarmAudio.play();
         alert("Time complete!");
+        alarmAudio.pause();
         this.resetTimer();
     }
 
@@ -362,9 +368,14 @@ class Timer extends React.Component {
         );
 
         return (
-            <div className="timers">
-                {this.state.editingTime ? editTimeMode : this.state.editingName ? editNameMode : viewMode }
-            </div>
+            <Fragment>
+                <audio className="audio-sound">
+                    <source src={soundfile}></source>
+                </audio>
+                <div className="timers">
+                    {this.state.editingTime ? editTimeMode : this.state.editingName ? editNameMode : viewMode }
+                </div>
+            </Fragment>
         );
     }
 }

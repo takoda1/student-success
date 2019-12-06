@@ -309,13 +309,23 @@ class GroupMessages extends Component {
     }
 
     render() {
-
+        var thisMessage;
         var dates = [];
-        const listGroupMessages = this.props.messages.map((msg) =>
-            <div>
-                <span className="message-date"><b>{!dates.includes(msg.chatdate)? (dates.push(msg.chatdate), fixDateWithYear(msg.chatdate)) : false}</b></span> 
-                <div className="group-message" key={msg.id}><b>{msg.username}</b>: {msg.chattext} </div>
-            </div>);
+        const listGroupMessages = this.props.messages.map((msg) => {
+            if(msg.userid === this.props.user.id) {
+                thisMessage = <div className="group-message" key={msg.id} style={{backgroundColor: '#DEF2FF'}}><b>Me</b>: {msg.chattext} </div>;
+            }
+            else {
+                thisMessage = <div className="group-message" key={msg.id} style={{}}><b>{msg.username}</b>: {msg.chattext} </div>;
+            }
+            return(
+                <div>
+                    <span className="message-date"><b>{!dates.includes(msg.chatdate)? (dates.push(msg.chatdate), fixDateWithYear(msg.chatdate)) : false}</b></span> 
+                    {/* <div className="group-message" key={msg.id}><b>{msg.username}</b>: {msg.chattext} </div> */}
+                    {thisMessage}
+                </div>
+            ); 
+        });
         return(
             <div className="group-messages" id="group-messages">
                 { listGroupMessages }

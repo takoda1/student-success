@@ -20,10 +20,11 @@ h2 {
 .history-date {
   padding: .5em 0 .5em 0;
   width: 7em;
-  background-color: #D8EBF4 !important;
+  background-color: #DEF2FF !important;
   color: black !important;
   margin: 1em;
   transition: background .4s;
+  border: 3px solid #A6C4FF !important;
 }
 .history-date:hover {
   background: #BAD5E1 !important;

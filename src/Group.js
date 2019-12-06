@@ -100,18 +100,14 @@ class Group extends Component {
         const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: checked, hidereflection: notNull, classid: this.props.user.classid};
         await axios.put(`/user/${this.props.user.id}`, editUser);
 
-        const groupUsers = (await axios.get(`/userByGroup/${this.props.user.groupid}`)).data;
-        var groupTimers = [];
-
-        for(var i=0; i < groupUsers.length; i++) {
-            var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${today}`)).data;
-            var hideThisTimer = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hidetimer;
-            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, timers: thisTimers, hide: hideThisTimer};
-            groupTimers.push(theseTimers);
-        }
+        var groupTimers = this.state.groupTimers.map((user) => {
+            if(user.userId === this.props.user.id) {
+                user.hide = checked;
+            }
+            return user;
+        })
 
         this.setState({ hideTimer: checked, groupTimers });
-        // window.location.reload(false);
     }
 
     async onHideReflections(checked) {
@@ -125,15 +121,12 @@ class Group extends Component {
         const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid};
         await axios.put(`/user/${this.props.user.id}`, editUser);
 
-        const groupUsers = (await axios.get(`/userByGroup/${this.props.user.groupid}`)).data;
-        var groupReflections = [];
-
-        for(var i=0; i < groupUsers.length; i++) {
-            var thisReflections = (await axios.get(`/reflection/${groupUsers[i].id}/${today}`)).data;
-            var hideThisReflection = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hidereflection;
-            var theseReflections = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, reflections: thisReflections, hide: hideThisReflection};
-            groupReflections.push(theseReflections);
-        }
+        var groupReflections = this.state.groupReflections.map((user) => {
+            if(user.userId === this.props.user.id) {
+                user.hide = checked;
+            }
+            return user;
+        });
         
         this.setState({ hideReflection: checked, hideTimer: getNewHideTimer, groupReflections });
 

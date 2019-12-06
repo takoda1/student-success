@@ -309,6 +309,7 @@ If you want to create your own auth0 account to function with this app, follow t
 - Add `http://localhost:3005/callback, https://student-success.herokuapp.com/callback` to ALLOWED CALLBACK URLS under application settings in auth0
 - Add `http://localhost:3005, https://student-success.herokuapp.com` to ALLOWED WEB ORIGINS and ALLOWED LOGOUT URLS under application settings in auth0
 - Save the changes
+- Add a user role called user and an admin role called admin in auth0.
 - Add this snippet of code to an empty rule (Rules are on the left sidebar on the auth0 dashboard) : 
 ```function (user, context, callback) {
   user.app_metadata = user.app_metadata || {};

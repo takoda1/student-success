@@ -259,13 +259,6 @@ class Admin extends React.Component {
                                     </Col>
                                 </Row>
 
-                                <Row>
-                                    <Col >
-                                        <h3>New Notes for You:</h3>
-                                        <Notes currentUsers={this.state.currentUsers} />
-                                    </Col>
-                                </Row>
-
                             </Col>
                         </Row>
                         </div>
@@ -596,6 +589,7 @@ class UserView extends React.Component {
     }
 }
 
+/* Currently an unused feature */
 class Notes extends React.Component {
     constructor(props) {
         super(props);

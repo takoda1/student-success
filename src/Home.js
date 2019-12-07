@@ -137,7 +137,7 @@ class Home extends React.Component {
                                     <Timers user={this.props.user} />
                                 </div>
                                 <Reflections user={this.props.user} questions={this.state.questions} />
-                                <Note user={this.props.user} />
+                                {/* <Note user={this.props.user} /> */}
                             </div>
                         )
                     }
@@ -450,6 +450,7 @@ class Reflections extends React.Component {
     }
 }
 
+/* Currently an unused feature */
 class Note extends React.Component {
     constructor(props) {
         super(props);

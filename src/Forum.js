@@ -22,9 +22,35 @@ class Forum extends Component {
         };
 
         this.onPost = this.onPost.bind(this);
+        this.onEdit = this.onEdit.bind(this);
+        this.getPosts = this.getPosts.bind(this);
     }
 
     async componentDidMount() {
+        const forumPosts = await this.getPosts();
+        this.setState({ forumPosts });
+    }
+
+    async onPost() {
+        const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: todayDate };
+        await axios.post('/forum', newPost);
+        const forumPosts = await this.getPosts();
+        this.setState({ forumPosts, newPostTitle: '', newPostText: '', makingPost: false });
+    }
+
+    async onEdit(postId, titleText, postText) {
+        const post = {
+            title: titleText,
+            body: postText,
+        }
+
+        await axios.put(`/forum/${postId}`, post);
+        const forumPosts = await this.getPosts();
+        const activePost = (await axios.get(`/forum/${postId}`)).data[0];
+        this.setState({ forumPosts, activePost });
+    }
+
+    async getPosts() {
         const allPosts = (await axios.get(`/forumPosts`)).data;        
         const forumPosts = [];
         for (const post of allPosts) {
@@ -34,14 +60,7 @@ class Forum extends Component {
             }
         }
 
-        this.setState({ forumPosts });
-    }
-
-    async onPost() {
-        const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: todayDate };
-        await axios.post('/forum', newPost);
-        const forumPosts = (await axios.get(`/forumPosts`)).data;
-        this.setState({ forumPosts, newPostTitle: '', newPostText: '', makingPost: false });
+        return forumPosts;
     }
 
     render() {
@@ -86,20 +105,20 @@ class Forum extends Component {
                                 return (
                                     <div key={post.id} className="post-date">
                                         { date }
-                                        <Post date={date} post={post} onClick={(e) => this.setState({ activePost: post })} />
+                                        <Post date={date} post={post} onClick={() => this.setState({ activePost: post })} />
                                     </div>
                                 )
                             }
 
                             return (
-                                <Post key={post.id} date={date} post={post} onClick={(e) => this.setState({ activePost: post })} />
+                                <Post key={post.id} date={date} post={post} onClick={() => this.setState({ activePost: post })} />
                             )
                         })}
                     </div>
                 </div>
                 <div className="active-container">
                     { this.state.activePost ? (
-                        <ActivePost post={this.state.activePost} user={this.props.user} />
+                        <ActivePost post={this.state.activePost} user={this.props.user} onEdit={this.onEdit} />
                     ) : (<p>Select a post to view, or create your own!</p>) }
                 </div>
             </div>
@@ -124,6 +143,9 @@ class ActivePost extends Component {
         this.state = {
             comments: [],
             newCommentText: "",
+            titleText: "",
+            postText: "",
+            editing: false
         }
 
         this.onReply = this.onReply.bind(this);
@@ -131,13 +153,27 @@ class ActivePost extends Component {
 
     async componentDidMount() {
         await this.props.post;
-        const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
-        this.setState({ comments });
+
+        if (this.props.post) {
+            const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
+            this.setState({ 
+                comments,
+                titleText: this.props.post.title,
+                postText: this.props.post.body,
+            });
+        }
     }
 
-    async componentDidUpdate() {
+    async componentDidUpdate(prevProps) {
+        if (prevProps.post.id !== this.props.post.id) {
+            this.setState({ editing: false })
+        }
         const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
-        this.setState({ comments });
+        this.setState({ 
+            comments,
+            titleText: this.props.post.title,
+            postText: this.props.post.body,
+        });
     }
 
     async onReply(event) {
@@ -154,14 +190,41 @@ class ActivePost extends Component {
         this.setState({ comments, newCommentText: "" });
     }
 
+
     render() {
+        const viewMode = (
+            <div className="active-post">
+                <h3>{this.props.post.title}</h3>
+
+                <p>{this.props.post.body}</p>
+                <p className="author-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
+                { this.props.user.id === this.props.post.userid ? <Button onClick={() => this.setState({ editing: true })} >Edit Post</Button> : null }
+            </div>
+        );
+
+        const editMode = (
+            <div className="active-post">
+                <Form onSubmit={(event) => {
+                    event.preventDefault();
+                    this.props.onEdit(this.props.post.id, this.state.titleText, this.state.postText);
+                    this.setState({ editing: false });
+                }}>
+                    <Form.Row>
+                        <Col><Form.Control value={this.state.titleText} onChange={(event) => this.setState({ titleText: event.target.value })} /></Col>
+                    </Form.Row>
+                    <Form.Row>
+                        <Col><Form.Control as="textarea" rows="5" value={this.state.postText} onChange={(event) => this.setState({ postText: event.target.value })} /></Col>
+                    </Form.Row>
+                    <Form.Row>
+                        <Col><Button type="submit">Save Changes</Button></Col>
+                    </Form.Row>
+                </Form> 
+            </div>
+        )
+
         return (
             <div >
-                <div className="active-post">
-                    <h3>{this.props.post.title}</h3>
-                    <p>{this.props.post.body}</p>
-                    <p className="author-info">{`${this.props.post.username}, ${this.props.post.postdate}`}</p>
-                </div>
+                {this.state.editing ? editMode : viewMode}
                 <div className="post-replies">
                     <h4>Comments:</h4>
                     {this.state.comments.map((comment) => {

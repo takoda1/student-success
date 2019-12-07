@@ -349,4 +349,3 @@ The main notes:
 - A user will receive a reminder if they haven't logged in for the day (Complicated given the structure of how a web app works)
 - A user can set goals for the future as well as that day
 - Allow the app to use persistent google oauth logins.
-- Maybe allow toggling of groupchat page to show timers and reflections, in addition to goals, we were thinking not to do this because students may not want their timers or reflections to be public to their group.

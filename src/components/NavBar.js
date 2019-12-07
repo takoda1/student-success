@@ -15,13 +15,13 @@ function AuthNavBar(props) {
 		<NavBar style={{ background: '#1c53c9', margin: 0 }}>
 	{
 		!auth0Client.isAuthenticated() &&
-        <Button variant="primary" size="sm" onClick={auth0Client.signIn}>Sign In</Button>
+        <Button className="sign-in" variant="primary" size="sm" onClick={auth0Client.signIn}>Sign In</Button>
 	}
 	{
 		auth0Client.isAuthenticated() &&
         <div>
           <label className="mr-2 text-white">{auth0Client.getProfile().name}</label>
-          <Button variant="primary" size="sm" onClick={() => {signOut()}}>Sign Out</Button>
+          <Button className="sign-out" variant="primary" size="sm" onClick={() => {signOut()}}>Sign Out</Button>
         </div>
 	}
 	</NavBar>

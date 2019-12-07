@@ -288,7 +288,7 @@ class Reflections extends Component {
         else{
             return(
                 <div className="history-reflections">
-                    <h2>Reflection</h2><br/>
+                    <h2>Reflections</h2><br/>
                     <p>No reflection.</p>
                 </div>
             );

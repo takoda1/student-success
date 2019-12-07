@@ -227,7 +227,7 @@ class History extends Component {
 class Calendar extends Component {
       render() {
         const listDays = this.props.week.map((date) =>
-        <Button key={date} variant="outline-primary" size="lg" className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</Button>
+        <Button key={date} variant="primary" size="lg" className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</Button>
         );
     
         return(

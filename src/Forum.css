@@ -13,11 +13,12 @@ body {
     overflow: scroll;
 }
 .post-preview {
-    background: #D8EBF4;
+    background: #DEF2FF;
     border-radius: 10px;
     padding: 10px;
     margin: 10px;
     overflow: hidden;
+    border: 3px solid #A6C4FF;
 }
 h4 {
     margin: 10px;
@@ -36,7 +37,7 @@ h4 {
     padding: 20px;
 }
 .active-post {
-    background: #D8EBF4;
+    background: #DEF2FF;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
@@ -49,7 +50,7 @@ h4 {
     padding-right: 25px;
 }
 .comment-block {
-    background: #D8EBF4;
+    background: #DEF2FF;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;

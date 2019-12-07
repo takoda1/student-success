@@ -34,7 +34,7 @@ PORT=3005
 
 ### For the API 
 
-Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3) 
+Follow this https://www.taniarascia.com/node-express-postgresql-heroku/ for postgres setup (the instructions for postgres setup are for mac, pc users will have to look up how to do instructions 1, 2, and 3)  
 
 
 The following commands are boiled down what the tutorial above accomplishes
@@ -309,6 +309,7 @@ If you want to create your own auth0 account to function with this app, follow t
 - Add `http://localhost:3005/callback, https://student-success.herokuapp.com/callback` to ALLOWED CALLBACK URLS under application settings in auth0
 - Add `http://localhost:3005, https://student-success.herokuapp.com` to ALLOWED WEB ORIGINS and ALLOWED LOGOUT URLS under application settings in auth0
 - Save the changes
+- Add a user role called user and an admin role called admin in auth0.
 - Add this snippet of code to an empty rule (Rules are on the left sidebar on the auth0 dashboard) : 
 ```function (user, context, callback) {
   user.app_metadata = user.app_metadata || {};
@@ -348,4 +349,3 @@ The main notes:
 - A user will receive a reminder if they haven't logged in for the day (Complicated given the structure of how a web app works)
 - A user can set goals for the future as well as that day
 - Allow the app to use persistent google oauth logins.
-- Maybe allow toggling of groupchat page to show timers and reflections, in addition to goals, we were thinking not to do this because students may not want their timers or reflections to be public to their group.

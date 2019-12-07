@@ -138,7 +138,6 @@ class Home extends React.Component {
                                     <Timers user={this.props.user} />
                                 </div>
                                 <Reflections user={this.props.user} questions={this.state.questions} />
-                                {/* <Note user={this.props.user} /> */}
                             </div>
                         )
                     }

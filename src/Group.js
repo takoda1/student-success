@@ -79,10 +79,13 @@ class Group extends Component {
     }
     async onMessageSent(event) {
         event.preventDefault();
-        const newMessage = { groupid: this.props.user.groupid, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
-        await axios.post('/groupchat', newMessage);
-        const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
-        this.setState({ messages, newMessageText: '' });
+        if(this.state.newMessageText !== '') {
+            const newMessage = { groupid: this.props.user.groupid, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
+            await axios.post('/groupchat', newMessage);
+            const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
+            this.setState({ messages, newMessageText: '' });
+        }
+        
     }
 
     onInputSelected(value) {
@@ -144,7 +147,7 @@ class Group extends Component {
                     <GroupMessages user={this.props.user} messages={this.state.messages} />
                     <Form onSubmit={this.onMessageSent}>
                         <InputGroup>
-                            <Form.Control type="text" value={this.state.newMessageText} inline="true" onChange={this.onMessageTyped} placeholder="Type your message here" />
+                            <Form.Control type="text" className="message-input" value={this.state.newMessageText} inline="true" onChange={this.onMessageTyped} placeholder="Type your message here" />
                             <Button id="group-chat-button" variant="primary" type="submit" inline="true">Send!</Button>
                         </InputGroup>
                         

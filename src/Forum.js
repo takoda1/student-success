@@ -23,25 +23,18 @@ class Forum extends Component {
 
         this.onPost = this.onPost.bind(this);
         this.onEdit = this.onEdit.bind(this);
+        this.getPosts = this.getPosts.bind(this);
     }
 
     async componentDidMount() {
-        const allPosts = (await axios.get(`/forumPosts`)).data;        
-        const forumPosts = [];
-        for (const post of allPosts) {
-            const classId = (await axios.get(`/user/${post.userid}`)).data[0].classid;
-            if (classId === this.props.user.classid) {
-                forumPosts.push(post);
-            }
-        }
-
+        const forumPosts = await this.getPosts();
         this.setState({ forumPosts });
     }
 
     async onPost() {
         const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: todayDate };
         await axios.post('/forum', newPost);
-        const forumPosts = (await axios.get(`/forumPosts`)).data;
+        const forumPosts = await this.getPosts();
         this.setState({ forumPosts, newPostTitle: '', newPostText: '', makingPost: false });
     }
 
@@ -52,9 +45,22 @@ class Forum extends Component {
         }
 
         await axios.put(`/forum/${postId}`, post);
-        const forumPosts = (await axios.get(`/forumPosts`)).data;
-        const activePost = (await axios.get(`/forum/${postId}`)).data[0]
+        const forumPosts = await this.getPosts();
+        const activePost = (await axios.get(`/forum/${postId}`)).data[0];
         this.setState({ forumPosts, activePost });
+    }
+
+    async getPosts() {
+        const allPosts = (await axios.get(`/forumPosts`)).data;        
+        const forumPosts = [];
+        for (const post of allPosts) {
+            const classId = (await axios.get(`/user/${post.userid}`)).data[0].classid;
+            if (classId === this.props.user.classid) {
+                forumPosts.push(post);
+            }
+        }
+
+        return forumPosts;
     }
 
     render() {

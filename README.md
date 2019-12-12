@@ -59,7 +59,7 @@ On 11/8/2019, commit number 173, on a windows machine, these steps pulled up a l
 
 # 2. Testing
 `npm test` to run backend/api tests.  
-`cypress open` to run frontend cypress tests.
+`npm run cypress` to run frontend cypress tests.
 
 # 3. Deployment  
 The app is deployed to heroku, and can be accessed here: https://student-success.herokuapp.com/.  

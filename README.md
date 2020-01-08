@@ -14,6 +14,8 @@
 
 # 0. Software for Student Success
 This webapp is meant to be used for senior honors students working on their honors thesis to help them stay organized and motivated throughout the writing process. The app also allows students to collaborate and interact with other students in their class. 
+
+Project website: http://comp523teamb.web.unc.edu/
  
 # 1. Getting started
 

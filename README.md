@@ -129,7 +129,10 @@ Groups:
 {id: int, groupname: string}
 
 Groupchat:
-{id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string}
+{id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string, userid: foreignKey(users: id), username: string}
+
+Grouplinks:
+{id: int, groupid: foreignKey(groups: id), link: string, linkdate: string, userid: foreignKey(users: id), username: string}
 
 Forum:
 {id: int, title: string, body: string, userid: int, username: string, postdate: string}
@@ -243,6 +246,12 @@ DELETE /group/:id	Deletes a single group with provided id
 GET /groupchat/:groupid     Gets all groupchat messages for a single group
 
 POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string, chatdate: string, userid: int, username: string}
+
+### Group Links
+
+GET /grouplinks/:groupid    Gets all groupchat links for a single group
+
+POST /grouplinks            Posts a single link with body: {groupid: int, link: string, linkdate: string, userid: int, username: string}
 
 ### Forum
 

@@ -8,6 +8,7 @@ const timerQueries = require('./queries/timerQueries')
 const reflectionQueries = require('./queries/reflectionQueries')
 const groupQueries = require('./queries/groupQueries')
 const chatQueries = require('./queries/chatQueries')
+const linkQueries = require('./queries/linkQueries')
 const forumQueries = require('./queries/forumQueries')
 const noteQueries = require('./queries/noteQueries')
 const classQueries = require('./queries/classQueries')
@@ -73,6 +74,9 @@ app.delete('/group/:id', groupQueries.deleteGroup)
 
 app.get('/groupchat/:groupid', chatQueries.getAllChats)
 app.post('/groupchat', chatQueries.addChat)
+
+app.get('/grouplinks/:groupid', linkQueries.getAllLinks)
+app.post('/grouplinks', linkQueries.addLink)
 
 app.get('/forumPosts', forumQueries.getAllPosts)
 app.get('/forum/:id', forumQueries.getPost)

@@ -79,10 +79,13 @@ class Group extends Component {
     }
     async onMessageSent(event) {
         event.preventDefault();
-        const newMessage = { groupid: this.props.user.groupid, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
-        await axios.post('/groupchat', newMessage);
-        const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
-        this.setState({ messages, newMessageText: '' });
+        if(this.state.newMessageText !== '') {
+            const newMessage = { groupid: this.props.user.groupid, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
+            await axios.post('/groupchat', newMessage);
+            const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
+            this.setState({ messages, newMessageText: '' });
+        }
+        
     }
 
     onInputSelected(value) {
@@ -97,10 +100,17 @@ class Group extends Component {
         else {
             var notNull = getNewHideTimer;
         }
-        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: checked, hidereflection: notNull, classid: this.props.user.classid}
+        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: checked, hidereflection: notNull, classid: this.props.user.classid};
         await axios.put(`/user/${this.props.user.id}`, editUser);
-        this.setState({ hideTimer: checked });
-        window.location.reload(false);
+
+        var groupTimers = this.state.groupTimers.map((user) => {
+            if(user.userId === this.props.user.id) {
+                user.hide = checked;
+            }
+            return user;
+        })
+
+        this.setState({ hideTimer: checked, groupTimers });
     }
 
     async onHideReflections(checked) {
@@ -111,11 +121,17 @@ class Group extends Component {
         else {
             var notNull = getNewHideTimer;
         }
-        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid}
+        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid};
         await axios.put(`/user/${this.props.user.id}`, editUser);
+
+        var groupReflections = this.state.groupReflections.map((user) => {
+            if(user.userId === this.props.user.id) {
+                user.hide = checked;
+            }
+            return user;
+        });
         
-        this.setState({ hideReflection: checked, hideTimer: getNewHideTimer });
-        window.location.reload(false);
+        this.setState({ hideReflection: checked, hideTimer: getNewHideTimer, groupReflections });
 
     }
 
@@ -131,7 +147,7 @@ class Group extends Component {
                     <GroupMessages user={this.props.user} messages={this.state.messages} />
                     <Form onSubmit={this.onMessageSent}>
                         <InputGroup>
-                            <Form.Control type="text" value={this.state.newMessageText} inline="true" onChange={this.onMessageTyped} placeholder="Type your message here" />
+                            <Form.Control type="text" className="message-input" value={this.state.newMessageText} inline="true" onChange={this.onMessageTyped} placeholder="Type your message here" />
                             <Button id="group-chat-button" variant="primary" type="submit" inline="true">Send!</Button>
                         </InputGroup>
                         
@@ -296,13 +312,23 @@ class GroupMessages extends Component {
     }
 
     render() {
-
+        var thisMessage;
         var dates = [];
-        const listGroupMessages = this.props.messages.map((msg) =>
-            <div>
-                <span className="message-date"><b>{!dates.includes(msg.chatdate)? (dates.push(msg.chatdate), fixDateWithYear(msg.chatdate)) : false}</b></span> 
-                <div className="group-message" key={msg.id}><b>{msg.username}</b>: {msg.chattext} </div>
-            </div>);
+        const listGroupMessages = this.props.messages.map((msg) => {
+            if(msg.userid === this.props.user.id) {
+                thisMessage = <div className="group-message" key={msg.id} style={{backgroundColor: '#DEF2FF'}}><b>Me</b>: {msg.chattext} </div>;
+            }
+            else {
+                thisMessage = <div className="group-message" key={msg.id} style={{}}><b>{msg.username}</b>: {msg.chattext} </div>;
+            }
+            return(
+                <div>
+                    <span className="message-date"><b>{!dates.includes(msg.chatdate)? (dates.push(msg.chatdate), fixDateWithYear(msg.chatdate)) : false}</b></span> 
+                    {/* <div className="group-message" key={msg.id}><b>{msg.username}</b>: {msg.chattext} </div> */}
+                    {thisMessage}
+                </div>
+            ); 
+        });
         return(
             <div className="group-messages" id="group-messages">
                 { listGroupMessages }

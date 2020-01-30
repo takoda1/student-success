@@ -227,7 +227,7 @@ class History extends Component {
 class Calendar extends Component {
       render() {
         const listDays = this.props.week.map((date) =>
-        <Button key={date} variant="outline-primary" size="lg" className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</Button>
+        <Button key={date} variant="primary" size="lg" className="history-date" onClick={() => this.props.onDayClicked(date)}>{getDayofWeek(date)} <br></br>{fixDate(date)}</Button>
         );
     
         return(
@@ -288,7 +288,7 @@ class Reflections extends Component {
         else{
             return(
                 <div className="history-reflections">
-                    <h2>Reflection</h2><br/>
+                    <h2>Reflections</h2><br/>
                     <p>No reflection.</p>
                 </div>
             );

@@ -139,7 +139,6 @@ class Home extends React.Component {
                                     <Timers user={this.props.user} />
                                 </div>
                                 <Reflections user={this.props.user} questions={this.state.questions} />
-                                <Note user={this.props.user} />
                             </div>
                         )
                     }
@@ -452,15 +451,15 @@ class Reflections extends React.Component {
             <Form className="editReflectionMode" onSubmit={this.onReflectionSubmitted}>
                 <div className="text-block">
                     <p>{this.props.questions.questionone || "Loading Question 1..."}</p>
-                    <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[0]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 0, 1) })} />
+                    <Form.Control className="questionOne" as="textarea" rows="5" value={this.state.reflectionQuestions[0]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 0, 1) })} />
                     <br/>
                     <p>{this.props.questions.questiontwo || "Loading Question 2..."}</p>
-                    <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[1]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 1, 2) })} />
+                    <Form.Control className="questionTwo" as="textarea" rows="5" value={this.state.reflectionQuestions[1]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 1, 2) })} />
                     <br/>
                     <p>{this.props.questions.questionthree || "Loading Question 3..."}</p>
-                    <Form.Control as="textarea" rows="5" value={this.state.reflectionQuestions[2]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 2) })} />
+                    <Form.Control className="questionThree" as="textarea" rows="5" value={this.state.reflectionQuestions[2]} onChange={(event) => this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 2) })} />
                 </div>
-                <Button type="submit">Save</Button>
+                <Button type="submit" className="save-reflection">Save</Button>
             </Form>
         );
 
@@ -474,6 +473,7 @@ class Reflections extends React.Component {
     }
 }
 
+/* Currently an unused feature */
 class Note extends React.Component {
     constructor(props) {
         super(props);

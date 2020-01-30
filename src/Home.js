@@ -1,5 +1,6 @@
 import { Layout, GoalList, secondsToHms, delimiter } from './shared';
 import React, { Fragment } from 'react';
+import { Prompt } from 'react-router-dom';
 import axios from 'axios';
 import Moment from 'moment';
 import "./Home.css";
@@ -78,11 +79,11 @@ class Home extends React.Component {
         const updatedGoal = { goaltext: goal.goaltext, completed };
         await axios.put(`/goal/${goal.id}`, updatedGoal);
         const goals = (await axios.get(`/goals/${this.props.user.id}/${todayDate}`)).data;
-
+        
         this.setState(() => {
             return { goals };
         });
-
+        
         this.checkTotalGoals();
     }
 
@@ -171,9 +172,11 @@ class Timers extends React.Component {
             customName: "Custom",
             manualTime: 0,
             manualCategory: "Writing",
-            alarm: false
+            alarm: false,
+            activeTimers: 0,
         }
 
+        this.updateActiveTimers = this.updateActiveTimers.bind(this);
         this.updateTimers = this.updateTimers.bind(this);
         this.updateCustomName = this.updateCustomName.bind(this);
     }
@@ -181,6 +184,12 @@ class Timers extends React.Component {
     async componentDidMount() {
         const timers = (await axios.get(`/timer/${this.props.user.id}/${todayDate}`)).data[0];
         this.setState({ timers });
+    }
+
+    updateActiveTimers(active) {
+        let activeTimers = this.state.activeTimers;
+        active ? activeTimers++ : activeTimers--;
+        this.setState({ activeTimers });
     }
 
     updateCustomName(customName) {
@@ -206,18 +215,20 @@ class Timers extends React.Component {
 
     render() {
         const ready = this.state.timers;
+        const timerRunning = this.state.activeTimers > 0;
 
         return (
             <div style={{ display: "inline-block", width: '50%', verticalAlign: 'top' }}>
+                <Prompt when={timerRunning} message="You still have a timer running.  Are you sure you'd like to leave?" />
                 <div>
                     <h3 style={{ display: "inline-block", width: '60%', marginRight: 15, paddingRight: 25 }} >Timers</h3>
                     <h3 style={{ display: "inline-block", width: '30%' }} >Today's Times</h3>
                 </div>
                 <div>
                     <div className="timers-list" style={{ display: "inline-block", width: '60%', verticalAlign: 'top', marginRight: 15, paddingRight: 25, borderRight: '2px solid #DDD'  }}>
-                        <Timer name="Writing" updateTimers={this.updateTimers} category="writing" />
-                        <Timer name="Research" updateTimers={this.updateTimers} category="research" />
-                        <Timer name={this.state.customName} updateTimers={this.updateTimers} updateCustomName={this.updateCustomName} category="custom" />
+                        <Timer name="Writing" updateTimers={this.updateTimers} category="writing" updateActiveTimers={this.updateActiveTimers} />
+                        <Timer name="Research" updateTimers={this.updateTimers} category="research" updateActiveTimers={this.updateActiveTimers} />
+                        <Timer name={this.state.customName} updateTimers={this.updateTimers} updateCustomName={this.updateCustomName} category="custom" updateActiveTimers={this.updateActiveTimers} />
                     </div>
                     <div style={{ display: "inline-block", verticalAlign: 'top' }}>
                         <table className="timers-table" >
@@ -283,8 +294,9 @@ class Timer extends React.Component {
         this.setState({
             time: this.state.time,
             start: Math.floor(Date.now()/1e3) - this.state.time,
-            active: true
+            active: true,
         });
+        this.props.updateActiveTimers(true);
         this.timer = setInterval(() => {
             this.setState({
                 time: Math.floor(Date.now()/1e3) - this.state.start
@@ -299,6 +311,7 @@ class Timer extends React.Component {
     stopTimer() {
         clearInterval(this.timer);
         this.setState({ active: false });
+        this.props.updateActiveTimers(false);
     }
 
     resetTimer() {

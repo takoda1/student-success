@@ -25,8 +25,8 @@ class Admin extends React.Component {
             firstField: "",
             lastField: "",
             emailField: "",
-            groupField: 0,
-            classField: 0,
+            groupField: "",
+            classField: "",
             groupNameField: "",
             classNameField: "",
             questions: {},
@@ -53,7 +53,9 @@ class Admin extends React.Component {
 
     async addUser(event) {
         event.preventDefault();
-        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid: this.state.groupField, classid: this.state.classField});
+        const groupid = (await axios.get(`/group/${this.state.groupField}`)).data[0].id;
+        const classid = (await axios.get(`/class/${this.state.classField}`)).data[0].id;
+        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid, classid});
         const currentUsers = (await axios.get("/users")).data;
             
         this.setState({
@@ -61,15 +63,19 @@ class Admin extends React.Component {
             firstField: "",
             lastField: "",
             emailField: "",
-            groupField: 0,
-            classField: 0,
+            groupField: "",
+            classField: "",
         });
         
     }
 
-    async editUser(user, firstname, lastname, email, groupid, classid) {
+    async editUser(user, firstname, lastname, email, groupname, classname) {
         const hidetimer = user.hidetimer ? user.hidetimer : false;
         const hidereflection = user.hidereflection ? user.hidereflection : false;
+
+        const groupid = (await axios.get(`/group/${groupname}`)).data[0].id;
+        const classid = (await axios.get(`/class/${classname}`)).data[0].id;
+
         await axios.put(`/user/${user.id}`, { firstname, lastname, email, groupid, classid, hidetimer, hidereflection });
         const currentUsers = (await axios.get("/users")).data;
             
@@ -259,7 +265,7 @@ class Admin extends React.Component {
                                         <h3>Users list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} deleteUser={this.deleteUser} />)}
+                                                {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} deleteUser={this.deleteUser} currentClasses={this.state.currentClasses} currentGroups={this.state.currentGroups} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -295,7 +301,10 @@ class Admin extends React.Component {
                                                     <Form.Label>Group: </Form.Label>
                                                 </Col>
                                                 <Col>
-                                                    <Form.Control type="number" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
+                                                    <Form.Control as="select" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} >
+                                                        <option key={0} >Select...</option>
+                                                        {this.state.currentGroups.map((group) => <option key={group.id}>{group.groupname}</option>)}
+                                                    </Form.Control>
                                                 </Col>
                                             </Form.Row>
                                             <Form.Row >
@@ -303,7 +312,10 @@ class Admin extends React.Component {
                                                     <Form.Label>Class: </Form.Label>
                                                 </Col>
                                                 <Col>
-                                                    <Form.Control type="number" value={this.state.classField} onChange={(event) => this.setState({ classField: event.target.value })} />
+                                                    <Form.Control as="select" value={this.state.classField} onChange={(event) => this.setState({ classField: event.target.value })} >
+                                                        <option key={0}>Select...</option>
+                                                        {this.state.currentClasses.map((c) => <option key={c.id}>{c.classname}</option>)}
+                                                    </Form.Control>
                                                 </Col>
                                             </Form.Row>
                                             <br />
@@ -341,7 +353,7 @@ class ClassView extends React.Component {
     render() {
         return (
             <div>
-                Class #{ this.props.class.id }: { this.props.class.classname }  
+                { this.props.class.classname }  
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
@@ -373,7 +385,7 @@ class GroupView extends React.Component {
     render() {
         return (
             <div>
-                Group #{ this.props.group.id }: { this.props.group.groupname }  
+                { this.props.group.groupname }  
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
@@ -404,14 +416,19 @@ class UserView extends React.Component {
             firstField: this.props.user.firstname,
             lastField: this.props.user.lastname,
             emailField: this.props.user.email,
-            groupField: this.props.user.groupid,
-            classField: this.props.user.classid,
+            groupField: "",
+            classField: "",
+            groupName: "",
+            className: "",
             options: {},
             series: []
         }
     }
 
     async componentDidMount() {
+        const groupName = (await axios.get(`/grou/${this.props.user.groupid}`)).data[0].groupname;
+        const className = (await axios.get(`/clas/${this.props.user.classid}`)).data[0].classname;
+
         var writingDataPoints = [];
         var researchDataPoints = [];
         var customDataPoints = [];
@@ -547,7 +564,7 @@ class UserView extends React.Component {
                 data: customDataPoints
             }
         ];
-        this.setState({options, series});
+        this.setState({options, series, className, groupName});
     }
 
     render() {
@@ -559,8 +576,8 @@ class UserView extends React.Component {
                 <Modal.Body>
                     <p>Name: {this.props.user.firstname} {this.props.user.lastname}</p>
                     <p>Email: {this.props.user.email}</p>
-                    <p>Group Id: {this.props.user.groupid}</p>
-                    <p>Class Id: {this.props.user.classid}</p>
+                    <p>Group: {this.state.groupName}</p>
+                    <p>Class: {this.state.className}</p>
                     <br/>
                     <div className="admin-graph-div">
                         <Chart className="admin-pg-graph" options={this.state.options} series={this.state.series} type="line" width='100%' />
@@ -586,7 +603,7 @@ class UserView extends React.Component {
                     <Form onSubmit={(e) => {
                         e.preventDefault();
                         this.props.editUser(this.props.user, this.state.firstField, this.state.lastField, this.state.emailField, this.state.groupField, this.state.classField);
-                        this.setState({ show: false, editing: false })
+                        this.setState({ show: false, editing: false, groupName: this.state.groupField, className: this.state.classField });
                     }}>
                         <Form.Row>
                             <Col>
@@ -614,10 +631,13 @@ class UserView extends React.Component {
                         </Form.Row>
                         <Form.Row>
                             <Col>
-                                <Form.Label>Group Id: </Form.Label>
+                                <Form.Label>Group: </Form.Label>
                             </Col>
                             <Col>
-                                <Form.Control type="number" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} />
+                                <Form.Control as="select" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} >
+                                    <option key={0}>Select...</option>
+                                    {this.props.currentGroups.map((group) => <option key={group.id}>{group.groupname}</option>)}
+                                </Form.Control>
                             </Col>
                         </Form.Row>
                         <Form.Row>
@@ -625,7 +645,10 @@ class UserView extends React.Component {
                                 <Form.Label>Class Id: </Form.Label>
                             </Col>
                             <Col>
-                                <Form.Control type="number" value={this.state.classField} onChange={(event) => this.setState({ classField: event.target.value })} />
+                                <Form.Control as="select" value={this.state.classField} onChange={(event) => this.setState({ classField: event.target.value })} >
+                                    <option key={0}>Select...</option>
+                                    {this.props.currentClasses.map((c) => <option key={c.id}>{c.classname}</option>)}
+                                </Form.Control>
                             </Col>
                         </Form.Row>
                         <Button type="submit">Save Changes</Button>
@@ -641,7 +664,7 @@ class UserView extends React.Component {
 
         return (
             <li>
-                {`${this.props.user.firstname} ${this.props.user.lastname} - ${this.props.user.email} - Group #${this.props.user.groupid}`}
+                {`${this.props.user.firstname} ${this.props.user.lastname} - ${this.props.user.email} - ${this.state.groupName}`}
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
                 {this.state.editing ? editModal : viewModal}
             </li>

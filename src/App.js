@@ -54,7 +54,7 @@ class App extends Component {
                 <nav>
                     <div style={{ background: '#1c53c9', paddingBottom: 15 }}>
                         <NavButton name="Home" path="/index" />
-                        <NavButton name="History" path="/history" />
+                        <NavButton name="Timers" path="/timers" />
                         <NavButton name="Group" path="/group" />
                         <NavButton name="Forum" path="/forum" />
                         {
@@ -72,7 +72,7 @@ class App extends Component {
                         <Route path="/index">
                             <Home user={this.state.user} />
                         </Route>
-                        <Route path="/history">
+                        <Route path="/timers">
                             <History user={this.state.user} />
                         </Route>
                         <Route path="/group">

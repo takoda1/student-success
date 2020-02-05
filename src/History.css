@@ -118,3 +118,7 @@ h2 {
   display: flex;
   justify-content: center;
 }
+.history-date-picker {
+  margin: .5em;
+  margin-left: 1em;
+}

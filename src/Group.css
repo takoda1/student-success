@@ -72,3 +72,8 @@
 .message-date {
     font-size: 1.25em;
 }
+.wrap-links {
+    word-wrap: break-word;
+    max-height: 33vh !important;
+    overflow-y: scroll;
+}

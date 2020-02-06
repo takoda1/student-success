@@ -122,6 +122,9 @@ Goals:
 Timers:
 {id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, researchtime: int, writingtime: int, customtime: int}    (time is in seconds)
 
+Customtimers:
+{id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, time: int, name: string}  (time in seconds)
+
 Reflections:
 {id: int, userid: foreignKey(Users: id), reflectiondate: yyyy-mm-dd, reflectiontext: string}
 
@@ -210,6 +213,25 @@ Updates/puts the timer specified by its unique id with new researchtime, writing
 
 DELETE /timer/:id
 Deletes the timer specified by its unique id
+
+#### Custom Timers
+
+GET /customTimer/:userid/:date
+Returns the timers for a specified user (userid, references primary key of users table)
+and for a specified date in the format yyyy-mm-dd
+
+GET /customTimerByUser/:userid
+Returns all timers for a specified user (userid, references primary key of users table)
+
+GET /customTimer/:id
+Returns a single timer referenced by the timer primary key id
+
+POST /customTimer   (Requires json/js body of {userid: number, timerdate: "yyyy-mm-dd", time: int, name: string})
+
+PUT /customTimer/:id (Requires json/js body of {time: int, name: string})
+
+DELETE /customTimer/:id
+Deletes the custom timer specified by its unique id
 
 ### Reflections
 

@@ -5,6 +5,7 @@ const cors = require('cors')
 const userQueries = require('./queries/userQueries')
 const goalQueries = require('./queries/goalQueries')
 const timerQueries = require('./queries/timerQueries')
+const customTimerQueries = require('./queries/customTimerQueries')
 const reflectionQueries = require('./queries/reflectionQueries')
 const groupQueries = require('./queries/groupQueries')
 const chatQueries = require('./queries/chatQueries')
@@ -59,6 +60,13 @@ app.get('/timerByUser/:userid', timerQueries.getTimerByUserid)
 app.post('/timer', timerQueries.addTimer)
 app.put('/timer/:id', timerQueries.putTimer)
 app.delete('/timer/:id', timerQueries.deleteTimer)
+
+app.get('/customTimer/:userid/:date', customTimerQueries.getCustomTimer);
+app.get('/customTimerByUser/:userid', customTimerQueries.getCustomTimerByUserid);
+app.get('/customTimer/:id', customTimerQueries.getCustomTimerById);
+app.post('/customTimer/', customTimerQueries.addCustomTimer);
+app.put('/customTimer/:id', customTimerQueries.putCustomTimer);
+app.delete('/customTimer/:id', customTimerQueries.deleteCustomTimer);
 
 app.get('/reflection/:userid/:date', reflectionQueries.getReflection)
 app.get('/reflection/:id', reflectionQueries.getReflectionById)

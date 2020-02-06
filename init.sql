@@ -45,6 +45,14 @@ CREATE TABLE timers (
 	customtime INT
 );
 
+CREATE TABLE customtimers (
+	id SERIAL PRIMARY KEY,
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	timerdate DATE NOT NULL,
+	time INT,
+	name TEXT
+)
+
 CREATE TABLE reflections (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,

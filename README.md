@@ -135,7 +135,7 @@ Groupchat:
 {id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string, userid: foreignKey(users: id), username: string}
 
 Grouplinks:
-{id: int, groupid: foreignKey(groups: id), link: string, linkdate: string, userid: foreignKey(users: id), username: string}
+{id: int, groupid: foreignKey(groups: id), link: string, title: string, linkdate: string, userid: foreignKey(users: id), username: string}
 
 Forum:
 {id: int, title: string, body: string, userid: int, username: string, postdate: string}
@@ -273,7 +273,11 @@ POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string
 
 GET /grouplinks/:groupid    Gets all groupchat links for a single group
 
-POST /grouplinks            Posts a single link with body: {groupid: int, link: string, linkdate: string, userid: int, username: string}
+POST /grouplinks            Posts a single link with body: {groupid: int, link: string, title: string, linkdate: string, userid: int, username: string}
+
+PUT /grouplinks/:id         Updates a link by its id, requires body of {link: string, title: string}
+
+DELETE /grouplinks/:id      Deletes a link by its id
 
 ### Forum
 

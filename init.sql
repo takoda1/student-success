@@ -73,6 +73,7 @@ CREATE TABLE grouplinks (
 	id SERIAL PRIMARY KEY, 
 	groupid INTEGER REFERENCES groups(id) ON DELETE CASCADE, 
 	link TEXT, 
+	title TEXT,
 	linkdate TEXT,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	username TEXT 

@@ -85,6 +85,8 @@ app.post('/groupchat', chatQueries.addChat)
 
 app.get('/grouplinks/:groupid', linkQueries.getAllLinks)
 app.post('/grouplinks', linkQueries.addLink)
+app.put('/grouplinks/:id', linkQueries.putLink)
+app.delete('/grouplinks/:id', linkQueries.deleteLink)
 
 app.get('/forumPosts', forumQueries.getAllPosts)
 app.get('/forum/:id', forumQueries.getPost)

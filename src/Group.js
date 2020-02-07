@@ -170,11 +170,11 @@ class Group extends Component {
                 <div className="shared-goals">
                     <GroupForm onHideTimers={this.onHideTimers} onHideReflections={this.onHideReflections} onInputSelected={this.onInputSelected} hideTimer={this.state.hideTimer} hideReflection={this.state.hideReflection} />
                     <br />
-                    <Form onSubmit={this.onLinkSubmitted}>
+                    {/* <Form onSubmit={this.onLinkSubmitted}>
                         <Form.Label>Input links to documents you would like to share with the group:</Form.Label>
                         <Form.Control type="text" onChange={this.onLinkTyped} value={this.state.newLinkText} />
                         <Button variant="primary" type="submit">Submit</Button>
-                     </Form>
+                     </Form> */}
                     <GroupData user={this.props.user} groupGoals={this.state.groupGoals} groupTimers={this.state.groupTimers} groupReflections={this.state.groupReflections} groupLinks={this.state.groupLinks} selectedView={this.state.selectedView} groupId={this.props.user.groupid} />
                 </div>
                 <div className="group-chat">
@@ -370,7 +370,7 @@ class ListLinks extends Component {
     render() {
         if(this.props.links.length !== 0) {
             const listLink = this.props.links.map((link) => 
-                <li><a href={link.link} target="_blank">{link.link}</a></li>);
+                <li><a href={link.link} target="_blank">{link.title}</a></li>);
             return(<div> {listLink} </div>);
         }
         else {

@@ -88,3 +88,19 @@ button:hover {
 .goal-check-col {
   flex-grow: 1.19 !important;
 }
+.home-reflections {
+  width: 100%;
+}
+.home-flex-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+.home-links {
+  width: 45vw;
+}
+/* .links-buttons {
+  flex-shrink: 4 !important;
+} */
+/* .edit-links {
+  flex-grow: 2.5 !important;
+} */

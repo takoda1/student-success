@@ -77,3 +77,11 @@
     max-height: 33vh !important;
     overflow-y: scroll;
 }
+.grid-layout {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: auto;
+}
+.date-picker {
+    margin-top: 4vh;
+}

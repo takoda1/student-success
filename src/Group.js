@@ -6,8 +6,13 @@ import { getTodaysDate, CheckboxGoals, secondsToHms, delimiter, fixDateWithYear 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import DatePicker from "react-datepicker";
+import Moment from 'moment';
 
-const today = getTodaysDate();
+
+const today = Moment().format('YYYY-MM-DD');
+
+const newDate = new Date();
 
 class Group extends Component {
     constructor(props) {
@@ -22,20 +27,21 @@ class Group extends Component {
             groupName: '',
             messages: [],
             newMessageText: '',
-            newLinkText: '',
             selectedView: 'goals',
             hideTimer: this.props.user.hidetimer,
-            hidereflection: this.props.user.hidereflection
+            hidereflection: this.props.user.hidereflection,
+            selectedDate: newDate,
+            selectedMomentDate: today
 
         };
 
         this.onMessageTyped = this.onMessageTyped.bind(this);
         this.onMessageSent = this.onMessageSent.bind(this);
-        this.onLinkTyped = this.onLinkTyped.bind(this);
-        this.onLinkSubmitted = this.onLinkSubmitted.bind(this);
         this.onInputSelected = this.onInputSelected.bind(this);
         this.onHideTimers = this.onHideTimers.bind(this);
         this.onHideReflections = this.onHideReflections.bind(this);
+
+        this.onDateChanged = this.onDateChanged.bind(this);
     }
 
     async componentDidMount() {
@@ -101,22 +107,6 @@ class Group extends Component {
         }
         
     }
-
-    onLinkTyped(event) {
-        this.setState({ newLinkText: event.target.value });
-    }
-
-    async onLinkSubmitted(event) {
-        event.preventDefault();
-        console.log(this.state.newLinkText)
-        if(this.state.newLinkText !== '') {
-            const newLink = { groupid: this.props.user.groupid, link: this.state.newLinkText, linkdate: today, userid: this.props.user.id, username: this.props.user.firstname };
-            await axios.post('/grouplinks', newLink);
-            const groupLinksApi = (await axios.get(`grouplinks/${this.props.user.groupid}`)).data;
-            this.setState({ groupLinksApi, newLinkText: '' });
-        }
-    }    
-
     onInputSelected(value) {
         this.setState({selectedView: value});
     }
@@ -164,17 +154,46 @@ class Group extends Component {
 
     }
 
+    async onDateChanged(date) {
+        const selectedMomentDate = Moment(date).format('YYYY-MM-DD');
+        this.setState({selectedMomentDate, selectedDate: date});
+
+        const groupUsers = (await axios.get(`/userByGroup/${this.props.user.groupid}`)).data;
+
+        var groupGoals = [];
+        var groupTimers = [];
+        var groupReflections = [];
+
+        for(var i=0; i < groupUsers.length; i++) {
+            var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${selectedMomentDate}`)).data;
+            var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, goals: thisGoals};
+            groupGoals.push(theseGoals);
+
+            var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${selectedMomentDate}`)).data;
+            var hideThisTimer = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hidetimer;
+            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, timers: thisTimers, hide: hideThisTimer};
+            groupTimers.push(theseTimers);
+
+            var thisReflections = (await axios.get(`/reflection/${groupUsers[i].id}/${selectedMomentDate}`)).data;
+            var hideThisReflection = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hidereflection;
+            var theseReflections = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, reflections: thisReflections, hide: hideThisReflection};
+            groupReflections.push(theseReflections);
+
+        }
+
+        this.setState({groupGoals, groupTimers, groupReflections});
+
+    }
+
     render() {
         return(
             <div className="group-body">
                 <div className="shared-goals">
-                    <GroupForm onHideTimers={this.onHideTimers} onHideReflections={this.onHideReflections} onInputSelected={this.onInputSelected} hideTimer={this.state.hideTimer} hideReflection={this.state.hideReflection} />
+                    <div className="grid-layout">
+                        <GroupForm onHideTimers={this.onHideTimers} onHideReflections={this.onHideReflections} onInputSelected={this.onInputSelected} hideTimer={this.state.hideTimer} hideReflection={this.state.hideReflection} />
+                        <DatePicker className="date-picker" selected={this.state.selectedDate} onChange={this.onDateChanged} />
+                    </div>
                     <br />
-                    {/* <Form onSubmit={this.onLinkSubmitted}>
-                        <Form.Label>Input links to documents you would like to share with the group:</Form.Label>
-                        <Form.Control type="text" onChange={this.onLinkTyped} value={this.state.newLinkText} />
-                        <Button variant="primary" type="submit">Submit</Button>
-                     </Form> */}
                     <GroupData user={this.props.user} groupGoals={this.state.groupGoals} groupTimers={this.state.groupTimers} groupReflections={this.state.groupReflections} groupLinks={this.state.groupLinks} selectedView={this.state.selectedView} groupId={this.props.user.groupid} />
                 </div>
                 <div className="group-chat">
@@ -338,7 +357,7 @@ class Goals extends Component {
         else if(this.props.hide === true) {
             return(
                 <div className="group-data-item" id="group-reflections">
-                    <h2>{this.props.userName}'s Reflection</h2><br/>
+                    <h2>{this.props.userName}'s Reflections</h2><br/>
                     <p>Has elected to not share their reflections with the group.</p>
                 </div>
             );
@@ -346,7 +365,7 @@ class Goals extends Component {
         else{
             return(
                 <div className="group-data-item" id="group-reflections">
-                    <h2>{this.props.userName}'s Reflection</h2><br/>
+                    <h2>{this.props.userName}'s Reflections</h2><br/>
                     <p>No reflection.</p>
                 </div>
             );

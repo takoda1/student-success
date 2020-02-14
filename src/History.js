@@ -1,12 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import './History.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faMinusCircle, faCaretRight, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
-import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import Moment from 'moment';
-import { getTodaysDate, secondsToHms, Goals, delimiter, fixDateWithYear } from './shared';
+import {secondsToHms, fixDateWithYear } from './shared';
 import Chart from 'react-apexcharts'
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -45,6 +42,7 @@ class History extends Component {
         this.onChangeManualCategory = this.onChangeManualCategory.bind(this);
         this.onChangeManualTime = this.onChangeManualTime.bind(this);
         this.onSubmitManualTime = this.onSubmitManualTime.bind(this);
+
     }
 
     async componentDidMount() {
@@ -53,6 +51,13 @@ class History extends Component {
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
         console.log(customTimers);
         this.setState({ timers, customTimers });
+        
+        // if (Notification.permission !== "denied") {
+        //     Notification.requestPermission().then(function (permission) {
+        //     });
+        // }
+
+        askNotificationPermission();
 
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
         var startWeek = Moment(allTimers[0].timerdate).week();
@@ -253,6 +258,7 @@ class History extends Component {
     }
 
 
+
     render() {
         return(
             <div><br/>
@@ -386,6 +392,9 @@ class Timer extends Component {
 
 
     async timerFinished() {
+        if (Notification.permission === "granted") {
+            var notification = new Notification("Time complete!");
+        }
         const alarmAudio = document.getElementsByClassName("audio-sound")[0];
         alarmAudio.play();
         alert("Time complete!");
@@ -457,118 +466,49 @@ class Timer extends Component {
     }
 }
 
-class Reflections extends Component {
-    render() {
-        if(this.props.reflections && this.props.reflections.reflectiontext.length > 0 && this.props.reflections.reflectiontext !== ")(}){(" && this.props.reflections.reflectiontext !== ")(}){()(}){("){
-            const reflectionSplit = this.props.reflections.reflectiontext.split(delimiter);
-            return(
-                <div className="history-reflections">
-                    <h2>Reflections</h2><br/>
-                    <p>
-                        1. {reflectionSplit[0]}
-                    </p>
-                    <p>
-                        2. {reflectionSplit[1]}
-                    </p>
-                    <p>
-                        3. {reflectionSplit[2]}
-                    </p>
-                </div>
-            );
-        }
-        else{
-            return(
-                <div className="history-reflections">
-                    <h2>Reflections</h2><br/>
-                    <p>No reflection.</p>
-                </div>
-            );
-        }
-        
-    }
-}
-
-class Completed extends Component {
-    render() {
-        let date = fixDate(this.props.selectedDate);
-        if(this.props.goals.length !== 0){
-            const isCompleted = this.props.goals.reduce((memo, goal) => { return memo ? goal.completed : false }, true) ? true : false;
-            if(isCompleted=== true) {
-                return(
-                    <div className="history-goals-aside">
-                        <FontAwesomeIcon icon={faCheckCircle} />
-                        <p>You've completed all of your goals for {date}! :)</p>
-                    </div> 
-                 );
-            }
-            else {
-                return(
-                    <div className="history-goals-aside">
-                        <FontAwesomeIcon icon={faMinusCircle} />
-                        <p>You did not meet all of your goals for {date} :(</p>
-                    </div> 
-                );
-            }
-        }
-        else {
-            return(
-                <div className="history-goals-aside">
-                    <div className="history-no-goals">No goals recorded on {date}.</div>
-                </div>
-            );
-        }
-        
-    }
-
-
-}
 
 // Functions
 
-function fixDate(d) {
-    var res = d.split("-");
-    return(res[1].concat("/", res[2]));
-}
 
-// function formatDate(date){
-//         var dd = date.getDate();
-//         var mm = date.getMonth()+1;
-//         var yyyy = date.getFullYear();
-//         if(dd<10) {dd='0'+dd}
-//         if(mm<10) {mm='0'+mm}
-//         date = yyyy+'-'+mm+'-'+dd;
-//         return date
-//      }
+function checkNotificationPromise() {
+    try {
+      Notification.requestPermission().then();
+    } catch(e) {
+      return false;
+    }
 
-// function Last7Days (date) {
-//         var result = [];
-//         for (var i=0; i<7; i++) {
-//             var d = new Date(date);
-//             d.setDate(d.getDate() - i);
-//             result.unshift( formatDate(d) )
-//         }
-    
-//         return(result);
-// }
+    return true;
+  }
 
-// function getDayofWeek(date) {
-//     let d = new Date(date);
-//     var n = d.getDay();
-
-//     var mapDays = new Map([[6, "Sunday"], [0, "Monday"], [1, "Tuesday"], [2, "Wednesday"], [3, "Thursday"], [4, "Friday"], [5, "Saturday"]]);
-//     return(mapDays.get(n));
-// }
-
-// function getCurrentWeek(d) {
-//     let curr = new Date(d); 
-//     let week = []
-
-//     for (let i = 0; i <= 6; i++) {
-//         let first = curr.getDate() - curr.getDay() + i;
-//         let day = new Date(curr.setDate(first)).toISOString().slice(0, 10)
-//         week.push(day)
-//     }
-//     return(week);
-// }
-
+function askNotificationPermission() {
+    // function to actually ask the permissions
+    function handlePermission(permission) {
+      // Whatever the user answers, we make sure Chrome stores the information
+      if(!('permission' in Notification)) {
+        Notification.permission = permission;
+      }
+  
+      // set the button to shown or hidden, depending on what the user answers
+      if(Notification.permission === 'denied' || Notification.permission === 'default') {
+        Notification.requestPermission().then(function(result) {
+            console.log(result);
+        });
+      }
+    }
+    // Let's check if the browser supports notifications
+    if (!('Notification' in window)) {
+      console.log("This browser does not support notifications.");
+    } else {
+      if(checkNotificationPromise()) {
+        Notification.requestPermission()
+        .then((permission) => {
+          handlePermission(permission);
+        })
+      } else {
+        Notification.requestPermission(function(permission) {
+          handlePermission(permission);
+        });
+      }
+    }
+  }
 export { History };

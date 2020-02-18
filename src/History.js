@@ -50,7 +50,6 @@ class History extends Component {
         const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
         const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
-        console.log(distinctCustomNames);
         this.setState({ timers, customTimers, distinctCustomNames });
 
         // if (Notification.permission !== "denied") {

@@ -33,6 +33,7 @@ class History extends Component {
             alarm: false,
 
             customTimers: [],
+            distinctCustomNames: [],
         };
 
         this.onDateChanged = this.onDateChanged.bind(this);
@@ -47,10 +48,10 @@ class History extends Component {
 
     async componentDidMount() {
         const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
-        console.log(timers);
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
-        console.log(customTimers);
-        this.setState({ timers, customTimers });
+        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
+        console.log(distinctCustomNames);
+        this.setState({ timers, customTimers, distinctCustomNames });
 
         // if (Notification.permission !== "denied") {
         //     Notification.requestPermission().then(function (permission) {
@@ -250,7 +251,8 @@ class History extends Component {
         }
 
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
-        this.setState({ customTimers });
+        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
+        this.setState({ customTimers, distinctCustomNames });
     }
 
     onChangeManualCategory(event) {
@@ -277,8 +279,10 @@ class History extends Component {
         const selectedDate = Moment(date).format('YYYY-MM-DD');
         this.setState({ selectedDate, unformattedDate: date });
         const timers = (await axios.get(`/timer/${this.props.user.id}/${selectedDate}`)).data[0];
+        const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
         this.setState({
-            timers
+            timers,
+            customTimers,
         });
     }
 
@@ -292,7 +296,7 @@ class History extends Component {
                 </div>
                 <div>
                     <div className="history-grid-goals">
-                        <Timers timers={this.state.timers} customTimers={this.state.customTimers} user={this.props.user} selectedDate={this.state.selectedDate} customName={this.state.customName} manualTime={this.state.manualTime} manualCategory={this.state.manualCategory} alarm={this.state.alarm} updateTimers={this.updateTimers} updateCustomTimer={this.updateCustomTimer} updateCustomName={this.updateCustomName} onChangeManualCategory={this.onChangeManualCategory} onChangeManualTime={this.onChangeManualTime} onSubmitManualTime={this.onSubmitManualTime} />
+                        <Timers timers={this.state.timers} customTimers={this.state.customTimers} distinctCustomNames={this.state.distinctCustomNames} user={this.props.user} selectedDate={this.state.selectedDate} customName={this.state.customName} manualTime={this.state.manualTime} manualCategory={this.state.manualCategory} alarm={this.state.alarm} updateTimers={this.updateTimers} updateCustomTimer={this.updateCustomTimer} updateCustomName={this.updateCustomName} onChangeManualCategory={this.onChangeManualCategory} onChangeManualTime={this.onChangeManualTime} onSubmitManualTime={this.onSubmitManualTime} />
                     </div>
                 </div><br /><br />
                 <div className="history-graph">
@@ -309,7 +313,7 @@ class Timers extends Component {
         const ready = this.props.timers;
 
         return (
-            <div style={{ display: "inline-block", 'padding-left': '100px', width: '100%', verticalAlign: 'top' }}>
+            <div style={{ display: "inline-block", paddingLeft: '100px', width: '100%', verticalAlign: 'top' }}>
                 <div>
                     <h3 style={{ display: "inline-block", width: '30%' }} >Today's Times</h3>
                 </div>
@@ -344,7 +348,7 @@ class Timers extends Component {
                                 <option>Writing</option>
                                 <option>Research</option>
                                 {
-                                    this.props.customTimers.map((timer) => <option key={timer.id}>{timer.name}</option>)
+                                    this.props.distinctCustomNames.map((timer) => <option key={timer.name}>{timer.name}</option>)
                                 }
                             </Form.Control>
                             <Form.Control placeholder="Enter time in minutes..." type="number" onChange={() => this.props.onChangeManualTime(event)} />
@@ -355,7 +359,7 @@ class Timers extends Component {
                     <div className="timers-list" style={{ display: "inline-block", width: '70%', verticalAlign: 'top', marginLeft: 15, paddingLeft: 25, borderLeft: '2px solid #DDD' }}>
                         {/* <Timer name="Writing" updateTimers={this.props.updateTimers} category="writing" />
                         <Timer name="Research" updateTimers={this.props.updateTimers} category="research" /> */}
-                        <Timer customTimers={this.props.customTimers} name={this.props.customName} updateTimers={this.props.updateCustomTimer} updateCustomName={this.props.updateCustomName} category="custom" />
+                        <Timer customTimers={this.props.customTimers} distinctCustomNames={this.props.distinctCustomNames} name={this.props.customName} updateTimers={this.props.updateCustomTimer} updateCustomName={this.props.updateCustomName} category="custom" />
                         <br />
                     </div>
 
@@ -452,7 +456,7 @@ class Timer extends Component {
                             <option>Writing</option>
                             <option>Research</option>
                             {
-                                this.props.customTimers.map((timer) => <option key={timer.id}>{timer.name}</option>)
+                                this.props.distinctCustomNames.map((timer) => <option key={timer.name}>{timer.name}</option>)
                             }
                         </Form.Control>
                     </Col>
@@ -480,7 +484,7 @@ class Timer extends Component {
         const startB = this.state.active ? null : (<Button onClick={this.startTimer}>start</Button>);
         const stopB = this.state.active ? (<Button onClick={this.stopTimer}>pause</Button>) : null;
         const resetB = this.state.active ? null : (<Button onClick={this.resetTimer}>submit this time</Button>);
-        const editTimeB = this.state.active ? null : (<Button onClick={() => this.setState({ editingTime: true })}>enter time</Button>);
+        const editTimeB = this.state.active ? null : (<Button onClick={() => this.setState({ editingTime: true })}>set time limit</Button>);
         const editNameB = this.state.active ? null : (<Button onClick={() => this.setState({ editingName: true })}>switch timer</Button>);
         const newNameB = this.state.active ? null : (<Button onClick={() => this.setState({ newName: true })}>add new timer</Button>);
 

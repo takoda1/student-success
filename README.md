@@ -221,7 +221,7 @@ Returns the timers for a specified user (userid, references primary key of users
 and for a specified date in the format yyyy-mm-dd
 
 GET /customTimerByUser/:userid
-Returns all timers for a specified user (userid, references primary key of users table)
+Returns all custom timer names ever used for a specified user (userid, references primary key of users table)
 
 GET /customTimer/:id
 Returns a single timer referenced by the timer primary key id

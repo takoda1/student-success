@@ -26,7 +26,7 @@ const getCustomTimer = (request, response) => {
 const getCustomTimerByUserid = (request, response) => {
     const userid = parseInt(request.params.userid)
     if (!isNaN(userid)) {
-        pool.query('SELECT * FROM customtimers WHERE userid = $1', [userid], (error, results) => {
+        pool.query('SELECT DISTINCT name FROM customtimers WHERE userid = $1', [userid], (error, results) => {
             if (error) {
                 throw error
             }

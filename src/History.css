@@ -122,3 +122,30 @@ h2 {
   margin: .5em;
   margin-left: 1em;
 }
+.timers {
+  background-color: #A6C4FF;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  margin-left: 25px;
+  text-align: center;
+}
+.timers p {
+  font-size: 100px;
+}
+.timers button {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.timers-table {
+  background-color: #A6C4FF;
+  border-radius: 10px;
+  width: 13vw;
+  /* padding: 0.75em .75em .75em .75em; */
+  text-align: left;
+}
+.timers-table th {
+  padding: 7px;
+}
+.add-time {
+  width: 17vw;
+}

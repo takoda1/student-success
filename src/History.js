@@ -214,7 +214,7 @@ class History extends Component {
 
     async updateCustomTimer(time, category) {
 
-        gtag('event', 'Logged Time', {
+        window.gtag('event', 'Logged Time', {
             'event_category': 'Timers',
             'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
             'value': time

@@ -296,7 +296,6 @@ class Goals extends React.Component {
 class GroupLinks extends React.Component {
     render() {
         const sortedLinks = this.props.links.sort(function(a, b){return a.id - b.id});
-        // console.log(sortedLinks);
         const listLink = sortedLinks.map((link) => 
                 <LinkItem key={"link-" + link.id} link={link} onLinkRemoved={this.props.onLinkRemoved} onLinkUpdated={this.props.onLinkUpdated} />);
         return(

@@ -243,15 +243,27 @@ class History extends Component {
         const timerTemplate = (savedTimer == null) ?
             { name: category, time } : { name: category, time: savedTimer.time + time };
 
+        const timerTemplate2 = this.state.timers ?
+            { writingtime: this.state.timers.writingtime, researchtime: this.state.timers.researchtime, customtime: this.state.timers.customtime } :
+            { writingtime: 0, researchtime: 0, customtime: 0 };
+        timerTemplate2["customtime"] += time;
+
         if (savedTimer == null) {
             await axios.post(`/customTimer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate });
         } else {
             await axios.put(`/customTimer/${savedTimer.id}`, timerTemplate);
         }
 
+        if (this.state.timers) {
+            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate2 });
+        } else {
+            await axios.post(`/timer`, { ...timerTemplate2, userid: this.props.user.id, timerdate: this.state.selectedDate });
+        }
+
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
         const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
-        this.setState({ customTimers, distinctCustomNames });
+        const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
+        this.setState({ customTimers, distinctCustomNames, timers });
     }
 
     onChangeManualCategory(event) {
@@ -291,7 +303,8 @@ class History extends Component {
         return (
             <div><br />
                 <div className="history-date-picker" >
-                    <h4>Timers for <DatePicker selected={this.state.unformattedDate} onChange={this.onDateChanged} /></h4>
+                    <h2>Timers</h2>
+                    <DatePicker selected={this.state.unformattedDate} onChange={this.onDateChanged} />
                 </div>
                 <div>
                     <div className="history-grid-goals">
@@ -314,7 +327,7 @@ class Timers extends Component {
         return (
             <div style={{ display: "inline-block", paddingLeft: '100px', width: '100%', verticalAlign: 'top' }}>
                 <div>
-                    <h3 style={{ display: "inline-block", width: '30%' }} >Today's Times</h3>
+                    <h3 style={{ display: "inline-block", width: '30%' }} >Recorded Times</h3>
                 </div>
                 <div>
                     <div style={{ display: "inline-block", verticalAlign: 'top' }}>

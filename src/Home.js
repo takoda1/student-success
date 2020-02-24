@@ -31,11 +31,8 @@ class Home extends React.Component {
             completedReflections: false,
             reflectionQuestions: ["", "", ""],
             editingReflections: false,
-            newLinkText: '',
-            newLinkName: '',
-            editedLinkText: '',
-            editedLinkName: '',
-            links: []
+            weeklyGoals: [],
+            newWeeklyText: ''
         };
 
         this.checkTotalGoals = this.checkTotalGoals.bind(this);
@@ -45,6 +42,12 @@ class Home extends React.Component {
         this.onGoalEdited = this.onGoalEdited.bind(this);
         this.onGoalRemoved = this.onGoalRemoved.bind(this);
 
+        this.onWeeklyGoalTyped = this.onWeeklyGoalTyped.bind(this);
+        this.onWeeklyGoalSubmitted = this.onWeeklyGoalSubmitted.bind(this);
+        this.onWeeklyGoalEdited = this.onWeeklyGoalEdited.bind(this);
+        this.onWeeklyGoalRemoved = this.onWeeklyGoalRemoved.bind(this);
+        this.onWeeklyGoalCheck = this.onWeeklyGoalCheck.bind(this);
+
         this.onDateChanged = this.onDateChanged.bind(this);
 
         this.onReflectionSubmitted = this.onReflectionSubmitted.bind(this);
@@ -53,13 +56,6 @@ class Home extends React.Component {
         this.onReflectionThreeChanged = this.onReflectionThreeChanged.bind(this);
         this.onEditButtonClick = this.onEditButtonClick.bind(this);
 
-        this.onLinkTyped = this.onLinkTyped.bind(this);
-        this.onLinkSubmitted = this.onLinkSubmitted.bind(this);
-        this.onLinkNameTyped = this.onLinkNameTyped.bind(this);
-        this.onLinkEdited = this.onLinkEdited.bind(this);
-        this.onLinkRemoved = this.onLinkRemoved.bind(this);
-        this.onLinkUpdated = this.onLinkUpdated.bind(this);
-
     }
 
     async componentDidMount() {
@@ -67,13 +63,13 @@ class Home extends React.Component {
         const questions = (await axios.get(`/question`)).data[0];
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${this.state.selectedMomentDate}`)).data[0];
 
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
 
         if (reflections) {
-            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, questions, links });
+            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, questions, weeklyGoals: filteredWeeklyGoals });
         } else {
-            this.setState({ completedReflections: false, goals, questions, links });
+            this.setState({ completedReflections: false, goals, questions, weeklyGoals: filteredWeeklyGoals });
         }
         this.checkTotalGoals();
     }
@@ -151,11 +147,57 @@ class Home extends React.Component {
         });
     }
 
-    async onLinkEdited(event, newLink, newTitle, linkId) {
-        event.preventDefault();
-        const updatedLink = {link: newLink, title: newTitle };
-        await axios.put(`/grouplinks/${linkId}`, updatedLink);
+    onWeeklyGoalTyped(event) {
+        this.setState({newWeeklyText: event.target.value});
+    }
 
+    async onWeeklyGoalSubmitted(event) {
+        event.preventDefault();
+        const newGoal = { userid: this.props.user.id, goaldate: this.state.selectedMomentDate, goaltext: this.state.newWeeklyText, completed: false, completedate: "2100-01-01" };
+        await axios.post('/weeklyGoal', newGoal);
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+        this.setState(() => {
+            return { weeklyGoals: filteredWeeklyGoals, newWeeklyText: '' };
+        });
+    }
+
+    async onWeeklyGoalEdited(event, newText, goalId, completed, completeDate) {
+        event.preventDefault();
+        const updatedGoal = { goaltext: newText, completed: completed, completedate: Moment(completeDate).format("YYYY-MM-DD") };
+        await axios.put(`/weeklyGoal/${goalId}`, updatedGoal);
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+        this.setState(() => {
+            return { weeklyGoals: filteredWeeklyGoals };
+        });
+    }
+
+    async onWeeklyGoalRemoved(goalId) {
+        event.preventDefault();
+        await axios.delete(`/weeklyGoal/${goalId}`);
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+        this.setState(() => {
+            return { weeklyGoals: filteredWeeklyGoals };
+        });
+    }
+
+    async onWeeklyGoalCheck(completed, goal) {
+        var updatedGoal;
+        if(completed === true) {
+            updatedGoal = { goaltext: goal.goaltext, completed, completedate: this.state.selectedMomentDate };
+        }
+        else {
+            updatedGoal = { goaltext: goal.goaltext, completed, completedate: "2100-01-01" };
+        }
+        await axios.put(`/weeklyGoal/${goal.id}`, updatedGoal);
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+
+        this.setState(() => {
+            return { weeklyGoals: filteredWeeklyGoals };
+        });
     }
 
     async onGoalRemoved(goalId) {
@@ -166,21 +208,6 @@ class Home extends React.Component {
             return { goals };
         });
         this.checkTotalGoals();
-    }
-
-    async onLinkRemoved(linkId) {
-        event.preventDefault();
-        await axios.delete(`/grouplinks/${linkId}`);
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-        this.setState({links});
-    }
-    async onLinkUpdated(linkId, newLinkName, newLinkText) {
-        event.preventDefault();
-        await axios.put(`grouplinks/${linkId}`, {link: newLinkText, title: newLinkName});
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-        this.setState({links});
     }
 
     async onReflectionSubmitted(event) {
@@ -223,13 +250,190 @@ class Home extends React.Component {
         this.setState({selectedMomentDate});
         const goals = (await axios.get(`/goals/${this.props.user.id}/${selectedMomentDate}`)).data;
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${selectedMomentDate}`)).data[0];
+
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+
         if (reflections) {
-            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, selectedDate: date, selectedMomentDate });
+            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, selectedDate: date, selectedMomentDate, weeklyGoals: filteredWeeklyGoals });
         } else {
-            this.setState({ reflections: {}, reflectionQuestions: ["", "", ""], completedReflections: false, goals, selectedDate: date, selectedMomentDate });
+            this.setState({ reflections: {}, reflectionQuestions: ["", "", ""], completedReflections: false, goals, selectedDate: date, selectedMomentDate, weeklyGoals: filteredWeeklyGoals });
         }
         this.checkTotalGoals();
 
+    }
+
+    render() {
+        const loading = this.props.user === null;
+
+        return (
+        <div>
+                <Layout >
+                    <h2>Home Page</h2>
+                    {
+                        loading ? (<p>Loading...</p>) :
+                        (
+                            <div>
+                                <DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} />
+                                <div className="home-flex-container">
+                                    <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
+                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} />
+                                </div>
+                                <GroupLinks user={this.props.user} />
+                                <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
+                            </div>
+                        )
+                    }
+                </Layout>
+        </div>
+        );
+    }
+}
+
+class Goals extends React.Component {
+    render() {
+        return (
+            <div style={{ display: "inline-block", width: '35%', verticalAlign: 'top'}}>
+                <h3>Daily Goals</h3>
+                <div>
+                    <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
+                </div>
+            </div>
+        );
+    }
+}
+
+class WeeklyGoals extends React.Component {
+    render() {
+        return(
+            <div className="weekly-goals-div">
+                <h3>Long Term Goals</h3>
+                <div>
+                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />
+                </div>
+            </div>
+        );
+    }
+}
+
+class WeeklyGoalList extends React.Component {
+    render() {
+        const sortedWeeklyGoals = this.props.weeklyGoals.sort(function(a, b){return a.id - b.id});
+        const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />);
+        return(
+            <ul className="goal-list">
+                {listWeeklyGoals}
+                <Form className="addGoal" onSubmit={this.props.onWeeklyGoalSubmitted}>
+                    <Form.Row>
+                        <Col className="goal-input">
+                            <Form.Control type="text" className="addGoalField" value={this.props.newWeeklyText} onChange={this.props.onWeeklyGoalTyped} />
+                        </Col>
+                        <Col>
+                            <Button type="submit">Add Goal</Button>
+                        </Col>
+                    </Form.Row>
+                </Form>
+            </ul>
+        );
+    }
+}
+
+class WeeklyGoalItem extends React.Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            editing: false,
+            goaltext: this.props.goal.goaltext
+        };
+    }
+
+    render() {
+        const editMode = (
+            <Form className="editGoal" onSubmit={(event) => {
+                this.setState({editing: !this.state.editing});
+                this.props.onWeeklyGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed, this.props.goal.completedate);
+            }}>
+                <Form.Row className="goal-row">
+                    <Col className="goal-input">
+                        <Form.Control type="text" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({goaltext: event.target.value})} />
+                    </Col>
+                    <Col>
+                        <Button type="submit">Update</Button>
+                    </Col>
+                </Form.Row>
+            </Form>
+        );
+
+        const viewMode = (
+            <div className="home-goal-list">
+                <Form.Row className="goals-form-row">
+                    <Col className="goal-check-col">
+                        <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
+                            this.props.onWeeklyGoalCheck(event.target.checked, this.props.goal);
+                        }} label={this.state.goaltext} />
+                    </Col>
+                    <Col>
+                        <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
+                        <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
+                    </Col>
+                </Form.Row>
+            </div>
+        );
+        return(
+            <div className="goals">
+                {this.state.editing? editMode : viewMode }
+            </div>
+        );
+    }
+}
+
+class GroupLinks extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            newLinkText: '',
+            newLinkName: '',
+            editedLinkText: '',
+            editedLinkName: '',
+            links: []
+        };
+
+        this.onLinkTyped = this.onLinkTyped.bind(this);
+        this.onLinkSubmitted = this.onLinkSubmitted.bind(this);
+        this.onLinkNameTyped = this.onLinkNameTyped.bind(this);
+        this.onLinkEdited = this.onLinkEdited.bind(this);
+        this.onLinkRemoved = this.onLinkRemoved.bind(this);
+        this.onLinkUpdated = this.onLinkUpdated.bind(this);
+    }
+
+    async componentDidMount() {
+        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
+        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
+        this.setState({links});
+    }
+
+    async onLinkEdited(event, newLink, newTitle, linkId) {
+        event.preventDefault();
+        const updatedLink = {link: newLink, title: newTitle };
+        await axios.put(`/grouplinks/${linkId}`, updatedLink);
+
+    }
+
+    async onLinkRemoved(linkId) {
+        event.preventDefault();
+        await axios.delete(`/grouplinks/${linkId}`);
+        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
+        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
+        this.setState({links});
+    }
+    async onLinkUpdated(linkId, newLinkName, newLinkText) {
+        event.preventDefault();
+        await axios.put(`grouplinks/${linkId}`, {link: newLinkText, title: newLinkName});
+        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
+        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
+        this.setState({links});
     }
 
     onLinkTyped(event) {
@@ -247,69 +451,26 @@ class Home extends React.Component {
             await axios.post('/grouplinks', newLink);
             const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
             const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-            // const groupLinksApi = (await axios.get(`grouplinks/${this.props.user.groupid}`)).data;
             this.setState({newLinkText: '', newLinkName: '', links });
         }
-    }    
+    } 
 
-    
     render() {
-        const loading = this.props.user === null;
-
-        return (
-        <div>
-                <Layout >
-                    <h2>Home Page</h2>
-                    {
-                        loading ? (<p>Loading...</p>) :
-                        (
-                            <div>
-                                <p>Welcome, {this.props.user.firstname}</p>
-                                <DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} />
-                                <div className="home-flex-container">
-                                    <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
-                                    <GroupLinks onLinkRemoved={this.onLinkRemoved} onLinkUpdated={this.onLinkUpdated} links={this.state.links} newLinkText={this.state.newLinkText} newLinkName={this.state.newLinkName} onLinkTyped={this.onLinkTyped} onLinkSubmitted={this.onLinkSubmitted} onLinkNameTyped={this.onLinkNameTyped} onLinkEdited={this.onLinkEdited} editedLinkText={this.state.editedLinkText} editedLinkName={this.state.editedLinkName} />
-                                </div>
-                                <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
-                            </div>
-                        )
-                    }
-                </Layout>
-        </div>
-        );
-    }
-}
-
-class Goals extends React.Component {
-    render() {
-        return (
-            <div style={{ display: "inline-block", width: '35%', verticalAlign: 'top'}}>
-                <h3>Goals</h3>
-                <div style={{ marginRight: 15, paddingRight: 25, borderRight: '2px solid #DDD' }}>
-                    <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
-                </div>
-            </div>
-        );
-    }
-}
-
-class GroupLinks extends React.Component {
-    render() {
-        const sortedLinks = this.props.links.sort(function(a, b){return a.id - b.id});
+        const sortedLinks = this.state.links.sort(function(a, b){return a.id - b.id});
         const listLink = sortedLinks.map((link) => 
-                <LinkItem key={"link-" + link.id} link={link} onLinkRemoved={this.props.onLinkRemoved} onLinkUpdated={this.props.onLinkUpdated} />);
+                <LinkItem key={"link-" + link.id} link={link} onLinkRemoved={this.onLinkRemoved} onLinkUpdated={this.onLinkUpdated} />);
         return(
             <div className="home-links">
                 <h3>Group Links</h3>
                 <div className="text-block">
                     <p>Enter links that you would like to share with your group</p>
-                    <Form onSubmit={this.props.onLinkSubmitted}>
+                    <Form onSubmit={this.onLinkSubmitted}>
                         <Form.Row>
                             <Col>
-                                <Form.Control type="text" onChange={this.props.onLinkNameTyped} value={this.props.newLinkName} placeholder="Link Name" />
+                                <Form.Control type="text" onChange={this.onLinkNameTyped} value={this.newLinkName} placeholder="Link Name" />
                             </Col>
                             <Col>
-                                <Form.Control type="text" onChange={this.props.onLinkTyped} value={this.props.newLinkText} placeholder="Link URL" />
+                                <Form.Control type="text" onChange={this.onLinkTyped} value={this.newLinkText} placeholder="Link URL" />
                             </Col>
                             <Button variant="primary" type="submit">Submit</Button>
                         </Form.Row>
@@ -368,32 +529,6 @@ class LinkItem extends React.Component {
     }
 }
 
-class ListLinks extends React.Component {
-    render() {
-        return(
-            <div className="goals">
-            <Form className="editGoal" onSubmit={(event) => {
-              this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
-            }}>
-              <Form.Row className="goal-row">
-                <Col className="goal-input">
-                    <Form.Control type="text" value="link name" />
-                </Col>
-                <Col>
-                    <Form.Control type="text" value="link url" />
-                </Col>
-                <Col>
-                  <Button type="submit">Update</Button>
-                  <Button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
-                </Col>
-              </Form.Row>
-              {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
-            </Form>
-          </div>
-        );
-    }
-}
-
 class Reflections extends React.Component {
     render() {
         const viewMode = (
@@ -441,66 +576,66 @@ class Reflections extends React.Component {
 }
 
 /* Currently an unused feature */
-class Note extends React.Component {
-    constructor(props) {
-        super(props);
+// class Note extends React.Component {
+//     constructor(props) {
+//         super(props);
 
-        this.state = {
-            note: {},
-            noteText: "",
-            editing: false,
-            doneToday: true,
-        }
+//         this.state = {
+//             note: {},
+//             noteText: "",
+//             editing: false,
+//             doneToday: true,
+//         }
         
-        this.updateNote = this.updateNote.bind(this);
-    }
+//         this.updateNote = this.updateNote.bind(this);
+//     }
 
-    async componentDidMount() {
-        const note = (await axios.get(`/note/${this.props.user.id}/${this.props.selectedMomentDate}`)).data[0];
-        if (note) {
-            this.setState({ note, doneToday: true, noteText: note.notetext });
-        } else {
-            this.setState({ doneToday: false })
-        }
-    }
+//     async componentDidMount() {
+//         const note = (await axios.get(`/note/${this.props.user.id}/${this.props.selectedMomentDate}`)).data[0];
+//         if (note) {
+//             this.setState({ note, doneToday: true, noteText: note.notetext });
+//         } else {
+//             this.setState({ doneToday: false })
+//         }
+//     }
 
-    async updateNote(event) {
-        event.preventDefault();
+//     async updateNote(event) {
+//         event.preventDefault();
         
-        if (this.state.doneToday) {
-            await axios.put(`/note/${this.state.note.id}`, { notetext: this.state.noteText });
-        } else {
-            await axios.post(`/note`, { userid: this.props.user.id, notedate: this.props.selectedMomentDate, notetext: this.state.noteText });
-            this.setState({ doneToday: true });
-        }
+//         if (this.state.doneToday) {
+//             await axios.put(`/note/${this.state.note.id}`, { notetext: this.state.noteText });
+//         } else {
+//             await axios.post(`/note`, { userid: this.props.user.id, notedate: this.props.selectedMomentDate, notetext: this.state.noteText });
+//             this.setState({ doneToday: true });
+//         }
 
-        const note = (await axios.get(`/note/${this.props.user.id}/${this.props.selectedMomentDate}`)).data[0];
-        this.setState({ note, editing: false });
-    }
+//         const note = (await axios.get(`/note/${this.props.user.id}/${this.props.selectedMomentDate}`)).data[0];
+//         this.setState({ note, editing: false });
+//     }
 
-    render() {
-        const viewMode = (
-            <div className="text-block">
-                <p>{ this.state.noteText }</p>
-                <Button onClick={() => this.setState({ editing: true })}>Edit</Button>
-            </div>
-        )
+//     render() {
+//         const viewMode = (
+//             <div className="text-block">
+//                 <p>{ this.state.noteText }</p>
+//                 <Button onClick={() => this.setState({ editing: true })}>Edit</Button>
+//             </div>
+//         )
 
-        const editMode = (
-            <Form className="text-block" onSubmit={this.updateNote}>
-                <Form.Control as="textarea" rows="5" value={this.state.noteText} onChange={(event) => this.setState({ noteText: event.target.value })}></Form.Control>
-                <Button type="submit">Save Note</Button>
-            </Form>
-        )
+//         const editMode = (
+//             <Form className="text-block" onSubmit={this.updateNote}>
+//                 <Form.Control as="textarea" rows="5" value={this.state.noteText} onChange={(event) => this.setState({ noteText: event.target.value })}></Form.Control>
+//                 <Button type="submit">Save Note</Button>
+//             </Form>
+//         )
 
-        return (
-            <div>
-                <h3>Notes for Your Professor:</h3>
-                { this.state.editing ? editMode : viewMode }
-            </div>
-        )
-    }
-}
+//         return (
+//             <div>
+//                 <h3>Notes for Your Professor:</h3>
+//                 { this.state.editing ? editMode : viewMode }
+//             </div>
+//         )
+//     }
+// }
 
 
 export { Home };

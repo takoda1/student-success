@@ -78,9 +78,6 @@ button:hover {
 .home-links {
   width: 45vw;
 }
-/* .links-buttons {
-  flex-shrink: 4 !important;
-} */
-/* .edit-links {
-  flex-grow: 2.5 !important;
-} */
+.weekly-goals-div {
+  width: 35%;
+}

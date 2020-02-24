@@ -20,10 +20,12 @@ function Layout(props) {
 }
 
 function GoalList(props) {
+  const sortedGoals = props.goals.sort(function(a, b){return a.id - b.id});
+  const sortedGoalsList = sortedGoals.map((g) => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />);
   return (
     <div>
       <ul className="goal-list">
-        {props.goals.sort((a, b) => a.id > b.id).map(g => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />)}
+        {sortedGoalsList}
         <Form className="addGoal" onSubmit={props.onGoalAdded}>
           <Form.Row>
             <Col className="goal-input">

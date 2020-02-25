@@ -361,6 +361,9 @@ class ClassView extends React.Component {
                     </Modal.Header>
                     <Modal.Body>
                         {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
+                        <br/>
+                        <h6>Contact Line:</h6>
+                        <p>{this.props.members.map((member) => member.email + ',')}</p>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({show: false})}>
@@ -393,6 +396,9 @@ class GroupView extends React.Component {
                     </Modal.Header>
                     <Modal.Body>
                         {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
+                        <br/>
+                        <h6>Contact Line:</h6>
+                        <p>{this.props.members.map((member) => member.email + ',')}</p>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({show: false})}>

@@ -29,6 +29,10 @@ class Forum extends Component {
     async componentDidMount() {
         const forumPosts = await this.getPosts();
         this.setState({ forumPosts });
+        window.gtag('event', 'Page View', {
+            'event_category': 'Forum',
+            'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
+        });
     }
 
     async onPost() {

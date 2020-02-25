@@ -52,6 +52,11 @@ class History extends Component {
         const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
         this.setState({ timers, customTimers, distinctCustomNames });
 
+        window.gtag('event', 'Page View', {
+            'event_category': 'Timers',
+            'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
+        });
+
         askNotificationPermission();
 
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
@@ -212,7 +217,7 @@ class History extends Component {
         window.gtag('event', 'Logged Time', {
             'event_category': 'Timers',
             'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
-            'value': time
+            'value': time / 60 // in minutes
         });
 
         if (category === 'Writing' || category === 'Research') {

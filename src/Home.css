@@ -38,26 +38,6 @@ button:hover {
 .goals-form-row label {
   margin-bottom: 5px !important;
 }
-.timers {
-  width: 100%;
-  background-color: #A6C4FF;
-  border-radius: 10px;
-  margin-bottom: 5px;
-  padding: 1px 1px 1px 10px;
-}
-.timers-table {
-  background-color: #A6C4FF;
-  border-radius: 10px;
-  width: 13vw;
-  /* padding: 0.75em .75em .75em .75em; */
-  text-align: left;
-}
-.timers-table th {
-  padding: 7px;
-}
-.add-time {
-  width: 17vw;
-}
 .text-block {
   background-color: #A6C4FF;
   padding: 0.75em .75em .75em .75em;
@@ -87,4 +67,22 @@ button:hover {
 }
 .goal-check-col {
   flex-grow: 1.19 !important;
+}
+.home-reflections {
+  width: 93vw;
+}
+.home-flex-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+.home-bottom-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.home-links {
+  width: 45vw;
+}
+.weekly-goals-div {
+  width: 35%;
 }

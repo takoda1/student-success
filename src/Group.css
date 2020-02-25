@@ -32,16 +32,18 @@
     padding: 0.75em 2em 2em 2em;
     border-radius: 10px;
 }
-
+#group-timers {
+    padding-bottom: 0;
+}
 .group-data-item p {
     font-size: 1em;
 }
+
 .group-data-item ol {
-    font-size: 1em;
     margin-left: -1em;
 }
-#group-reflections {
-    max-height: 33vh !important;
+#group-reflections, #group-timers {
+    max-height: 31vh !important;
     overflow: scroll;
 }
 .group-messages {
@@ -70,5 +72,24 @@
     text-align: right;
 }
 .message-date {
+    font-size: 1.25em;
+}
+.wrap-links {
+    word-wrap: break-word;
+    max-height: 33vh !important;
+    overflow-y: scroll;
+}
+.grid-layout {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: auto;
+}
+.date-picker {
+    margin-top: 4vh;
+}
+.group-data-item h4 {
+    text-align: center;
+}
+.link-text-div {
     font-size: 1.25em;
 }

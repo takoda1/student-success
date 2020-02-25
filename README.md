@@ -118,9 +118,14 @@ Users:
 Goals:
 {id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
 
+Weeklygoals:
+{id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean, completedate: yyyy-mm-dd}
 
 Timers:
 {id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, researchtime: int, writingtime: int, customtime: int}    (time is in seconds)
+
+Customtimers:
+{id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, time: int, name: string}  (time in seconds)
 
 Reflections:
 {id: int, userid: foreignKey(Users: id), reflectiondate: yyyy-mm-dd, reflectiontext: string}
@@ -132,7 +137,7 @@ Groupchat:
 {id: int, groupid: foreignKey(groups: id), chattext: string, chatdate: string, userid: foreignKey(users: id), username: string}
 
 Grouplinks:
-{id: int, groupid: foreignKey(groups: id), link: string, linkdate: string, userid: foreignKey(users: id), username: string}
+{id: int, groupid: foreignKey(groups: id), link: string, title: string, linkdate: string, userid: foreignKey(users: id), username: string}
 
 Forum:
 {id: int, title: string, body: string, userid: int, username: string, postdate: string}
@@ -188,6 +193,23 @@ Updates/puts the goal specified by its unique id with new goalText and completed
 DELETE /goal/:id
 Deletes the goal specified by its unique id
 
+### Weekly Goals
+
+GET /weeklyGoals/:userid
+Returns all weekly goals for a specified user (userid, references primary key of users table)
+
+GET /weeklyGoal/:id
+Returns a single goal referenced by the goal primary key id
+
+POST /weeklyGoal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean, completedate: "yyyy-mm-dd"})
+Posts a weekly goal with specified values
+
+PUT /weeklyGoal/:id  (Requires json/js body of {goaltext: string, completed: boolean, completedate: "yyyy-mm-dd"})
+Updates/puts the goal specified by its unique id with new goalText, completed, and completedate values.
+
+DELETE /weeklyGoal/:id
+Deletes the goal specified by its unique id
+
 ### Timers
 
 #### all time values are in seconds
@@ -210,6 +232,25 @@ Updates/puts the timer specified by its unique id with new researchtime, writing
 
 DELETE /timer/:id
 Deletes the timer specified by its unique id
+
+#### Custom Timers
+
+GET /customTimer/:userid/:date
+Returns the timers for a specified user (userid, references primary key of users table)
+and for a specified date in the format yyyy-mm-dd
+
+GET /customTimerByUser/:userid
+Returns all custom timer names ever used for a specified user (userid, references primary key of users table)
+
+GET /customTimer/:id
+Returns a single timer referenced by the timer primary key id
+
+POST /customTimer   (Requires json/js body of {userid: number, timerdate: "yyyy-mm-dd", time: int, name: string})
+
+PUT /customTimer/:id (Requires json/js body of {time: int, name: string})
+
+DELETE /customTimer/:id
+Deletes the custom timer specified by its unique id
 
 ### Reflections
 
@@ -251,7 +292,11 @@ POST /groupchat   Posts a single chat with body: {groupid: int, chattext: string
 
 GET /grouplinks/:groupid    Gets all groupchat links for a single group
 
-POST /grouplinks            Posts a single link with body: {groupid: int, link: string, linkdate: string, userid: int, username: string}
+POST /grouplinks            Posts a single link with body: {groupid: int, link: string, title: string, linkdate: string, userid: int, username: string}
+
+PUT /grouplinks/:id         Updates a link by its id, requires body of {link: string, title: string}
+
+DELETE /grouplinks/:id      Deletes a link by its id
 
 ### Forum
 

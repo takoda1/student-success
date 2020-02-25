@@ -4,7 +4,9 @@ const cors = require('cors')
 
 const userQueries = require('./queries/userQueries')
 const goalQueries = require('./queries/goalQueries')
+const weeklyGoalQueries = require('./queries/weeklyGoalQueries')
 const timerQueries = require('./queries/timerQueries')
+const customTimerQueries = require('./queries/customTimerQueries')
 const reflectionQueries = require('./queries/reflectionQueries')
 const groupQueries = require('./queries/groupQueries')
 const chatQueries = require('./queries/chatQueries')
@@ -53,12 +55,25 @@ app.post('/goal', goalQueries.addGoal)
 app.put('/goal/:id', goalQueries.putGoal)
 app.delete('/goal/:id', goalQueries.deleteGoal)
 
+app.get('/weeklyGoals/:userid', weeklyGoalQueries.getWeeklyGoals)
+app.get('/weeklyGoal/:id', weeklyGoalQueries.getWeeklyGoal)
+app.post('/weeklyGoal', weeklyGoalQueries.addWeeklyGoal)
+app.put('/weeklyGoal/:id', weeklyGoalQueries.putWeeklyGoal)
+app.delete('/weeklyGoal/:id', weeklyGoalQueries.deleteWeeklyGoal)
+
 app.get('/timer/:userid/:date', timerQueries.getTimer)
 app.get('/timer/:id', timerQueries.getTimerById)
 app.get('/timerByUser/:userid', timerQueries.getTimerByUserid)
 app.post('/timer', timerQueries.addTimer)
 app.put('/timer/:id', timerQueries.putTimer)
 app.delete('/timer/:id', timerQueries.deleteTimer)
+
+app.get('/customTimer/:userid/:date', customTimerQueries.getCustomTimer);
+app.get('/customTimerByUser/:userid', customTimerQueries.getCustomTimerByUserid);
+app.get('/customTimer/:id', customTimerQueries.getCustomTimerById);
+app.post('/customTimer/', customTimerQueries.addCustomTimer);
+app.put('/customTimer/:id', customTimerQueries.putCustomTimer);
+app.delete('/customTimer/:id', customTimerQueries.deleteCustomTimer);
 
 app.get('/reflection/:userid/:date', reflectionQueries.getReflection)
 app.get('/reflection/:id', reflectionQueries.getReflectionById)
@@ -77,6 +92,8 @@ app.post('/groupchat', chatQueries.addChat)
 
 app.get('/grouplinks/:groupid', linkQueries.getAllLinks)
 app.post('/grouplinks', linkQueries.addLink)
+app.put('/grouplinks/:id', linkQueries.putLink)
+app.delete('/grouplinks/:id', linkQueries.deleteLink)
 
 app.get('/forumPosts', forumQueries.getAllPosts)
 app.get('/forum/:id', forumQueries.getPost)

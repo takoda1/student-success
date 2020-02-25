@@ -36,6 +36,15 @@ CREATE TABLE goals (
 	completed BOOLEAN NOT NULL
 );
 
+CREATE TABLE weeklygoals (
+	id SERIAL PRIMARY KEY,
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	goaldate DATE NOT NULL,
+	goaltext TEXT,
+	completed BOOLEAN NOT NULL,
+	completedate DATE
+);
+
 CREATE TABLE timers (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -44,6 +53,14 @@ CREATE TABLE timers (
 	writingtime INT,
 	customtime INT
 );
+
+CREATE TABLE customtimers (
+	id SERIAL PRIMARY KEY,
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	timerdate DATE NOT NULL,
+	time INT,
+	name TEXT
+)
 
 CREATE TABLE reflections (
 	id SERIAL PRIMARY KEY,
@@ -65,6 +82,7 @@ CREATE TABLE grouplinks (
 	id SERIAL PRIMARY KEY, 
 	groupid INTEGER REFERENCES groups(id) ON DELETE CASCADE, 
 	link TEXT, 
+	title TEXT,
 	linkdate TEXT,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	username TEXT 

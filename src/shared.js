@@ -115,8 +115,9 @@ class Goals extends React.Component {
 
 class CheckboxGoals extends React.Component {
   render () {
+      const sortedGoals = this.props.goals.sort(function(a, b) {return a.id - b.id});
       if(this.props.goals.length !== 0){
-          const listGoals = this.props.goals.map((goal) =>
+          const listGoals = sortedGoals.map((goal) =>
           <li key={goal.id}> <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> {goal.goaltext}</li> );
           return(<div className="history-goals">{listGoals}</div>);
       }

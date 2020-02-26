@@ -32,6 +32,7 @@ class Home extends React.Component {
             reflectionQuestions: ["", "", ""],
             editingReflections: false,
             weeklyGoals: [],
+            unfilteredWeeklyGoals: [],
             newWeeklyText: ''
         };
 
@@ -67,9 +68,9 @@ class Home extends React.Component {
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
 
         if (reflections) {
-            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, questions, weeklyGoals: filteredWeeklyGoals });
+            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, questions, weeklyGoals: filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals });
         } else {
-            this.setState({ completedReflections: false, goals, questions, weeklyGoals: filteredWeeklyGoals });
+            this.setState({ completedReflections: false, goals, questions, weeklyGoals: filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals });
         }
         this.checkTotalGoals();
     }
@@ -158,7 +159,7 @@ class Home extends React.Component {
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
         this.setState(() => {
-            return { weeklyGoals: filteredWeeklyGoals, newWeeklyText: '' };
+            return { weeklyGoals: filteredWeeklyGoals, newWeeklyText: '', unfilteredWeeklyGoals: weeklyGoals };
         });
     }
 
@@ -169,7 +170,7 @@ class Home extends React.Component {
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
         this.setState(() => {
-            return { weeklyGoals: filteredWeeklyGoals };
+            return { weeklyGoals: filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals };
         });
     }
 
@@ -179,7 +180,7 @@ class Home extends React.Component {
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
         this.setState(() => {
-            return { weeklyGoals: filteredWeeklyGoals };
+            return { weeklyGoals: filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals };
         });
     }
 
@@ -196,7 +197,7 @@ class Home extends React.Component {
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
 
         this.setState(() => {
-            return { weeklyGoals: filteredWeeklyGoals };
+            return { weeklyGoals: filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals };
         });
     }
 
@@ -251,13 +252,13 @@ class Home extends React.Component {
         const goals = (await axios.get(`/goals/${this.props.user.id}/${selectedMomentDate}`)).data;
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${selectedMomentDate}`)).data[0];
 
-        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
-        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+        // const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        // const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
 
         if (reflections) {
-            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, selectedDate: date, selectedMomentDate, weeklyGoals: filteredWeeklyGoals });
+            this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, selectedDate: date, selectedMomentDate });
         } else {
-            this.setState({ reflections: {}, reflectionQuestions: ["", "", ""], completedReflections: false, goals, selectedDate: date, selectedMomentDate, weeklyGoals: filteredWeeklyGoals });
+            this.setState({ reflections: {}, reflectionQuestions: ["", "", ""], completedReflections: false, goals, selectedDate: date, selectedMomentDate });
         }
         this.checkTotalGoals();
 
@@ -277,7 +278,7 @@ class Home extends React.Component {
                                 <DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} />
                                 <div className="home-flex-container">
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
-                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} />
+                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} />
                                 </div>
                                 <div className="home-bottom-flex">
                                     <GroupLinks user={this.props.user} />
@@ -311,7 +312,7 @@ class WeeklyGoals extends React.Component {
             <div className="weekly-goals-div">
                 <h3>Long Term Goals</h3>
                 <div>
-                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />
+                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} unfilteredWeeklyGoals={this.props.unfilteredWeeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />
                 </div>
             </div>
         );
@@ -320,7 +321,7 @@ class WeeklyGoals extends React.Component {
 
 class WeeklyGoalList extends React.Component {
     render() {
-        const sortedWeeklyGoals = this.props.weeklyGoals.sort(function(a, b){return a.id - b.id});
+        const sortedWeeklyGoals = this.props.unfilteredWeeklyGoals.sort(function(a, b){return a.id - b.id});
         const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />);
         return(
             <ul className="goal-list">

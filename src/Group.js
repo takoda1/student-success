@@ -369,10 +369,6 @@ class Goals extends Component {
         }
         const listAllCustom = allCustomTimers.map((timer) =>
     <li key={"distinct-timer-" + timer.name}> <b>{timer.name}</b>: {secondsToHms(timer.time)}</li>);
-    //     const allCustomNames = this.props.distinctCustomNames.map((name) =>
-    // <li key={"distinct-name-" + name.name}>{name.name}:</li>);
-    //     const customTimersList = this.props.customTimers.map((timer) => 
-    //         <li key={"custom-" + timer.id}>{timer.name}: {secondsToHms(timer.time)}</li>);
         if(this.props.timers.length > 0 && this.props.hide !== true) {
             return(
                 <div className="group-data-item" id="group-timers">

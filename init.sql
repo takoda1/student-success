@@ -36,6 +36,15 @@ CREATE TABLE goals (
 	completed BOOLEAN NOT NULL
 );
 
+CREATE TABLE subgoals (
+	id SERIAL PRIMARY KEY,
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	parentgoal INTEGER REFERENCES goals(id) ON DELETE CASCADE,
+	goaldate DATE NOT NULL,
+	goaltext TEXT,
+	completed BOOLEAN NOT NULL
+);
+
 CREATE TABLE weeklygoals (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,

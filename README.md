@@ -114,9 +114,11 @@ In a react component:
 Users:
 {id: int, firstname: string, lastname: string, email: string, groupid: foreignKey(groups: id), hidetimer: boolean, hidereflection: boolean, classid: foreignKey(classes: id)}
 
-
 Goals:
 {id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
+
+Subgoals:
+{id: int, userid: foreignKey(Users: id), parentgoal: foreignKey(Goals: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
 
 Weeklygoals:
 {id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean, completedate: yyyy-mm-dd}
@@ -192,6 +194,27 @@ Updates/puts the goal specified by its unique id with new goalText and completed
 
 DELETE /goal/:id
 Deletes the goal specified by its unique id
+
+### Sub Goals
+
+GET /subgoals/:userid/:date
+Returns all sub goals for a specified user (userid, references primary key of users table)
+and for a specified date in the format yyyy-mm-dd
+
+GET /subgoal/:id
+Returns a single sub goal referenced by the goal primary key id
+
+GET /subgoal/:parentgoal
+Returns all sub goals for a specified parent goal (parentgoal, references primary key of goals table)
+
+POST /subgoal    (Requires json/js body of {userid: number, parentgoal: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean})
+Posts a sub goal with specified values
+
+PUT /subgoal/:id  (Requires json/js body of {goaltext: string, completed: boolean})
+Updates/puts the sub goal specified by its unique id with new goalText and completed values.
+
+DELETE /subgoal/:id
+Deletes the sub goal specified by its unique id
 
 ### Weekly Goals
 

@@ -73,6 +73,11 @@ class Home extends React.Component {
             this.setState({ completedReflections: false, goals, questions, weeklyGoals: filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals });
         }
         this.checkTotalGoals();
+
+        window.gtag('event', 'Page View', {
+            'event_category': 'Home',
+            'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
+        });
     }
 
     checkTotalGoals() {

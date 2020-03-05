@@ -58,6 +58,10 @@ class Group extends Component {
         var groupLinks = [];
         var groupWeeklyGoals = [];
 
+        window.gtag('event', 'Page View', {
+            'event_category': 'Group',
+            'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
+        });
         
         for(var i=0; i < groupUsers.length; i++) {
             var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;

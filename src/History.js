@@ -67,6 +67,11 @@ class History extends Component {
 
         this.setState({ timers, customTimers, distinctCustomNames, allCustomTimers });
 
+        window.gtag('event', 'Page View', {
+            'event_category': 'Timers',
+            'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
+        });
+
         askNotificationPermission();
 
         const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;

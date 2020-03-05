@@ -28,12 +28,13 @@ button:hover {
   margin-left: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+  font-size: small;
 }
 .goal-row {
   margin-top: 10px;
 }
 .goals-form-row {
-  margin-top: 10px;
+  margin-top: 15px;
 }
 .goals-form-row label {
   margin-bottom: 5px !important;
@@ -64,9 +65,12 @@ button:hover {
 }
 .goal-input {
   flex-grow: 2 !important;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .goal-check-col {
   flex-grow: 1.19 !important;
+  padding-top: 10px;
 }
 .home-reflections {
   width: 93vw;
@@ -85,4 +89,11 @@ button:hover {
 }
 .weekly-goals-div {
   width: 35%;
+}
+.sub-goal-row {
+  margin-left: 15px !important;
+  margin-bottom: 5px;
+}
+.sub-goal-row button {
+  font-size: small !important;
 }

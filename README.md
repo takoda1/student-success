@@ -204,7 +204,7 @@ and for a specified date in the format yyyy-mm-dd
 GET /subgoal/:id
 Returns a single sub goal referenced by the goal primary key id
 
-GET /subgoal/:parentgoal
+GET /subgoalByParent/:parentgoal
 Returns all sub goals for a specified parent goal (parentgoal, references primary key of goals table)
 
 POST /subgoal    (Requires json/js body of {userid: number, parentgoal: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean})

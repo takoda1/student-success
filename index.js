@@ -58,7 +58,7 @@ app.delete('/goal/:id', goalQueries.deleteGoal)
 
 app.get('/subgoals/:userid/:date', subgoalQueries.getSubGoals)
 app.get('/subgoal/:id', subgoalQueries.getSubGoal)
-app.get('/subgoal/:parentgoal', subgoalQueries.getSubGoalByParent)
+app.get('/subgoalByParent/:parentgoal', subgoalQueries.getSubGoalByParent)
 app.post('/subgoal', subgoalQueries.addSubGoal)
 app.put('/subgoal/:id', subgoalQueries.putSubGoal)
 app.delete('/subgoal/:id', subgoalQueries.deleteSubGoal)

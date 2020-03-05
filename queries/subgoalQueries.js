@@ -61,6 +61,7 @@ const getSubGoalByParent = (request, response) => {
 Expects: request.body to have json:
 {
     userId: int,
+    parentgoal: int,
     goalDate: "yyyy-mm-dd",
     goalText: "This is some text",
     completed: boolean

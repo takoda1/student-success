@@ -217,7 +217,7 @@ class History extends Component {
         window.gtag('event', 'Logged Time', {
             'event_category': 'Timers',
             'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
-            'value': time / 60 // in minutes
+            'value': time
         });
 
         if (category === 'Writing' || category === 'Research') {

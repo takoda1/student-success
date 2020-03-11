@@ -372,6 +372,7 @@ class Goals extends Component {
             }
             allCustomTimers.push(pushTimer);
         }
+
         const listAllCustom = allCustomTimers.map((timer) =>
     <li key={"distinct-timer-" + timer.name}> <b>{timer.name}</b>: {secondsToHms(timer.time)}</li>);
         if(this.props.timers.length > 0 && this.props.hide !== true) {
@@ -396,9 +397,13 @@ class Goals extends Component {
         }
         else {
             return(
-                <div className="group-data-item">
+                <div className="group-data-item" id="group-timers">
                     <h4>{this.props.userName} {this.props.userLastName}</h4><br/>
-                    <div className="no-timers">No timers.</div>
+                    <ul className="history-timers-list">
+                        <li><b>Writing</b>: {secondsToHms(0)}</li>
+                        <li><b>Research</b>: {secondsToHms(0)}</li>
+                        { listAllCustom }
+                    </ul>
                 </div>
             );
         }

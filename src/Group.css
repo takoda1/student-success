@@ -43,7 +43,7 @@
     margin-left: -1em;
 }
 #group-reflections, #group-timers {
-    max-height: 31vh !important;
+    max-height: 29vh !important;
     overflow: scroll;
 }
 .group-messages {

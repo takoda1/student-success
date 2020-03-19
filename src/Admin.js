@@ -35,6 +35,8 @@ class Admin extends React.Component {
 
         this.addUser = this.addUser.bind(this);
         this.editUser = this.editUser.bind(this);
+        this.editGroup = this.editGroup.bind(this);
+        this.editClass = this.editClass.bind(this);
         this.addGroup = this.addGroup.bind(this);
         this.addClass = this.addClass.bind(this);
         this.updateQuestions = this.updateQuestions.bind(this);
@@ -82,6 +84,20 @@ class Admin extends React.Component {
         this.setState({
             currentUsers,
         });
+    }
+
+    async editClass(classname, classid) {
+        await axios.put(`/class/${classid}`, { classname });
+        const currentClasses = (await axios.get('/classes')).data;
+        const currentUsers = (await axios.get("/users")).data;
+        this.setState({ currentClasses, currentUsers });
+    }
+
+    async editGroup(groupname, groupid) {
+        await axios.put(`/group/${groupid}`, { groupname });
+        const currentGroups = (await axios.get('/groups')).data;
+        const currentUsers = (await axios.get("/users")).data;
+        this.setState({ currentGroups, currentUsers });
     }
 
     async addGroup(event) {
@@ -210,7 +226,7 @@ class Admin extends React.Component {
                                         <h3>Class list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentClasses.map((aClass) => <ClassView deleteClass={this.deleteClass} class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
+                                                {this.state.currentClasses.map((aClass) => <ClassView editClass={this.editClass} deleteClass={this.deleteClass} class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -237,7 +253,7 @@ class Admin extends React.Component {
                                         <h3>Groups list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentGroups.map((group) => <GroupView deleteGroup={this.deleteGroup} group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
+                                                {this.state.currentGroups.map((group) => <GroupView editGroup={this.editGroup} deleteGroup={this.deleteGroup} group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -347,14 +363,17 @@ class ClassView extends React.Component {
 
         this.state = {
             show: false,
+            editing: false,
+            editingName: this.props.class.classname,
         }
     }
 
     render() {
-        return (
+        const viewMode = (
             <div>
                 { this.props.class.classname }  
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
+                <Button onClick={() => this.setState({editing: true})}>Edit</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
                         <Modal.Title>Class Members:</Modal.Title><Button onClick={() => this.props.deleteClass(event, this.props.class.id, this.props.class.classname)}>Delete Class</Button>
@@ -363,7 +382,7 @@ class ClassView extends React.Component {
                         {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
                         <br/>
                         <h6>Contact Line:</h6>
-                        <p class="contact">{this.props.members.map((member) => member.email + ', ')}</p>
+                        <p className="contact">{this.props.members.map((member) => member.email + ', ')}</p>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({show: false})}>
@@ -372,7 +391,22 @@ class ClassView extends React.Component {
                     </Modal.Footer>
                 </Modal>
             </div>
-        )
+        );
+
+        const editMode = (
+            <div>
+                <Form onSubmit={async (event) => { 
+                    event.preventDefault();
+                    await this.props.editClass(this.state.editingName, this.props.class.id);
+                    this.setState({ editing: false });
+                }}>
+                    <Form.Control value={this.state.editingName} onChange={(event) => this.setState({ editingName: event.target.value })} />
+                    <Button type="submit">Done</Button>
+                </Form>
+            </div>
+        );
+
+        return this.state.editing ? editMode : viewMode;
     }
 }
 
@@ -382,14 +416,17 @@ class GroupView extends React.Component {
 
         this.state = {
             show: false,
+            editing: false,
+            editingName: this.props.group.groupname,
         }
     }
 
     render() {
-        return (
+        const viewMode = (
             <div>
                 { this.props.group.groupname }  
                 <Button onClick={() => this.setState({show: true})}>View</Button> 
+                <Button onClick={() => this.setState({editing: true})}>Edit</Button> 
                 <Modal show={this.state.show} onHide={() => this.setState({show: false})}>
                     <Modal.Header>
                         <Modal.Title>Group Members:</Modal.Title><Button onClick={() => this.props.deleteGroup(event, this.props.group.id, this.props.group.groupname)}>Delete Group</Button>
@@ -398,7 +435,7 @@ class GroupView extends React.Component {
                         {this.props.members.map((member) => <li key={member.id}>{member.firstname} {member.lastname}</li>)}
                         <br/>
                         <h6>Contact Line:</h6>
-                        <p class="contact">{this.props.members.map((member) => member.email + ', ')}</p>
+                        <p className="contact">{this.props.members.map((member) => member.email + ', ')}</p>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => this.setState({show: false})}>
@@ -407,7 +444,22 @@ class GroupView extends React.Component {
                     </Modal.Footer>
                 </Modal>
             </div>
-        )
+        );
+
+        const editMode = (
+            <div>
+                <Form onSubmit={async (event) => { 
+                    event.preventDefault();
+                    await this.props.editGroup(this.state.editingName, this.props.group.id);
+                    this.setState({ editing: false });
+                }}>
+                    <Form.Control value={this.state.editingName} onChange={(event) => this.setState({ editingName: event.target.value })} />
+                    <Button type="submit">Done</Button>
+                </Form>
+            </div>
+        );
+
+        return this.state.editing ? editMode : viewMode;
     }
 }
 

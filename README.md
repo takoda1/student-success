@@ -303,6 +303,9 @@ GET /grou/:id		No, that is not a typo. Gets a single group by provided id
 
 POST /group			Posts a single group with body {groupname: string}
 
+PUT /group/:id  (Requires json/js body of {groupname: string})
+Updates/puts the group specified by its unique id with a new groupname value.
+
 DELETE /group/:id	Deletes a single group with provided id
 
 ### Groupchat
@@ -356,6 +359,9 @@ GET /classes     Gets all classes
 GET /clas/:id		No, that is not a typo. Gets a single class by provided id
 
 POST /class			Posts a single class with body {classname: string}
+
+PUT /class/:id  (Requires json/js body of {classname: string})
+Updates/puts the class specified by its unique id with a new classname value.
 
 DELETE /class/:id	Deletes a single class with provided id
 

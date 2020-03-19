@@ -63,6 +63,22 @@ const getClassById = (request, response) => {
     }
 }
 
+const putClass = (request, response) => {
+    const { classname } = request.body;
+    const id = parseInt(request.params.id)
+    if (!isNaN(id)) {
+        pool.query('UPDATE classes SET classname = $2 WHERE id = $1', [id, classname], (error, result) => {
+            if (error) { throw error }
+            else {
+                response.status(200).send(`Class updated with ID: ${id}`)
+            }
+        })
+    }
+    else {
+        response.status(400).send("Error: Parameter not a number")
+    }
+}
+
 const deleteClass = (request, response) => {
     const id = parseInt(request.params.id)
     if (!isNaN(id)) {
@@ -83,5 +99,6 @@ module.exports = {
     getClasses,
     addClass,
     getClassById,
+    putClass,
     deleteClass
 }

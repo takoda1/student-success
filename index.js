@@ -93,6 +93,7 @@ app.get('/group/:groupname', groupQueries.getGroup)
 app.get('/groups', groupQueries.getGroups)
 app.get('/grou/:id', groupQueries.getGroupById)
 app.post('/group', groupQueries.addGroup)
+app.put('/group/:id', groupQueries.putGroup) 
 app.delete('/group/:id', groupQueries.deleteGroup) 
 
 app.get('/groupchat/:groupid', chatQueries.getAllChats)
@@ -120,6 +121,7 @@ app.get('/class/:classname', classQueries.getClass)
 app.get('/classes', classQueries.getClasses)
 app.get('/clas/:id', classQueries.getClassById) //why won't /class/:id work?? Anything other than /class works
 app.post('/class', classQueries.addClass)
+app.put('/class/:id', classQueries.putClass)
 app.delete('/class/:id', classQueries.deleteClass)
 
 app.get('/comment/:id', commentQueries.getComment)

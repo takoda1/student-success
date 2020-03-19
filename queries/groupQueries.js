@@ -63,6 +63,22 @@ const getGroupById = (request, response) => {
     }
 }
 
+const putGroup = (request, response) => {
+    const { groupname } = request.body;
+    const id = parseInt(request.params.id)
+    if (!isNaN(id)) {
+        pool.query('UPDATE groups SET groupname = $2 WHERE id = $1', [id, groupname], (error, result) => {
+            if (error) { throw error }
+            else {
+                response.status(200).send(`Group updated with ID: ${id}`)
+            }
+        })
+    }
+    else {
+        response.status(400).send("Error: Parameter not a number")
+    }
+}
+
 const deleteGroup = (request, response) => {
     const id = parseInt(request.params.id)
     if (!isNaN(id)) {
@@ -83,5 +99,6 @@ module.exports = {
     getGroups,
     addGroup,
     getGroupById,
+    putGroup,
     deleteGroup
 }

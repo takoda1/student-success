@@ -104,6 +104,9 @@ class History extends Component {
                     writingDataPoints.push(0);
                     researchDataPoints.push(0);
                     customDataPoints.push(0);
+                    writing = 0;
+                    research = 0;
+                    custom = 0;
                     xAxis.push(thisWeek - startWeek + 2);
                     thisWeek += 1;
                 }
@@ -143,6 +146,7 @@ class History extends Component {
                     formatter: function (value) {
                         return 'Week ' + value;
                     },
+                    trim: false,
                     style: {
                         fontSize: '14px'
                     }
@@ -158,7 +162,7 @@ class History extends Component {
                 },
                 min: 0,
                 max: Math.ceil(maxY),
-                tickAmount: Math.ceil(maxY),
+                tickAmount: Math.ceil(maxY)/2,
                 labels: {
                     style: {
                         fontSize: '14px'

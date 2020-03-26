@@ -74,7 +74,8 @@ class History extends Component {
 
         askNotificationPermission();
 
-        const allTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
+        const getTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
+        const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
         var startWeek = Moment(allTimers[0].timerdate).week();
         var thisWeek = startWeek;
         var xAxis = []

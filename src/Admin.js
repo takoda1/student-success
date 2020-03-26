@@ -491,7 +491,8 @@ class UserView extends React.Component {
         var researchDataPoints = [];
         var customDataPoints = [];
 
-        const allTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
+        const getTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
+        const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
 
         if (allTimers.length > 0) {
             var startWeek = Moment(allTimers[0].timerdate).week();

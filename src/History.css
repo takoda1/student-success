@@ -69,7 +69,7 @@ h2 {
 }
 .history-timers-list {
     margin-top: -1em;
-    font-size: 1.25em;
+    font-size: 1.1em;
     margin-left: -1em;
 }
 .no-timers {
@@ -137,9 +137,9 @@ h2 {
   margin-bottom: 15px;
 }
 .timers-table {
-  background-color: #A6C4FF;
-  border-radius: 10px;
-  width: 13vw;
+  /* background-color: #A6C4FF;
+  border-radius: 10px; */
+  width: 100%;
   /* padding: 0.75em .75em .75em .75em; */
   text-align: left;
 }
@@ -148,4 +148,16 @@ h2 {
 }
 .add-time {
   width: 17vw;
+}
+/* .timer-table-body {
+  height: 50px !important;
+  overflow: scroll;
+} */
+
+.timer-pls-work {
+  max-height: 23vh !important;
+  overflow: scroll;
+  background-color: #A6C4FF;
+  border-radius: 10px;
+  padding-left: 3px;
 }

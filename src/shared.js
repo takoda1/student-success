@@ -226,8 +226,9 @@ class Goals extends React.Component {
 
 class CheckboxGoals extends React.Component {
   render () {
+      const sortedGoals = this.props.goals.sort(function(a, b) {return a.priority - b.priority});
       if(this.props.goals.length !== 0) {
-          const listGoals = this.props.goals.map((goal) => {
+          const listGoals = sortedGoals.map((goal) => {
             return (
               <div key={goal.id}>
                 <li> 

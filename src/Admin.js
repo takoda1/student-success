@@ -491,12 +491,19 @@ class UserView extends React.Component {
         var researchDataPoints = [];
         var customDataPoints = [];
 
-        const allTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
+        const getTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
+        const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
+        
+        // var test = Moment().day("Monday").year(2020).week(2).toDate();
+        // console.log(test);
 
         if (allTimers.length > 0) {
             var startWeek = Moment(allTimers[0].timerdate).week();
             var thisWeek = startWeek;
             var xAxis = []
+            // var from_date = Moment(allTimers[0].timerdate).startOf('week').format('MMM Do');
+            // var to_date = Moment(allTimers[0].timerdate).endOf('week').format('MMM Do');
+            // xAxis.push(from_date.concat(" - ", to_date));
             var writing = 0;
             var research = 0;
             var custom = 0;
@@ -511,19 +518,37 @@ class UserView extends React.Component {
                         researchDataPoints.push(research / 3600);
                         customDataPoints.push(custom / 3600);
                         xAxis.push(thisWeek - startWeek + 1);
+                        // var from_date = Moment(allTimers[i].timerdate).startOf('week').format('MMM Do');
+                        // var to_date = Moment(allTimers[i].timerdate).endOf('week').format('MMM Do');
+                        // xAxis.push(from_date.concat(" - ", to_date));
                     }
                 } else {
                     writingDataPoints.push(writing / 3600);
                     researchDataPoints.push(research / 3600);
                     customDataPoints.push(custom / 3600);
                     xAxis.push(thisWeek - startWeek + 1);
+                    // var from_date = Moment(allTimers[i].timerdate).startOf('week').format('MMM Do');
+                    // var to_date = Moment(allTimers[i].timerdate).endOf('week').format('MMM Do');
+
+                    // xAxis.push(from_date.concat(" - ", to_date));
+
+                    var emptyWeeks = 1;
 
                     while(Moment(allTimers[i].timerdate).week() > thisWeek+1) {
                         writingDataPoints.push(0);
                         researchDataPoints.push(0);
                         customDataPoints.push(0);
-                        xAxis.push(thisWeek-startWeek+2);
+
+                        writing = 0;
+                        research = 0;
+                        custom = 0;
+
+                        // var from_date = Moment(allTimers[i].timerdate).add(emptyWeeks, 'weeks').startOf('week').format('MMM Do');
+                        // var to_date = Moment(allTimers[i].timerdate).add(emptyWeeks, 'weeks').endOf('week').format('MMM Do');
+                        // xAxis.push(from_date.concat(" - ", to_date));
+                        xAxis.push(thisWeek - startWeek + 2);
                         thisWeek += 1;
+                        emptyWeeks += 1;
                     }
 
                     thisWeek = Moment(allTimers[i].timerdate).week();
@@ -536,6 +561,9 @@ class UserView extends React.Component {
                         researchDataPoints.push(allTimers[i].researchtime / 3600);
                         customDataPoints.push(allTimers[i].customtime / 3600);
                         xAxis.push(thisWeek - startWeek + 1);
+                        // var from_date = Moment(allTimers[i].timerdate).startOf('week').format('MMM Do');
+                        // var to_date = Moment(allTimers[i].timerdate).endOf('week').format('MMM Do');
+                        // xAxis.push(from_date.concat(" - ", to_date));
                     }
                 }
 
@@ -559,8 +587,9 @@ class UserView extends React.Component {
               },
               labels: {
                 formatter: function (value) {
-                  return 'Week ' + value;
+                    return 'Week ' + value;
                 },
+                trim: false,
                 style: {
                     fontSize: '14px'
                 }
@@ -581,7 +610,7 @@ class UserView extends React.Component {
                 },
                 min: 0,
                 max: Math.ceil(maxY),
-                tickAmount: Math.ceil(maxY)
+                tickAmount: Math.ceil(maxY)/2
             },
             title: {
                 text: 'Timer Hours Per Week',

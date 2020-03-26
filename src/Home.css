@@ -97,3 +97,7 @@ button:hover {
 .sub-goal-row button {
   font-size: small !important;
 }
+#subgoalToggle {
+  font-size: smaller;
+  border-radius: 100%;
+}

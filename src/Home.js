@@ -376,19 +376,34 @@ class WeeklyGoalItem extends React.Component {
         
         this.state = {
             editing: false,
-            goaltext: this.props.goal.goaltext
+            goaltext: this.props.goal.goaltext,
+            showSubgoalBox: false,
+            subgoals: [],
+            subgoalText: ''
         };
+    }
+
+    async componentDidMount() {
+        const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
+        this.setState({ subgoals });
     }
 
     render() {
         const editMode = (
             <Form className="editGoal" onSubmit={(event) => {
                 this.setState({editing: !this.state.editing});
-                this.props.onWeeklyGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed, this.props.goal.completedate);
+                this.props.onWeeklyGoalEdited(
+                    event, 
+                    this.state.goaltext, 
+                    this.props.goal.id, 
+                    this.props.goal.completed, 
+                    this.props.goal.completedate
+                );
             }}>
                 <Form.Row className="goal-row">
                     <Col className="goal-input">
-                        <Form.Control type="text" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({goaltext: event.target.value})} />
+                        <Form.Control type="text" className="goalField" value={this.state.goaltext} 
+                            onChange={(event) => this.setState({goaltext: event.target.value})} />
                     </Col>
                     <Col>
                         <Button type="submit">Update</Button>
@@ -408,8 +423,60 @@ class WeeklyGoalItem extends React.Component {
                     <Col>
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
+                        <Button size="sm" id="weeklySubgoalToggle" onClick={() => this.setState({ showSubgoalBox: !this.state.showSubgoalBox })}
+                            >{ this.state.showSubgoalBox ? "-" : "+" }</Button>
                     </Col>
                 </Form.Row>
+                {
+                    this.state.subgoals.sort(function(a,b){return a.id - b.id}).map((subgoal) => {
+                        return (
+                            <Form.Row className="sub-goal-row" key={subgoal.id}>
+                                <Col>
+                                    <Form.Check type="checkbox" checked={subgoal.completed} onChange={async (event) => {
+                                        const updated = { completed: event.target.checked, goaltext: subgoal.goaltext };
+                                        await axios.put(`/weeklySubgoal/${subgoal.id}`, updated);
+                                        const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
+                                        this.setState({ subgoals });
+                                    }} label={subgoal.goaltext}/>
+                                </Col>
+                                <Col>
+                                    <Button className="remove" onClick={async (event) => {
+                                        event.preventDefault();
+                                        await axios.delete(`/weeklySubgoal/${subgoal.id}`);
+                                        const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
+                                        this.setState({ subgoals });
+                                    }}>Remove</Button>
+                                </Col>
+                            </Form.Row>
+                        );
+                    })
+                }
+                {
+                    this.state.showSubgoalBox ? (
+                        <Form className="addSubGoal" onSubmit={async (event) => {
+                            event.preventDefault();
+                            const subgoal = { 
+                                userid: this.props.goal.userid, 
+                                parentgoal: this.props.goal.id, 
+                                goaldate: Moment(this.props.goal.goaldate).format("YYYY-MM-DD"), 
+                                goaltext: this.state.subgoalText, 
+                                completed: false 
+                            };
+                            await axios.post(`/weeklySubgoal`, subgoal);
+                            const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
+                            this.setState({ subgoals, subgoalText: '' });
+                        }}>
+                            <Form.Row className="sub-goal-row">
+                                <Col className="goal-input">
+                                    <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
+                                </Col>
+                                <Col>
+                                    <Button type="submit">Add Subgoal</Button>
+                                </Col>
+                            </Form.Row>
+                        </Form>
+                    ) : null
+                }
             </div>
         );
         return(

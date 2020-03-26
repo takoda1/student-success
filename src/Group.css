@@ -17,6 +17,9 @@
     grid-template-rows: auto;
     grid-row-gap: 15px;
 }
+.group-data input {
+    margin-right: 10px;
+}
 .group-chat {
     grid-area: chat;
     padding: 10px;

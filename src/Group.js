@@ -65,11 +65,21 @@ class Group extends Component {
         
         for(var i=0; i < groupUsers.length; i++) {
             var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
+            for (const goal of thisGoals) {
+                const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            }
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, goals: thisGoals};
             groupGoals.push(theseGoals);
 
             var thisWeeklyGoals = (await axios.get(`/weeklyGoals/${groupUsers[i].id}`)).data;
             // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+            for (const goal of thisWeeklyGoals) {
+                const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            }
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals};
             groupWeeklyGoals.push(theseWeeklyGoals);
 
@@ -184,12 +194,22 @@ class Group extends Component {
 
         for(var i=0; i < groupUsers.length; i++) {
             var thisGoals = ((await axios.get(`/goals/${groupUsers[i].id}/${selectedMomentDate}`)).data).sort(function(a,b) {return a.id - b.id});
+            for (const goal of thisGoals) {
+                const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            } 
             // thisGoals = thisGoals.sort(function(a, b){return a.id - b.id});
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, goals: thisGoals};
             groupGoals.push(theseGoals);
 
             var thisWeeklyGoals = (await axios.get(`/weeklyGoals/${groupUsers[i].id}`)).data;
             // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+            for (const goal of thisWeeklyGoals) {
+                const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            }
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals};
             groupWeeklyGoals.push(theseWeeklyGoals);
 

@@ -91,6 +91,7 @@ class GoalItem extends React.Component {
 
     this.state = {
       editing: false,
+      showSubgoalBox: false,
       goaltext: props.goal.goaltext,
       subgoals: [],
       subgoalText: ''
@@ -106,11 +107,18 @@ class GoalItem extends React.Component {
     const editMode = (  
       <Form className="editGoal" onSubmit={(event) => {
         this.setState({ editing: !this.state.editing });
-        this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed, this.props.goal.priority);
+        this.props.onGoalEdited(
+          event, 
+          this.state.goaltext, 
+          this.props.goal.id, 
+          this.props.goal.completed, 
+          this.props.goal.priority
+        );
       }}>
         <Form.Row className="goal-row">
           <Col className="goal-input">
-            <Form.Control type="text" className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} />
+            <Form.Control type="text" className="goalField" value={this.state.goaltext} 
+              onChange={(event) => this.setState({ goaltext: event.target.value })} />
           </Col>
           <Col>
             <Button type="submit">Update</Button>
@@ -131,6 +139,8 @@ class GoalItem extends React.Component {
             <Col>
               <Button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
               <Button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
+              <Button size="sm" id="subgoalToggle" onClick={() => this.setState({ showSubgoalBox: !this.state.showSubgoalBox })}
+                >{ this.state.showSubgoalBox ? "-" : "+" }</Button>
             </Col>
         </Form.Row>
         {
@@ -156,24 +166,34 @@ class GoalItem extends React.Component {
               </Form.Row>
             );
           })
+        } 
+        {
+          this.state.showSubgoalBox ? (
+            <Form className="addSubGoal" onSubmit={async (event) => {
+              event.preventDefault();
+              const subgoal = { 
+                userid: this.props.goal.userid, 
+                parentgoal: this.props.goal.id, 
+                goaldate: Moment(this.props.goal.goaldate).format("YYYY-MM-DD"), 
+                goaltext: this.state.subgoalText, 
+                completed: false 
+              };
+              await axios.post(`/subgoal`, subgoal);
+              const subgoals = (await axios.get(`/subgoalByParent/${this.props.goal.id}`)).data;
+              this.setState({ subgoals, subgoalText: '' });
+            }}>
+              <Form.Row className="sub-goal-row">
+                <Col className="goal-input">
+                  <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
+                </Col>
+                <Col>
+                  <Button type="submit">Add Subgoal</Button>
+                </Col>
+              </Form.Row>
+              {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
+            </Form>
+          ) : null
         }
-        <Form className="addSubGoal" onSubmit={async (event) => {
-          event.preventDefault();
-          const subgoal = { userid: this.props.goal.userid, parentgoal: this.props.goal.id, goaldate: Moment(this.props.goal.goaldate).format("YYYY-MM-DD"), goaltext: this.state.subgoalText, completed: false };
-          await axios.post(`/subgoal`, subgoal);
-          const subgoals = (await axios.get(`/subgoalByParent/${this.props.goal.id}`)).data;
-          this.setState({ subgoals, subgoalText: '' });
-        }}>
-          <Form.Row className="sub-goal-row">
-            <Col className="goal-input">
-              <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
-            </Col>
-            <Col>
-              <Button type="submit">Add Subgoal</Button>
-            </Col>
-          </Form.Row>
-          {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
-        </Form>
       </div>
     );
 
@@ -206,13 +226,26 @@ class Goals extends React.Component {
 
 class CheckboxGoals extends React.Component {
   render () {
-      const sortedGoals = this.props.goals.sort(function(a, b) {return a.id - b.id});
-      if(this.props.goals.length !== 0){
-          const listGoals = sortedGoals.map((goal) =>
-          <li key={goal.id}> <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> {goal.goaltext}</li> );
+      const sortedGoals = this.props.goals.sort(function(a, b) {return a.priority - b.priority});
+      if(this.props.goals.length !== 0) {
+          const listGoals = sortedGoals.map((goal) => {
+            return (
+              <div key={goal.id}>
+                <li> 
+                  <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> 
+                  {goal.goaltext}
+                </li>
+                {goal.subgoals ? goal.subgoals.map((subgoal) => {
+                  return (<li className="sub-goal-row" key={subgoal.id}>
+                    <input type="checkbox" checked={subgoal.completed} readOnly />
+                    {subgoal.goaltext}
+                  </li>);
+                }) : null }
+              </div>
+            );
+          });
           return(<div className="history-goals">{listGoals}</div>);
-      }
-      else{
+      } else {
           return(<div className="history-goals">No goals.</div>);
       }
   }

@@ -75,6 +75,11 @@ class Group extends Component {
 
             var thisWeeklyGoals = (await axios.get(`/weeklyGoals/${groupUsers[i].id}`)).data;
             const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+            for (const goal of filteredWeeklyGoals) {
+                const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            }
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: filteredWeeklyGoals};
             groupWeeklyGoals.push(theseWeeklyGoals);
 
@@ -199,6 +204,11 @@ class Group extends Component {
 
             var thisWeeklyGoals = (await axios.get(`/weeklyGoals/${groupUsers[i].id}`)).data;
             const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+            for (const goal of filteredWeeklyGoals) {
+                const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            }
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: filteredWeeklyGoals};
             groupWeeklyGoals.push(theseWeeklyGoals);
 

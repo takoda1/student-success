@@ -55,6 +55,15 @@ CREATE TABLE weeklygoals (
 	completedate DATE
 );
 
+CREATE TABLE weeklysubgoals (
+	id SERIAL PRIMARY KEY,
+	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	parentgoal INTEGER REFERENCES weeklygoals(id) ON DELETE CASCADE,
+	goaldate DATE NOT NULL,
+	goaltext TEXT,
+	completed BOOLEAN NOT NULL
+);
+
 CREATE TABLE timers (
 	id SERIAL PRIMARY KEY,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,

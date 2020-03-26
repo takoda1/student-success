@@ -20,12 +20,13 @@ describe('GOAL API', () => {
         userid: values.userid,
         goaldate: values.date,
         goaltext: 'this is text',
-        completed: true
+        completed: true,
+        priority: 1,
     }
 
     var goalId = ''
 
-    it('posts a goal with body {userid, goaldate, goaltext, completed}', () => {
+    it('posts a goal with body {userid, goaldate, goaltext, completed, priority}', () => {
         
         return chai.request(server)
         .post('/goal')
@@ -80,10 +81,11 @@ describe('GOAL API', () => {
         
     })
 
-    it('Updates a single goal based on the goal\'s id, and updates the goalText and completed fields', () => {
+    it('Updates a single goal based on the goal\'s id, and updates the goalText, completed, and priority fields', () => {
         const newGoal = {
             goaltext: "YAY",
-            completed: false
+            completed: false,
+            priority: 1,
         }
         return chai.request(server)
             .put('/goal/' + goalId)

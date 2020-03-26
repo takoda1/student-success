@@ -115,7 +115,7 @@ Users:
 {id: int, firstname: string, lastname: string, email: string, groupid: foreignKey(groups: id), hidetimer: boolean, hidereflection: boolean, classid: foreignKey(classes: id)}
 
 Goals:
-{id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
+{id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean, priority: int}
 
 Subgoals:
 {id: int, userid: foreignKey(Users: id), parentgoal: foreignKey(Goals: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
@@ -186,11 +186,11 @@ and for a specified date in the format yyyy-mm-dd
 GET /goal/:id
 Returns a single goal referenced by the goal primary key id
 
-POST /goal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean})
+POST /goal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean, priority: number})
 Posts a goal with specified values
 
-PUT /goal/:id  (Requires json/js body of {goaltext: string, completed: boolean})
-Updates/puts the goal specified by its unique id with new goalText and completed values.
+PUT /goal/:id  (Requires json/js body of {goaltext: string, completed: boolean, priority: number})
+Updates/puts the goal specified by its unique id with new goalText, completed, and priority values.
 
 DELETE /goal/:id
 Deletes the goal specified by its unique id

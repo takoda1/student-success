@@ -65,6 +65,11 @@ class Group extends Component {
         
         for(var i=0; i < groupUsers.length; i++) {
             var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
+            for (const goal of thisGoals) {
+                const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            }
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, goals: thisGoals};
             groupGoals.push(theseGoals);
 
@@ -184,6 +189,11 @@ class Group extends Component {
 
         for(var i=0; i < groupUsers.length; i++) {
             var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${selectedMomentDate}`)).data;
+            for (const goal of thisGoals) {
+                const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
+                console.log(subgoals);
+                goal.subgoals = subgoals;
+            } 
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, goals: thisGoals};
             groupGoals.push(theseGoals);
 

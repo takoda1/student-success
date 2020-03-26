@@ -116,7 +116,11 @@ class Home extends React.Component {
     }
 
     async onGoalCheck(completed, goal) {
-        const updatedGoal = { goaltext: goal.goaltext, completed };
+        const updatedGoal = { 
+            goaltext: goal.goaltext, 
+            completed, 
+            priority: goal.priority 
+        };
         await axios.put(`/goal/${goal.id}`, updatedGoal);
         const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
 
@@ -133,7 +137,13 @@ class Home extends React.Component {
 
     async onGoalSubmitted(event) {
         event.preventDefault();
-        const newGoal = { userid: this.props.user.id, goaldate: this.state.selectedMomentDate, goaltext: this.state.newGoalText, completed: false };
+        const newGoal = { 
+            userid: this.props.user.id, 
+            goaldate: this.state.selectedMomentDate, 
+            goaltext: this.state.newGoalText, 
+            completed: false, 
+            priority: (this.state.goals.length + 1) 
+        };
         await axios.post('/goal', newGoal);
         const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
         this.setState(() => {
@@ -142,9 +152,13 @@ class Home extends React.Component {
         this.checkTotalGoals();
     }
 
-    async onGoalEdited(event, newText, goalId, completed) {
+    async onGoalEdited(event, newText, goalId, completed, priority) {
         event.preventDefault();
-        const updatedGoal = { goaltext: newText, completed: completed };
+        const updatedGoal = { 
+            goaltext: newText, 
+            completed: completed, 
+            priority 
+        };
         await axios.put(`/goal/${goalId}`, updatedGoal);
         const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
         this.setState(() => {
@@ -158,7 +172,13 @@ class Home extends React.Component {
 
     async onWeeklyGoalSubmitted(event) {
         event.preventDefault();
-        const newGoal = { userid: this.props.user.id, goaldate: this.state.selectedMomentDate, goaltext: this.state.newWeeklyText, completed: false, completedate: "2100-01-01" };
+        const newGoal = { 
+            userid: this.props.user.id, 
+            goaldate: this.state.selectedMomentDate, 
+            goaltext: this.state.newWeeklyText, 
+            completed: false, 
+            completedate: "2100-01-01" 
+        };
         await axios.post('/weeklyGoal', newGoal);
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
@@ -169,7 +189,11 @@ class Home extends React.Component {
 
     async onWeeklyGoalEdited(event, newText, goalId, completed, completeDate) {
         event.preventDefault();
-        const updatedGoal = { goaltext: newText, completed: completed, completedate: Moment(completeDate).format("YYYY-MM-DD") };
+        const updatedGoal = { 
+            goaltext: newText, 
+            completed: completed, 
+            completedate: Moment(completeDate).format("YYYY-MM-DD") 
+        };
         await axios.put(`/weeklyGoal/${goalId}`, updatedGoal);
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));

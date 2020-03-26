@@ -33,7 +33,8 @@ CREATE TABLE goals (
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	goaldate DATE NOT NULL,
 	goaltext TEXT,
-	completed BOOLEAN NOT NULL
+	completed BOOLEAN NOT NULL,
+	priority INTEGER,
 );
 
 CREATE TABLE subgoals (

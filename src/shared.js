@@ -21,27 +21,68 @@ function Layout(props) {
   );
 }
 
-function GoalList(props) {
-  const sortedGoals = props.goals.sort(function(a, b){return a.id - b.id});
-  const sortedGoalsList = sortedGoals.map((g) => <GoalItem key={g.id} goal={g} onGoalCheck={props.onGoalCheck} onGoalEdited={props.onGoalEdited} onGoalRemoved={props.onGoalRemoved} />);
-  return (
-    <div>
-      <ul className="goal-list">
-        {sortedGoalsList}
-        <Form className="addGoal" onSubmit={props.onGoalAdded}>
-          <Form.Row>
-            <Col className="goal-input">
-              <Form.Control type="text" className="addGoalField" value={props.newGoalText} onChange={props.onGoalTyped} />
-            </Col>
-            <Col>
-              <Button type="submit">Add Goal</Button>
-            </Col>
-          </Form.Row>
-        </Form>
-      </ul>
-      <GoalsCompleted goalsCompleted={props.goalsCompleted}/>
-    </div>
-  );
+class GoalList extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      prioritizing: false,
+    }
+  }
+
+  render() {
+    const sortedGoals = this.props.goals.sort(function(a, b){return a.priority - b.priority});
+    const sortedGoalsList = sortedGoals.map((g) => <GoalItem key={g.id} goal={g} onGoalCheck={this.props.onGoalCheck} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} />);
+    const viewMode = (
+      <div>
+        <Button onClick={() => this.setState({ prioritizing: true })}>Set Priorities</Button>
+        <ul className="goal-list">
+          {sortedGoalsList}
+          <Form className="addGoal" onSubmit={this.props.onGoalAdded}>
+            <Form.Row>
+              <Col className="goal-input">
+                <Form.Control type="text" className="addGoalField" value={this.props.newGoalText} onChange={this.props.onGoalTyped} />
+              </Col>
+              <Col>
+                <Button type="submit">Add Goal</Button>
+              </Col>
+            </Form.Row>
+          </Form>
+        </ul>
+        <GoalsCompleted goalsCompleted={this.props.goalsCompleted}/>
+      </div>
+    );
+
+    const priorityMode = (
+      <div>
+        <ul className="goal-list">
+          <Form onSubmit={ () => this.setState({ prioritizing: false }) }>
+            {sortedGoals.map((goal) => {
+              return (
+                <Form.Row key={goal.id}>
+                  <Col>{goal.goaltext}</Col>
+                  <Col>
+                    <Form.Control as="select" onChange={async (event) => {
+                      event.preventDefault();
+                      await this.props.onGoalEdited(event, goal.goaltext, goal.id, goal.completed, event.target.value);
+                    }}>
+                        <option key={0} >{0}</option>
+                        {this.props.goals.map((group, index) => <option key={index+1}>{index+1}</option>)}
+                    </Form.Control>
+                  </Col>
+                </Form.Row>
+              );
+            })}
+            <Button type="submit">Save</Button>
+          </Form>
+        </ul>
+      </div>
+    );
+
+    return this.state.prioritizing ? priorityMode : viewMode;
+  }
+
+
 }
 
 class GoalItem extends React.Component {
@@ -65,7 +106,7 @@ class GoalItem extends React.Component {
     const editMode = (  
       <Form className="editGoal" onSubmit={(event) => {
         this.setState({ editing: !this.state.editing });
-        this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed);
+        this.props.onGoalEdited(event, this.state.goaltext, this.props.goal.id, this.props.goal.completed, this.props.goal.priority);
       }}>
         <Form.Row className="goal-row">
           <Col className="goal-input">

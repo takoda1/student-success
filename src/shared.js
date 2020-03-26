@@ -35,7 +35,7 @@ class GoalList extends React.Component {
     const sortedGoalsList = sortedGoals.map((g) => <GoalItem key={g.id} goal={g} onGoalCheck={this.props.onGoalCheck} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} />);
     const viewMode = (
       <div>
-        <Button onClick={() => this.setState({ prioritizing: true })}>Set Priorities</Button>
+        <Button onClick={() => this.setState({ prioritizing: true })}>Reorder List</Button>
         <ul className="goal-list">
           {sortedGoalsList}
           <Form className="addGoal" onSubmit={this.props.onGoalAdded}>

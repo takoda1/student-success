@@ -493,22 +493,32 @@ class UserView extends React.Component {
 
         const getTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
         const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
-        
+        console.log(allTimers)
         // var test = Moment().day("Monday").year(2020).week(2).toDate();
         // console.log(test);
+
+
 
         if (allTimers.length > 0) {
             var startWeek = Moment(allTimers[0].timerdate).week();
             var thisWeek = startWeek;
-            var xAxis = []
-            // var from_date = Moment(allTimers[0].timerdate).startOf('week').format('MMM Do');
-            // var to_date = Moment(allTimers[0].timerdate).endOf('week').format('MMM Do');
-            // xAxis.push(from_date.concat(" - ", to_date));
             var writing = 0;
             var research = 0;
             var custom = 0;
 
+            var weeks = [];
+            var startDate = Moment(allTimers[0].timerdate).weekday(0);
+
+            var today = Moment(allTimers[allTimers.length-1].timerdate).weekday(7);
+            while(startDate.isBefore(today)) {
+                let startDateWeek = startDate.weekday(0).format('MM/DD');
+                let endDateWeek = startDate.weekday(6).format('MM/DD');
+                startDate.add(7,'days');
+                weeks.push(startDateWeek.concat(" - ", endDateWeek));
+            }
+
             for (var i = 0; i < allTimers.length; i++) {
+                // console.log(Moment(allTimers[i].timerdate).week(), Moment(allTimers[i].timerdate).format('MM/DD/YYYY'));
                 if (Moment(allTimers[i].timerdate).week() === thisWeek) {
                     writing += allTimers[i].writingtime;
                     research += allTimers[i].researchtime;
@@ -517,38 +527,36 @@ class UserView extends React.Component {
                         writingDataPoints.push(writing / 3600);
                         researchDataPoints.push(research / 3600);
                         customDataPoints.push(custom / 3600);
-                        xAxis.push(thisWeek - startWeek + 1);
-                        // var from_date = Moment(allTimers[i].timerdate).startOf('week').format('MMM Do');
-                        // var to_date = Moment(allTimers[i].timerdate).endOf('week').format('MMM Do');
-                        // xAxis.push(from_date.concat(" - ", to_date));
                     }
                 } else {
                     writingDataPoints.push(writing / 3600);
                     researchDataPoints.push(research / 3600);
                     customDataPoints.push(custom / 3600);
-                    xAxis.push(thisWeek - startWeek + 1);
-                    // var from_date = Moment(allTimers[i].timerdate).startOf('week').format('MMM Do');
-                    // var to_date = Moment(allTimers[i].timerdate).endOf('week').format('MMM Do');
 
-                    // xAxis.push(from_date.concat(" - ", to_date));
+                    writing = 0;
+                    research = 0;
+                    custom = 0;
 
-                    var emptyWeeks = 1;
+                    var numWeeks = 0;
+                    if(Moment(allTimers[i-1].timerdate).week() < Moment(allTimers[i].timerdate).week()) {
+                        numWeeks = (Moment(allTimers[i].timerdate).week() - Moment(allTimers[i-1].timerdate).week()-1);
+                    }
+                    else {
+                        numWeeks = (52 - Moment(allTimers[i-1].timerdate).week() + Moment(allTimers[i].timerdate).week()-1);
+                    }
 
-                    while(Moment(allTimers[i].timerdate).week() > thisWeek+1) {
-                        writingDataPoints.push(0);
-                        researchDataPoints.push(0);
-                        customDataPoints.push(0);
 
+                    if(numWeeks >= 1) {
+                        // console.log(numWeeks, Moment(allTimers[i-1].timerdate).format('MM/DD/YY'), Moment(allTimers[i].timerdate).format('MM/DD/YY'));
+                        for(var j = 0; j< numWeeks; j++) {
+                            writingDataPoints.push(0);
+                            researchDataPoints.push(0);
+                            customDataPoints.push(0);
+                        }
                         writing = 0;
                         research = 0;
                         custom = 0;
-
-                        // var from_date = Moment(allTimers[i].timerdate).add(emptyWeeks, 'weeks').startOf('week').format('MMM Do');
-                        // var to_date = Moment(allTimers[i].timerdate).add(emptyWeeks, 'weeks').endOf('week').format('MMM Do');
-                        // xAxis.push(from_date.concat(" - ", to_date));
-                        xAxis.push(thisWeek - startWeek + 2);
                         thisWeek += 1;
-                        emptyWeeks += 1;
                     }
 
                     thisWeek = Moment(allTimers[i].timerdate).week();
@@ -560,10 +568,6 @@ class UserView extends React.Component {
                         writingDataPoints.push(allTimers[i].writingtime / 3600);
                         researchDataPoints.push(allTimers[i].researchtime / 3600);
                         customDataPoints.push(allTimers[i].customtime / 3600);
-                        xAxis.push(thisWeek - startWeek + 1);
-                        // var from_date = Moment(allTimers[i].timerdate).startOf('week').format('MMM Do');
-                        // var to_date = Moment(allTimers[i].timerdate).endOf('week').format('MMM Do');
-                        // xAxis.push(from_date.concat(" - ", to_date));
                     }
                 }
 
@@ -578,17 +582,14 @@ class UserView extends React.Component {
               id: 'Timer Stats'
             },
             xaxis: {
-              categories: xAxis,
+              categories: weeks,
               title: {
-                  text: 'Week Number',
+                  text: 'Weeks',
                   style: {
                       fontSize: '1em'
                   }
               },
               labels: {
-                formatter: function (value) {
-                    return 'Week ' + value;
-                },
                 trim: false,
                 style: {
                     fontSize: '14px'

@@ -610,8 +610,8 @@ class UserView extends React.Component {
                     }
                 },
                 min: 0,
-                max: Math.ceil(maxY),
-                tickAmount: Math.ceil(maxY)/2
+                max: Math.ceil(maxY) + 2,
+                tickAmount: (Math.ceil(maxY) + 2)/2
             },
             title: {
                 text: 'Timer Hours Per Week',

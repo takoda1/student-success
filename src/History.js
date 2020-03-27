@@ -181,8 +181,8 @@ class History extends Component {
                     }
                 },
                 min: 0,
-                max: Math.ceil(maxY),
-                tickAmount: Math.ceil(maxY)/2,
+                max: Math.ceil(maxY) + 2,
+                tickAmount: (Math.ceil(maxY) + 2)/2,
                 labels: {
                     style: {
                         fontSize: '14px'

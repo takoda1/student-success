@@ -34,7 +34,7 @@ CREATE TABLE goals (
 	goaldate DATE NOT NULL,
 	goaltext TEXT,
 	completed BOOLEAN NOT NULL,
-	priority INTEGER,
+	priority INTEGER
 );
 
 CREATE TABLE subgoals (

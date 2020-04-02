@@ -33,7 +33,10 @@ class Home extends React.Component {
             editingReflections: false,
             weeklyGoals: [],
             unfilteredWeeklyGoals: [],
-            newWeeklyText: ''
+            newWeeklyText: '',
+            weekDates: [],
+            weekCompleted: [],
+            weekDayNames: []
         };
 
         this.checkTotalGoals = this.checkTotalGoals.bind(this);
@@ -78,6 +81,30 @@ class Home extends React.Component {
             'event_category': 'Home',
             'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
         });
+
+
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
+
     }
 
     checkTotalGoals() {
@@ -128,6 +155,28 @@ class Home extends React.Component {
         this.setState(() => {
             return { goals };
         });
+
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
         
         this.checkTotalGoals();
     }
@@ -150,6 +199,29 @@ class Home extends React.Component {
         this.setState(() => {
             return { goals, newGoalText: '' };
         });
+
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
+
         this.checkTotalGoals();
     }
 
@@ -237,6 +309,29 @@ class Home extends React.Component {
         this.setState(() => {
             return { goals };
         });
+
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
+
         this.checkTotalGoals();
     }
 
@@ -289,6 +384,29 @@ class Home extends React.Component {
         } else {
             this.setState({ reflections: {}, reflectionQuestions: ["", "", ""], completedReflections: false, goals, selectedDate: date, selectedMomentDate });
         }
+
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(selectedMomentDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted});
+
         this.checkTotalGoals();
 
     }
@@ -304,7 +422,8 @@ class Home extends React.Component {
                         loading ? (<p>Loading...</p>) :
                         (
                             <div>
-                                <DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} />
+                                <DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} /><br/><br/>
+                                <WeekView weekDates={this.state.weekDates} weekCompleted={this.state.weekCompleted} weekDayNames={this.state.weekDayNames} />
                                 <div className="home-flex-container">
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
                                     <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} />
@@ -318,6 +437,71 @@ class Home extends React.Component {
                     }
                 </Layout>
         </div>
+        );
+    }
+}
+
+class WeekView extends React.Component {
+    render() {
+        return (
+            <div className="calendar-week">
+                <div className="calendar-day">
+                    {this.props.weekDayNames[0]}<br/>
+                    {Moment(this.props.weekDates[0]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[0]}/>
+                </div>
+                <div className="calendar-day">
+                    {this.props.weekDayNames[1]}<br/>
+                    {Moment(this.props.weekDates[1]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[1]}/>
+                </div>
+                <div className="calendar-day">
+                    {this.props.weekDayNames[2]}<br/>
+                    {Moment(this.props.weekDates[2]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[2]}/>
+                </div>
+                <div className="calendar-day">
+                    {this.props.weekDayNames[3]}<br/>
+                    {Moment(this.props.weekDates[3]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[3]}/>
+                </div>
+                <div className="calendar-day">
+                    {this.props.weekDayNames[4]}<br/>
+                    {Moment(this.props.weekDates[4]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[4]}/>
+                </div>
+                <div className="calendar-day">
+                    {this.props.weekDayNames[5]}<br/>
+                    {Moment(this.props.weekDates[5]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[5]}/>
+                </div>
+                <div className="calendar-day">
+                    {this.props.weekDayNames[6]}<br/>
+                    {Moment(this.props.weekDates[6]).format("MM/DD/YY")}<br/>
+                    <CompletedGoal completed={this.props.weekCompleted[6]}/>
+                </div>
+            </div>
+        )
+    }
+}
+
+class CompletedGoal extends React.Component {
+    render() {
+
+        if(this.props.completed === null) {
+            var isComplete = "-";
+        }
+        else if(this.props.completed === true) {
+            var isComplete = <FontAwesomeIcon icon={faCheckCircle} />
+        }
+        else {
+            var isComplete = <FontAwesomeIcon icon={faMinusCircle} />;
+            // isComplete = this.props.completed(true ? <FontAwesomeIcon icon={faCheckCircle} /> : <FontAwesomeIcon icon={faMinusCircle} />);
+        }
+        return(
+            <span>
+                {isComplete}
+            </span>
         );
     }
 }

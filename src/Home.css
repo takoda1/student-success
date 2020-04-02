@@ -105,3 +105,11 @@ button:hover {
   font-size: smaller;
   border-radius: 100%;
 }
+
+.calendar-week {
+  display: flex;
+  justify-content: space-evenly;
+}
+.calendar-day {
+  text-align: center;
+}

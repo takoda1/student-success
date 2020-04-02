@@ -31,7 +31,7 @@ class GoalList extends React.Component {
   }
 
   render() {
-    const sortedGoals = this.props.goals.sort(function(a, b){return a.priority - b.priority});
+    const sortedGoals = this.props.goals.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
     const sortedGoalsList = sortedGoals.map((g) => <GoalItem key={g.id} goal={g} onGoalCheck={this.props.onGoalCheck} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} />);
     const viewMode = (
       <div>

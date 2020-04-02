@@ -93,8 +93,9 @@ button:hover {
 .sub-goal-row {
   margin-left: 15px !important;
   margin-bottom: 5px;
+  
 }
-.sub-goal-row button {
+.sub-goal-row .small-button {
   font-size: small !important;
 }
 #subgoalToggle {

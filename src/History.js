@@ -3,7 +3,7 @@ import './History.css';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Moment from 'moment';
-import { secondsToHms, fixDateWithYear } from './shared';
+import { secondsToHms } from './shared';
 import Chart from 'react-apexcharts'
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -398,49 +398,30 @@ class Timers extends Component {
                     <h3 style={{ display: "inline-block", width: '30%' }} >Recorded Times</h3>
                 <div>
                     <div style={{ display: "inline-block", verticalAlign: 'top' }}>
-                    {/* <h3 style={{ display: "inline-block", width: '100%', textAlign: 'center' }} >Recorded Times</h3> */}
                         <div className="timer-pls-work">
-                        <table className="timers-table" >
-                            <tbody className="timer-table-body">
-                                <tr>
-                                    <th>Writing</th>
-                                    <td>{ready ? secondsToHms(this.props.timers.writingtime) : secondsToHms(0)}</td>
-                                </tr>
-                                <tr>
-                                    <th>Research</th>
-                                    <td>{ready ? secondsToHms(this.props.timers.researchtime) : secondsToHms(0)}</td>
-                                </tr>
+                        <div className="timers-table" >
+                            <div className="timer-table-body">
+                                <TimerEntry name="Writing" time={ready ? this.props.timers.writingtime : 0 } 
+                                    updateCustomTimer={this.props.updateCustomTimer} 
+                                    updateTimers={this.props.updateTimers} />
+                                <TimerEntry name="Research" time={ready ? this.props.timers.researchtime : 0 } 
+                                    updateCustomTimer={this.props.updateCustomTimer} 
+                                    updateTimers={this.props.updateTimers} />
                                 {
                                     this.props.allCustomTimers.map((timer) => {
                                         return (
-                                            <tr key={timer.id}>
-                                                <th>{timer.name}</th>
-                                                <td>{secondsToHms(timer.time)}</td>
-                                            </tr>
+                                            <TimerEntry key={timer.name} name={timer.name} time={timer.time}
+                                                updateCustomTimer={this.props.updateCustomTimer} 
+                                                updateTimers={this.props.updateTimers} />
                                         )
                                     })
                                 }
-                            </tbody>
-                        </table>
+                            </div>
                         </div>
-                        <br/>
-                        <Form className="text-block add-time" onSubmit={() => this.props.onSubmitManualTime(event)}>
-                            <Form.Label>Enter Time Manually: </Form.Label>
-                            <Form.Control as="select" value={this.props.manualCategory} onChange={() => this.props.onChangeManualCategory(event)}>
-                                <option>Writing</option>
-                                <option>Research</option>
-                                {
-                                    this.props.distinctCustomNames.map((timer) => <option key={timer.name}>{timer.name}</option>)
-                                }
-                            </Form.Control>
-                            <Form.Control placeholder="Enter time in minutes..." type="number" onChange={() => this.props.onChangeManualTime(event)} />
-                            <Button type="submit">Add Time</Button>
-                        </Form>
+                        </div>
                     </div>
 
                     <div className="timers-list" style={{ display: "inline-block", width: '70%', verticalAlign: 'top', marginLeft: 15, paddingLeft: 25, borderLeft: '2px solid #DDD' }}>
-                        {/* <Timer name="Writing" updateTimers={this.props.updateTimers} category="writing" />
-                        <Timer name="Research" updateTimers={this.props.updateTimers} category="research" /> */}
                         <Timer customTimers={this.props.customTimers} distinctCustomNames={this.props.distinctCustomNames} name={this.props.customName} updateTimers={this.props.updateCustomTimer} updateCustomName={this.props.updateCustomName} category="custom" />
                         <br />
                     </div>
@@ -448,6 +429,57 @@ class Timers extends Component {
                 </div>
             </div>
         );
+    }
+}
+
+class TimerEntry extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            editing: false,
+            adding: false,
+            time: 0,
+        }
+    }
+
+    render() {
+        const viewMode = (
+            <Form>
+                <Form.Row key={this.props.name}>
+                    <Col>{this.props.name}</Col>
+                    <Col>{secondsToHms(this.props.time)}</Col>
+                    <Button size="sml" onClick={() => this.setState({ editing: true, adding: true })}>Add</Button>
+                    <Button onClick={() => this.setState({ editing: true, adding: false })}>Subtract</Button>
+                </Form.Row>
+            </Form>
+        )
+
+        const editMode = (
+            <Form key={this.props.name} onSubmit={async (event) => {
+                event.preventDefault();
+                const modifier = this.state.adding ? 1 : -1;
+                const time = Number.parseInt(this.state.time) * 60 * modifier;
+                if (time) {
+                    if (this.props.name === "Writing" || this.props.name === "Research") {
+                        await this.props.updateTimers(time, this.props.name.toLowerCase());
+                    } else {
+                        await this.props.updateCustomTimer(time, this.props.name);
+                    }
+                }
+                this.setState({ editing: false })
+            }}>
+                <Form.Row >
+                    <Col>{this.props.name}</Col>
+                    <Col>{secondsToHms(this.props.time)}</Col>
+                    <Button type="submit">{this.state.adding ? "Add" : "Subtract"}</Button>
+                    <Button onClick={() => this.setState({ editing: false })}>Cancel</Button>
+                </Form.Row>
+                <Form.Control placeholder="Enter time in minutes..." type="number" 
+                    onChange={() => this.setState({ time: event.target.value })} />
+            </Form>
+        )
+
+        return this.state.editing ? editMode : viewMode;
     }
 }
 

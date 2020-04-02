@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import DatePicker from "react-datepicker";
 import Moment from 'moment';
+import Checkbox from './checkbox/Checkbox';
 
 
 const today = Moment().format('YYYY-MM-DD');
@@ -30,7 +31,7 @@ class Group extends Component {
             newMessageText: '',
             selectedView: 'goals',
             hideTimer: this.props.user.hidetimer,
-            hidereflection: this.props.user.hidereflection,
+            hideReflection: this.props.user.hidereflection,
             selectedDate: newDate,
             selectedMomentDate: today
 
@@ -67,7 +68,6 @@ class Group extends Component {
             var thisGoals = (await axios.get(`/goals/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
             for (const goal of thisGoals) {
                 const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
-                console.log(subgoals);
                 goal.subgoals = subgoals;
             }
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, goals: thisGoals};
@@ -77,7 +77,6 @@ class Group extends Component {
             // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
             for (const goal of thisWeeklyGoals) {
                 const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
-                console.log(subgoals);
                 goal.subgoals = subgoals;
             }
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals};
@@ -159,6 +158,7 @@ class Group extends Component {
     }
 
     async onHideReflections(checked) {
+        console.log("hide reflections", checked);
         const getNewHideTimer = (await axios.get(`/user/${this.props.user.id}`)).data[0].hidetimer;
         if(getNewHideTimer === null) {
             var notNull = false;
@@ -196,7 +196,6 @@ class Group extends Component {
             var thisGoals = ((await axios.get(`/goals/${groupUsers[i].id}/${selectedMomentDate}`)).data).sort(function(a,b) {return a.id - b.id});
             for (const goal of thisGoals) {
                 const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
-                console.log(subgoals);
                 goal.subgoals = subgoals;
             } 
             // thisGoals = thisGoals.sort(function(a, b){return a.id - b.id});
@@ -207,7 +206,6 @@ class Group extends Component {
             // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
             for (const goal of thisWeeklyGoals) {
                 const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
-                console.log(subgoals);
                 goal.subgoals = subgoals;
             }
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals};
@@ -239,7 +237,6 @@ class Group extends Component {
                         <GroupForm onHideTimers={this.onHideTimers} onHideReflections={this.onHideReflections} onInputSelected={this.onInputSelected} hideTimer={this.state.hideTimer} hideReflection={this.state.hideReflection} />
                         <div className="date-picker"><DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} /></div>
                     </div>
-                    <br />
                     <GroupData user={this.props.user} groupGoals={this.state.groupGoals} groupWeeklyGoals={this.state.groupWeeklyGoals} groupTimers={this.state.groupTimers} groupReflections={this.state.groupReflections} groupLinks={this.state.groupLinks} selectedView={this.state.selectedView} groupId={this.props.user.groupid} />
                 </div>
                 <div className="group-chat">
@@ -269,8 +266,8 @@ class GroupForm extends Component {
                     <option value={"reflections"}>Reflections</option>
                     <option value={"links"}>Document Links</option>
                 </Form.Control>
-                <Form.Check type="checkbox" label="Hide your timers" checked={this.props.hideTimer} onChange={(e) => this.props.onHideTimers(e.target.checked)} />
-                <Form.Check type="checkbox" label="Hide your reflections" checked={this.props.hideReflection}  onChange={(e) => this.props.onHideReflections(e.target.checked)} />
+                <Checkbox completed={this.props.hideTimer} onToggle={() => this.props.onHideTimers(!this.props.hideTimer)}>Hide your timers</Checkbox>
+                <Checkbox completed={this.props.hideReflection} onToggle={() => this.props.onHideReflections(!this.props.hideReflection)}>Hide your reflections</Checkbox>
             </Form>
         );
     }

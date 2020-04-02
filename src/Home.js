@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import DatePicker from "react-datepicker";
 import Col from 'react-bootstrap/Col';
+import Checkbox from './checkbox/Checkbox';
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -488,15 +489,14 @@ class WeekView extends React.Component {
 class CompletedGoal extends React.Component {
     render() {
 
-        if(this.props.completed === null) {
-            var isComplete = "-";
+        if(this.props.completed === false) {
+            var isComplete = <FontAwesomeIcon icon={faMinusCircle} />;
         }
         else if(this.props.completed === true) {
             var isComplete = <FontAwesomeIcon icon={faCheckCircle} />
         }
         else {
-            var isComplete = <FontAwesomeIcon icon={faMinusCircle} />;
-            // isComplete = this.props.completed(true ? <FontAwesomeIcon icon={faCheckCircle} /> : <FontAwesomeIcon icon={faMinusCircle} />);
+            var isComplete = "-";
         }
         return(
             <span>
@@ -600,9 +600,7 @@ class WeeklyGoalItem extends React.Component {
             <div className="home-goal-list">
                 <Form.Row className="goals-form-row">
                     <Col className="goal-check-col">
-                        <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
-                            this.props.onWeeklyGoalCheck(event.target.checked, this.props.goal);
-                        }} label={this.state.goaltext} />
+                        <Checkbox onToggle={() => {this.props.onWeeklyGoalCheck(!this.props.goal.completed, this.props.goal);}} completed={this.props.goal.completed}>{this.state.goaltext}</Checkbox>
                     </Col>
                     <Col>
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
@@ -616,15 +614,15 @@ class WeeklyGoalItem extends React.Component {
                         return (
                             <Form.Row className="sub-goal-row" key={subgoal.id}>
                                 <Col>
-                                    <Form.Check type="checkbox" checked={subgoal.completed} onChange={async (event) => {
-                                        const updated = { completed: event.target.checked, goaltext: subgoal.goaltext };
+                                    <Checkbox completed={subgoal.completed} onToggle={async () => {
+                                        const updated = { completed: !subgoal.completed, goaltext: subgoal.goaltext };
                                         await axios.put(`/weeklySubgoal/${subgoal.id}`, updated);
                                         const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
                                         this.setState({ subgoals });
-                                    }} label={subgoal.goaltext}/>
+                                    }}>{subgoal.goaltext}</Checkbox>
                                 </Col>
                                 <Col>
-                                    <Button className="remove" onClick={async (event) => {
+                                    <Button className="remove small-button" onClick={async (event) => {
                                         event.preventDefault();
                                         await axios.delete(`/weeklySubgoal/${subgoal.id}`);
                                         const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
@@ -655,7 +653,7 @@ class WeeklyGoalItem extends React.Component {
                                     <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
                                 </Col>
                                 <Col>
-                                    <Button type="submit">Add Subgoal</Button>
+                                    <Button type="submit" className="small-button">Add Subgoal</Button>
                                 </Col>
                             </Form.Row>
                         </Form>

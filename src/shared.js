@@ -5,6 +5,7 @@ import './Home.css';
 import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 import Moment from 'moment';
+import Checkbox from './checkbox/Checkbox';
 
 const delimiter = ")(}){(";
 
@@ -132,9 +133,9 @@ class GoalItem extends React.Component {
       <div className="home-goal-list">
         <Form.Row className="goals-form-row">
             <Col className="goal-check-col">
-            <Form.Check type="checkbox" checked={this.props.goal.completed} onChange={(event) => {
-                this.props.onGoalCheck(event.target.checked, this.props.goal);
-              }} label={this.state.goaltext}/>
+              <Checkbox completed={this.props.goal.completed} onToggle={() => {
+                this.props.onGoalCheck(!this.props.goal.completed, this.props.goal);
+              }} > {this.state.goaltext} </Checkbox>
             </Col>
             <Col>
               <Button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
@@ -148,15 +149,15 @@ class GoalItem extends React.Component {
             return (
               <Form.Row className="sub-goal-row" key={subgoal.id}>
                 <Col>
-                  <Form.Check type="checkbox" checked={subgoal.completed} onChange={async (event) => {
-                    const updated = { completed: event.target.checked, goaltext: subgoal.goaltext };
+                <Checkbox completed={subgoal.completed} onToggle={async () => {
+                    const updated = { completed: !subgoal.completed, goaltext: subgoal.goaltext };
                     await axios.put(`/subgoal/${subgoal.id}`, updated);
                     const subgoals = (await axios.get(`/subgoalByParent/${this.props.goal.id}`)).data;
                     this.setState({ subgoals });
-                  }} label={subgoal.goaltext}/>
+                  }}> {subgoal.goaltext} </Checkbox>
                 </Col>
                 <Col>
-                  <Button className="remove" onClick={async (event) => {
+                  <Button className="remove small-button" onClick={async (event) => {
                     event.preventDefault();
                     await axios.delete(`/subgoal/${subgoal.id}`);
                     const subgoals = (await axios.get(`/subgoalByParent/${this.props.goal.id}`)).data;
@@ -187,7 +188,7 @@ class GoalItem extends React.Component {
                   <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
                 </Col>
                 <Col>
-                  <Button type="submit">Add Subgoal</Button>
+                  <Button className="small-button" type="submit">Add Subgoal</Button>
                 </Col>
               </Form.Row>
               {/* <input className="goalField" value={this.state.goaltext} onChange={(event) => this.setState({ goaltext: event.target.value })} /> */}
@@ -232,13 +233,11 @@ class CheckboxGoals extends React.Component {
             return (
               <div key={goal.id}>
                 <li> 
-                  <input type="checkbox" idname={goal.id} value={goal.id} checked={goal.completed} readOnly /> 
-                  {goal.goaltext}
+                  <Checkbox completed={goal.completed}> {goal.goaltext} </Checkbox>
                 </li>
                 {goal.subgoals ? goal.subgoals.map((subgoal) => {
                   return (<li className="sub-goal-row" key={subgoal.id}>
-                    <input type="checkbox" checked={subgoal.completed} readOnly />
-                    {subgoal.goaltext}
+                    <Checkbox completed={subgoal.completed}> {subgoal.goaltext} </Checkbox>
                   </li>);
                 }) : null }
               </div>

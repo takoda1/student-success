@@ -6,6 +6,8 @@ import Col from 'react-bootstrap/Col';
 import axios from 'axios';
 import Moment from 'moment';
 import Checkbox from './checkbox/Checkbox';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 const delimiter = ")(}){(";
 
@@ -141,7 +143,7 @@ class GoalItem extends React.Component {
               <Button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
               <Button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
               <Button size="sm" id="subgoalToggle" onClick={() => this.setState({ showSubgoalBox: !this.state.showSubgoalBox })}
-                >{ this.state.showSubgoalBox ? "-" : "+" }</Button>
+                >{ this.state.showSubgoalBox ? <FontAwesomeIcon icon={faMinus} /> : <FontAwesomeIcon icon={faPlus} /> }</Button>
             </Col>
         </Form.Row>
         {

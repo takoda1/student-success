@@ -69,7 +69,7 @@ button:hover {
   margin-bottom: 5px;
 }
 .goal-check-col {
-  flex-grow: 1.19 !important;
+  flex-grow: 1.1 !important;
   padding-top: 10px;
 }
 .home-reflections {
@@ -113,4 +113,9 @@ button:hover {
 }
 .calendar-day {
   text-align: center;
+}
+.make-daily-goal-tooltip > .tooltip-inner {
+  border-radius: 3;
+  background-color: rgb(28, 83, 201);;
+  color: white;
 }

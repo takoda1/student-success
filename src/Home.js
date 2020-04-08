@@ -4,9 +4,11 @@ import axios from 'axios';
 import Moment from 'moment';
 import "./Home.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faMinusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faMinusCircle, faAngleDoubleLeft, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import DatePicker from "react-datepicker";
 import Col from 'react-bootstrap/Col';
 import Checkbox from './checkbox/Checkbox';
@@ -52,6 +54,7 @@ class Home extends React.Component {
         this.onWeeklyGoalEdited = this.onWeeklyGoalEdited.bind(this);
         this.onWeeklyGoalRemoved = this.onWeeklyGoalRemoved.bind(this);
         this.onWeeklyGoalCheck = this.onWeeklyGoalCheck.bind(this);
+        this.makeDailyGoal = this.makeDailyGoal.bind(this);
 
         this.onDateChanged = this.onDateChanged.bind(this);
 
@@ -371,6 +374,42 @@ class Home extends React.Component {
         this.setState({ editingReflections });
     }
 
+    async makeDailyGoal(event, goalId, completed, text, subgoals) {
+        event.preventDefault();
+        await axios.delete(`/weeklyGoal/${goalId}`);
+        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
+        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
+
+        const newGoal = { 
+            userid: this.props.user.id, 
+            goaldate: this.state.selectedMomentDate, 
+            goaltext: text, 
+            completed: completed, 
+            priority: (this.state.goals.length + 1) 
+        };
+        await axios.post('/goal', newGoal);
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
+
+        if(subgoals.length !== 0) {
+            var newDailyGoal = goals.filter(goal => goal.goaltext === text);
+
+            for(var i=0; i<subgoals.length; i++) {
+                await axios.delete(`/weeklySubgoal/${subgoals[i].id}`);
+                var newSubGoal = {
+                    userid: this.props.user.id,
+                    parentgoal: newDailyGoal[0].id,
+                    goaldate: this.state.selectedMomentDate,
+                    goaltext: subgoals[i].goaltext,
+                    completed: subgoals[i].completed
+                }
+                await axios.post(`/subgoal`, newSubGoal);
+            }
+        }
+
+        this.setState({weeklyGoals, filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals, goals});
+
+    }
+
     async onDateChanged(date) {
         const selectedMomentDate = Moment(date).format('YYYY-MM-DD');
         this.setState({selectedMomentDate});
@@ -427,7 +466,7 @@ class Home extends React.Component {
                                 <WeekView weekDates={this.state.weekDates} weekCompleted={this.state.weekCompleted} weekDayNames={this.state.weekDayNames} />
                                 <div className="home-flex-container">
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
-                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} />
+                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} makeDailyGoal={this.makeDailyGoal} />
                                 </div>
                                 <div className="home-bottom-flex">
                                     <GroupLinks user={this.props.user} />
@@ -525,7 +564,7 @@ class WeeklyGoals extends React.Component {
             <div className="weekly-goals-div">
                 <h3>Long Term Goals</h3>
                 <div>
-                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} unfilteredWeeklyGoals={this.props.unfilteredWeeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />
+                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} unfilteredWeeklyGoals={this.props.unfilteredWeeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} />
                 </div>
             </div>
         );
@@ -535,7 +574,7 @@ class WeeklyGoals extends React.Component {
 class WeeklyGoalList extends React.Component {
     render() {
         const sortedWeeklyGoals = this.props.unfilteredWeeklyGoals.sort(function(a, b){return a.id - b.id});
-        const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} />);
+        const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} />);
         return(
             <ul className="goal-list">
                 {listWeeklyGoals}
@@ -605,8 +644,13 @@ class WeeklyGoalItem extends React.Component {
                     <Col>
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
+                        <OverlayTrigger placement="right" delay={{ hide: 200 }} overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
+                            <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.id, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
+                                <FontAwesomeIcon icon={faAngleDoubleLeft} />
+                            </Button>
+                        </OverlayTrigger>
                         <Button size="sm" id="weeklySubgoalToggle" onClick={() => this.setState({ showSubgoalBox: !this.state.showSubgoalBox })}
-                            >{ this.state.showSubgoalBox ? "-" : "+" }</Button>
+                            >{ this.state.showSubgoalBox ? <FontAwesomeIcon icon={faMinus} /> : <FontAwesomeIcon icon={faPlus} /> }</Button>
                     </Col>
                 </Form.Row>
                 {
@@ -855,6 +899,14 @@ class Reflections extends React.Component {
         );
     }
 }
+
+function renderTooltip() {
+    return (
+      <Tooltip id="button-tooltip">
+        Simple tooltip
+      </Tooltip>
+    );
+  }
 
 /* Currently an unused feature */
 // class Note extends React.Component {

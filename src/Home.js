@@ -644,7 +644,7 @@ class WeeklyGoalItem extends React.Component {
                     <Col>
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
-                        <OverlayTrigger placement="right" delay={{ hide: 200 }} overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
+                        <OverlayTrigger placement="right" overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
                             <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.id, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
                                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
                             </Button>

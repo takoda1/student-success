@@ -46,7 +46,7 @@ class GoalList extends React.Component {
               <Col className="goal-input">
                 <Form.Control type="text" className="addGoalField" value={this.props.newGoalText} onChange={this.props.onGoalTyped} />
               </Col>
-              <Col>
+              <Col className="goal-buttons-col">
                 <Button type="submit">Add Goal</Button>
               </Col>
             </Form.Row>
@@ -139,7 +139,7 @@ class GoalItem extends React.Component {
                 this.props.onGoalCheck(!this.props.goal.completed, this.props.goal);
               }} > {this.state.goaltext} </Checkbox>
             </Col>
-            <Col>
+            <Col className="goal-buttons-col">
               <Button className="edit" onClick={() => this.setState({ editing: !this.state.editing }) }>Edit</Button>
               <Button className="remove" onClick={() => this.props.onGoalRemoved(this.props.goal.id)}>Remove</Button>
               <Button size="sm" id="subgoalToggle" onClick={() => this.setState({ showSubgoalBox: !this.state.showSubgoalBox })}
@@ -158,7 +158,7 @@ class GoalItem extends React.Component {
                     this.setState({ subgoals });
                   }}> {subgoal.goaltext} </Checkbox>
                 </Col>
-                <Col>
+                <Col className="goal-buttons-col">
                   <Button className="remove small-button" onClick={async (event) => {
                     event.preventDefault();
                     await axios.delete(`/subgoal/${subgoal.id}`);
@@ -189,7 +189,7 @@ class GoalItem extends React.Component {
                 <Col className="goal-input">
                   <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
                 </Col>
-                <Col>
+                <Col className="goal-buttons-col">
                   <Button className="small-button" type="submit">Add Subgoal</Button>
                 </Col>
               </Form.Row>

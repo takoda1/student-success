@@ -408,6 +408,30 @@ class Home extends React.Component {
 
         this.setState({weeklyGoals, filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals, goals});
 
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
+        
+        this.checkTotalGoals();
+
     }
 
     async onDateChanged(date) {

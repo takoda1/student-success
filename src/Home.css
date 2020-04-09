@@ -72,6 +72,9 @@ button:hover {
   flex-grow: 1.1 !important;
   padding-top: 10px;
 }
+/* .goal-buttons-col {
+  text-align: right;
+} */
 .home-reflections {
   width: 93vw;
 }
@@ -88,7 +91,7 @@ button:hover {
   width: 45vw;
 }
 .weekly-goals-div {
-  width: 35%;
+  width: 40%;
 }
 .sub-goal-row {
   margin-left: 15px !important;

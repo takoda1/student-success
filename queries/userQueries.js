@@ -31,11 +31,11 @@ const addUser = (request, response) => {
 }
 
 const putUser = (request, response) => {
-    const { firstname, lastname, email, groupid, hidetimer, hidereflection, classid } = request.body
+    const { firstname, lastname, email, groupid, hidetimer, hidereflection, classid, hideweeklygoals } = request.body
     const id = parseInt(request.params.id)
 
-    if (!isNaN(id) && firstname != null && lastname != null && email != null && !isNaN(groupid) && hidetimer != null && hidereflection != null && !isNaN(classid)) {
-        pool.query('UPDATE users SET firstname = $2, lastname = $3, email = $4, groupid = $5, hidetimer = $6, hidereflection = $7, classid = $8 WHERE id = $1', [id, firstname, lastname, email, groupid, hidetimer, hidereflection, classid], (error) => {
+    if (!isNaN(id) && firstname != null && lastname != null && email != null && !isNaN(groupid) && hidetimer != null && hidereflection != null && !isNaN(classid) && hideweeklygoals != null) {
+        pool.query('UPDATE users SET firstname = $2, lastname = $3, email = $4, groupid = $5, hidetimer = $6, hidereflection = $7, classid = $8, hideweeklygoals = $9 WHERE id = $1', [id, firstname, lastname, email, groupid, hidetimer, hidereflection, classid, hideweeklygoals], (error) => {
             if (error) {
                 response.status(400).send(error)
             }

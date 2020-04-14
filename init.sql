@@ -22,7 +22,8 @@ CREATE TABLE users (
 	groupid INTEGER REFERENCES groups(id),
 	hidetimer BOOLEAN,
 	hidereflection BOOLEAN,
-	classid INTEGER REFERENCES classes(id)
+	classid INTEGER REFERENCES classes(id),
+	hideweeklygoals BOOLEAN
 );
 
 INSERT INTO users (firstName, lastName, email, groupid, classid)

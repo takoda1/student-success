@@ -32,6 +32,7 @@ class Group extends Component {
             selectedView: 'goals',
             hideTimer: this.props.user.hidetimer,
             hideReflection: this.props.user.hidereflection,
+            hideWeekly: this.props.user.hideweeklygoals,
             selectedDate: newDate,
             selectedMomentDate: today
 
@@ -42,22 +43,31 @@ class Group extends Component {
         this.onInputSelected = this.onInputSelected.bind(this);
         this.onHideTimers = this.onHideTimers.bind(this);
         this.onHideReflections = this.onHideReflections.bind(this);
+        this.onHideWeekly = this.onHideWeekly.bind(this);
 
         this.onDateChanged = this.onDateChanged.bind(this);
     }
 
     async componentDidMount() {
-        const groupUsers = (await axios.get(`/userByGroup/${this.props.user.groupid}`)).data;
+        const groupUsers = ((await axios.get(`/userByGroup/${this.props.user.groupid}`)).data).sort((a, b) => a.id - b.id);
         const groupName = (await axios.get(`/grou/${this.props.user.groupid}/`)).data[0].groupname;
         const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
         const hideTimer = (await axios.get(`user/${this.props.user.id}`)).data[0].hidetimer;
         const hideReflection = (await axios.get(`user/${this.props.user.id}`)).data[0].hidereflection;
+        var hideWeekly = (await axios.get(`user/${this.props.user.id}`)).data[0].hideweeklygoals;
         const groupLinksApi = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
         var groupGoals = [];
         var groupTimers = [];
         var groupReflections = [];
         var groupLinks = [];
         var groupWeeklyGoals = [];
+
+        if(hideWeekly === null) {
+            hideWeekly = false;
+        }
+        else {
+            hideWeekly = hideWeekly;
+        }
 
         window.gtag('event', 'Page View', {
             'event_category': 'Group',
@@ -74,12 +84,17 @@ class Group extends Component {
             groupGoals.push(theseGoals);
 
             var thisWeeklyGoals = (await axios.get(`/weeklyGoals/${groupUsers[i].id}`)).data;
+            var hideThisWeekly = (await axios.get(`user/${groupUsers[i].id}`)).data[0].hideweeklygoals;
+
+            if(hideThisWeekly === null) {
+                hideThisWeekly = false;
+            }
             // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
             for (const goal of thisWeeklyGoals) {
                 const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
                 goal.subgoals = subgoals;
             }
-            var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals};
+            var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals, hide: hideThisWeekly};
             groupWeeklyGoals.push(theseWeeklyGoals);
 
             var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
@@ -104,7 +119,7 @@ class Group extends Component {
         }
 
 
-        this.setState({ groupGoals, groupTimers, groupReflections, groupLinksApi, groupLinks, groupWeeklyGoals, groupName, messages, hideTimer, hideReflection });
+        this.setState({ groupGoals, groupTimers, groupReflections, groupLinksApi, groupLinks, groupWeeklyGoals, groupName, messages, hideTimer, hideReflection, hideWeekly });
 
         setInterval(() => {
             this.checkNewMessages();
@@ -137,14 +152,18 @@ class Group extends Component {
     }
 
     async onHideTimers(checked) {
-        const getNewHideTimer = (await axios.get(`/user/${this.props.user.id}`)).data[0].hidereflection;
-        if(getNewHideTimer === null) {
+        const getNewHideReflection = (await axios.get(`/user/${this.props.user.id}`)).data[0].hidereflection;
+        var getNewHideWeekly = (await axios.get(`/user/${this.props.user.id}`)).data[0].hideweeklygoals;
+        if(getNewHideReflection === null) {
             var notNull = false;
         }
         else {
-            var notNull = getNewHideTimer;
+            var notNull = getNewHideReflection;
         }
-        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: checked, hidereflection: notNull, classid: this.props.user.classid};
+        if(getNewHideWeekly === null) {
+            getNewHideWeekly = false;
+        }
+        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: checked, hidereflection: notNull, classid: this.props.user.classid, hideweeklygoals: true};
         await axios.put(`/user/${this.props.user.id}`, editUser);
 
         var groupTimers = this.state.groupTimers.map((user) => {
@@ -158,15 +177,18 @@ class Group extends Component {
     }
 
     async onHideReflections(checked) {
-        console.log("hide reflections", checked);
         const getNewHideTimer = (await axios.get(`/user/${this.props.user.id}`)).data[0].hidetimer;
+        var getNewHideWeekly = (await axios.get(`/user/${this.props.user.id}`)).data[0].hideweeklygoals;
         if(getNewHideTimer === null) {
             var notNull = false;
         }
         else {
             var notNull = getNewHideTimer;
         }
-        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid};
+        if(getNewHideWeekly === null) {
+            getNewHideWeekly = false;
+        }
+        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid, hideweeklygoals: getNewHideWeekly};
         await axios.put(`/user/${this.props.user.id}`, editUser);
 
         var groupReflections = this.state.groupReflections.map((user) => {
@@ -176,15 +198,43 @@ class Group extends Component {
             return user;
         });
         
-        this.setState({ hideReflection: checked, hideTimer: getNewHideTimer, groupReflections });
+        this.setState({ hideReflection: checked, hideTimer: getNewHideTimer, hideWeekly: getNewHideWeekly, groupReflections });
 
+    }
+
+    async onHideWeekly(checked) {
+        var getNewHideTimer = (await axios.get(`/user/${this.props.user.id}`)).data[0].hidetimer;
+        var getNewHideReflection = (await axios.get(`/user/${this.props.user.id}`)).data[0].hidereflection;
+
+        if(getNewHideTimer === null) {
+            getNewHideTimer = false;
+        }
+        if(getNewHideReflection === null) {
+            getNewHideReflection = false;
+        }
+
+        const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: getNewHideTimer, hidereflection: getNewHideReflection, classid: this.props.user.classid, hideweeklygoals: checked};
+        await axios.put(`/user/${this.props.user.id}`, editUser);
+
+        var groupWeeklyGoals = this.state.groupWeeklyGoals.map((user) => {
+            if(user.userId === this.props.user.id) {
+                user.hide = checked;
+            }
+            return user;
+        })
+
+        this.setState({ hideWeekly: checked, groupWeeklyGoals, hideTimer: getNewHideTimer, hideReflection: getNewHideReflection })
+
+        // const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid};
+        // await axios.put(`/user/${this.props.user.id}`, editUser);
+        // this.setState({hideWeekly: !this.state.hideWeekly});
     }
 
     async onDateChanged(date) {
         const selectedMomentDate = Moment(date).format('YYYY-MM-DD');
         this.setState({selectedMomentDate, selectedDate: date});
 
-        const groupUsers = (await axios.get(`/userByGroup/${this.props.user.groupid}`)).data;
+        const groupUsers = ((await axios.get(`/userByGroup/${this.props.user.groupid}`)).data).sort((a,b) => a.id - b.id);
 
         var groupGoals = [];
         var groupTimers = [];
@@ -208,7 +258,8 @@ class Group extends Component {
                 const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
                 goal.subgoals = subgoals;
             }
-            var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals};
+            var hideThisWeekly = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hideweeklygoals;
+            var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals, hide: hideThisWeekly};
             groupWeeklyGoals.push(theseWeeklyGoals);
 
             var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${selectedMomentDate}`)).data;
@@ -234,7 +285,7 @@ class Group extends Component {
             <div className="group-body">
                 <div className="shared-goals">
                     <div className="grid-layout">
-                        <GroupForm onHideTimers={this.onHideTimers} onHideReflections={this.onHideReflections} onInputSelected={this.onInputSelected} hideTimer={this.state.hideTimer} hideReflection={this.state.hideReflection} />
+                        <GroupForm onHideTimers={this.onHideTimers} onHideReflections={this.onHideReflections} onHideWeekly={this.onHideWeekly} onInputSelected={this.onInputSelected} hideTimer={this.state.hideTimer} hideReflection={this.state.hideReflection} hideWeekly={this.state.hideWeekly}/>
                         <div className="date-picker"><DatePicker selected={this.state.selectedDate} onChange={this.onDateChanged} /></div>
                     </div>
                     <GroupData user={this.props.user} groupGoals={this.state.groupGoals} groupWeeklyGoals={this.state.groupWeeklyGoals} groupTimers={this.state.groupTimers} groupReflections={this.state.groupReflections} groupLinks={this.state.groupLinks} selectedView={this.state.selectedView} groupId={this.props.user.groupid} />
@@ -255,6 +306,9 @@ class Group extends Component {
 }
 
 class GroupForm extends Component {
+    componentDidMount() {
+        console.log(this.props.hideTimer);
+    }
     render() {
         return(
             <Form>
@@ -266,8 +320,9 @@ class GroupForm extends Component {
                     <option value={"reflections"}>Reflections</option>
                     <option value={"links"}>Document Links</option>
                 </Form.Control>
-                <Checkbox completed={this.props.hideTimer} onToggle={() => this.props.onHideTimers(!this.props.hideTimer)}>Hide your timers</Checkbox>
-                <Checkbox completed={this.props.hideReflection} onToggle={() => this.props.onHideReflections(!this.props.hideReflection)}>Hide your reflections</Checkbox>
+                <Checkbox completed={this.props.hideTimer} onToggle={() => this.props.onHideTimers(!this.props.hideTimer)}>Hide timers</Checkbox>
+                <Checkbox completed={this.props.hideWeekly} onToggle={() => this.props.onHideWeekly(!this.props.hideWeekly)}>Hide long term goals</Checkbox>
+                <Checkbox completed={this.props.hideReflection} onToggle={() => this.props.onHideReflections(!this.props.hideReflection)}>Hide reflections</Checkbox>
             </Form>
         );
     }
@@ -280,7 +335,7 @@ class GroupData extends Component {
             <div key={"div-goals-" + user.userId}><Goals key={"goals-" + user.userId} goals={user.goals} userName={user.firstName} userLastName={user.lastName}  /> </div>);
 
         const listUserWeeklyGoals = this.props.groupWeeklyGoals.map((user) =>
-            <div key={"div-weeklyGoals-" + user.userId}><WeeklyGoals key={"weeklyGoals-" + user.userId} weeklyGoals={user.weeklyGoals} userName={user.firstName} userLastName={user.lastName} /></div>);
+            <div key={"div-weeklyGoals-" + user.userId}><WeeklyGoals key={"weeklyGoals-" + user.userId} hide={user.hide} weeklyGoals={user.weeklyGoals} userName={user.firstName} userLastName={user.lastName} /></div>);
 
         const listUserTimers = this.props.groupTimers.map((user) =>
             <div key={"div-timers-" + user.userId}><Timers key={"timers-" + user.userId} hide={user.hide} timers={user.timers} customTimers={user.customTimers} distinctCustomNames={user.distinctCustomNames} userName={user.firstName} userLastName={user.lastName} /></div>);
@@ -366,12 +421,30 @@ class Goals extends Component {
 
   class WeeklyGoals extends Component {
       render() {
-          return(
-              <div className="group-data-item">
+        if(this.props.hide === true) {
+            return(
+                <div className="group-data-item">
+                  <h4>{this.props.userName} {this.props.userLastName}</h4>
+                  <p>Has elected to not share their long term goals.</p>
+              </div>
+            );
+        }
+
+        else {
+            return(
+                <div className="group-data-item">
                   <h4>{this.props.userName} {this.props.userLastName}</h4><br/>
                   <CheckboxGoals goals={this.props.weeklyGoals} />
               </div>
-          )
+            );
+        }
+
+        //   return(
+        //       <div className="group-data-item">
+        //           <h4>{this.props.userName} {this.props.userLastName}</h4><br/>
+        //           <CheckboxGoals goals={this.props.weeklyGoals} />
+        //       </div>
+        //   )
       }
   }
 
@@ -504,7 +577,7 @@ class GroupMessages extends Component {
                 thisMessage = <div className="group-message" key={msg.id} style={{}}><b>{msg.username}</b>: {msg.chattext} </div>;
             }
             return(
-                <div>
+                <div key={"msg-div-key-" + msg.id }>
                     <span className="message-date"><b>{!dates.includes(msg.chatdate)? (dates.push(msg.chatdate), fixDateWithYear(msg.chatdate)) : false}</b></span> 
                     {/* <div className="group-message" key={msg.id}><b>{msg.username}</b>: {msg.chattext} </div> */}
                     {thisMessage}

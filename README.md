@@ -71,7 +71,7 @@ The app is deployed to heroku, and can be accessed here: https://student-success
 - Once you have access to the project, you will notice that there is an add-on: Heroku postgres.
 - To connect to this database, install the heroku CLI first
 - Then, run `heroku login`
-- Then run heroku `pg:psql postgresql-shaped-80610 --app student-success` to connect to the database to run commands.
+- Then run `heroku pg:psql postgresql-shaped-80610 --app student-success` to connect to the database to run commands.
 - If the database is empty, run init.sql with `cat init.sql | pg:psql postgresql-shaped-80610 --app student-success`
 - Continuous deployment is enabled, it is connected to github.com/takoda1/student-success. This can be changed to whatever repository when you are added as a collaborator to heroku.
 

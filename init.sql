@@ -143,5 +143,12 @@ CREATE TABLE reflectionquestion (
 	questionthree TEXT
 );
 
+CREATE TABLE classlinks (
+	id SERIAL PRIMARY KEY,
+	classid INTEGER REFERENCES classes(id) ON DELETE CASCADE,
+	linkname TEXT,
+	linkurl TEXT
+);
+
 INSERT INTO reflectionquestion (questionone, questiontwo, questionthree)
 VALUES ('What obstacles did you encounter, if any?', 'What are some opportunities for improvement?', 'Any wins for the day worth recording?');

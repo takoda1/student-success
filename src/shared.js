@@ -277,8 +277,7 @@ function getTodaysDate() {
 }
 
 function fixDateWithYear(d) {
-  var res = d.split("-");
-  return(res[1].concat("/", res[2], "/", res[0].slice(-2)));
+  return(Moment(d).format("MM/DD/YY"))
 }
 
 export { Layout, GoalList, secondsToHms, getTodaysDate, Goals, CheckboxGoals, delimiter, fixDateWithYear };

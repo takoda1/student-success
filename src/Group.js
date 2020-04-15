@@ -306,9 +306,6 @@ class Group extends Component {
 }
 
 class GroupForm extends Component {
-    componentDidMount() {
-        console.log(this.props.hideTimer);
-    }
     render() {
         return(
             <Form>

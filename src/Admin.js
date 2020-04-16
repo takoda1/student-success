@@ -421,7 +421,7 @@ class Admin extends React.Component {
                                                 </Col>
                                             </Form.Row>
                                             <Form.Row>
-                                                <Col><Form.Label>(optional) Link: </Form.Label></Col>
+                                                <Col><Form.Label>(optional) Note: </Form.Label></Col>
                                                 <Col>
                                                     <Form.Control type="text" className="addGoalField" value={this.state.goalLink} onChange={(event) => this.setState({ goalLink: event.target.value })} />
                                                 </Col>

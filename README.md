@@ -71,7 +71,7 @@ The app is deployed to heroku, and can be accessed here: https://student-success
 - Once you have access to the project, you will notice that there is an add-on: Heroku postgres.
 - To connect to this database, install the heroku CLI first
 - Then, run `heroku login`
-- Then run heroku `pg:psql postgresql-shaped-80610 --app student-success` to connect to the database to run commands.
+- Then run `heroku pg:psql postgresql-shaped-80610 --app student-success` to connect to the database to run commands.
 - If the database is empty, run init.sql with `cat init.sql | pg:psql postgresql-shaped-80610 --app student-success`
 - Continuous deployment is enabled, it is connected to github.com/takoda1/student-success. This can be changed to whatever repository when you are added as a collaborator to heroku.
 
@@ -155,6 +155,9 @@ Reflectionquestions:
 
 Forumcomments:
 {id: int, body: string, userid: int, postid: int, username: string, commentdate: string}
+
+Classlinks:
+{id: int, classid: int, linkname: string, linkurl: string}
 
 ## Current endpoints:
 
@@ -382,6 +385,18 @@ DELETE /comment/:id		Deletes the comment with the associated id
 GET /question		Gets the single set of questions already in the database (returns {id: int, questionone: string, questiontwo: string, questionthree:string})
 
 PUT /question/:id		Updates the question with given id with body {questionone: string, questiontwo: string, questionthree:string}
+
+### Class links
+
+GET /classlink/:id Gets the class link with specified id
+
+GET /allClasslinks/:classid Gets all the links associated to provided classid
+
+POST /classlink Requires body of {classid: int, linkname: string, linkurl: string}
+
+PUT /classlink/:id Updates a class link by its id, requires body of {linkname: string, linkurl: string}
+
+DELETE /classlink/:id Deletes the class link with the associated id
 
 ## Auth0
 

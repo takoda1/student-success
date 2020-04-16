@@ -18,6 +18,7 @@ const noteQueries = require('./queries/noteQueries')
 const classQueries = require('./queries/classQueries')
 const commentQueries = require('./queries/commentQueries')
 const questionQueries = require('./queries/questionQueries')
+const classLinkQueries = require('./queries/classLinkQueries')
 
 /*
 process.env.port is provided by heroku and is the port on which,
@@ -140,6 +141,12 @@ app.delete('/comment/:id', commentQueries.deleteComment)
 
 app.get('/question', questionQueries.getQuestion)
 app.put('/question/:id', questionQueries.putQuestion)
+
+app.get('/classlink/:id', classLinkQueries.getClassLink)
+app.get('/allClasslinks/:classid', classLinkQueries.getAllClassLinks)
+app.post('/classlink', classLinkQueries.addClassLink)
+app.put('/classlink/:id', classLinkQueries.putClassLink)
+app.delete('/classlink/:id', classLinkQueries.deleteClassLink)
 
 app.get('/quit', (req, res) => {
     res.send('Closing..')

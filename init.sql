@@ -22,7 +22,8 @@ CREATE TABLE users (
 	groupid INTEGER REFERENCES groups(id),
 	hidetimer BOOLEAN,
 	hidereflection BOOLEAN,
-	classid INTEGER REFERENCES classes(id)
+	classid INTEGER REFERENCES classes(id),
+	hideweeklygoals BOOLEAN
 );
 
 INSERT INTO users (firstName, lastName, email, groupid, classid)
@@ -140,6 +141,13 @@ CREATE TABLE reflectionquestion (
 	questionone TEXT,
 	questiontwo TEXT,
 	questionthree TEXT
+);
+
+CREATE TABLE classlinks (
+	id SERIAL PRIMARY KEY,
+	classid INTEGER REFERENCES classes(id) ON DELETE CASCADE,
+	linkname TEXT,
+	linkurl TEXT
 );
 
 INSERT INTO reflectionquestion (questionone, questiontwo, questionthree)

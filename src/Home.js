@@ -408,6 +408,30 @@ class Home extends React.Component {
 
         this.setState({weeklyGoals, filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals, goals});
 
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(var i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
+        
+        this.checkTotalGoals();
+
     }
 
     async onDateChanged(date) {
@@ -583,7 +607,7 @@ class WeeklyGoalList extends React.Component {
                         <Col className="goal-input">
                             <Form.Control type="text" className="addGoalField" value={this.props.newWeeklyText} onChange={this.props.onWeeklyGoalTyped} />
                         </Col>
-                        <Col>
+                        <Col className="goal-buttons-col">
                             <Button type="submit">Add Goal</Button>
                         </Col>
                     </Form.Row>
@@ -641,7 +665,7 @@ class WeeklyGoalItem extends React.Component {
                     <Col className="goal-check-col">
                         <Checkbox onToggle={() => {this.props.onWeeklyGoalCheck(!this.props.goal.completed, this.props.goal);}} completed={this.props.goal.completed}>{this.state.goaltext}</Checkbox>
                     </Col>
-                    <Col>
+                    <Col className="goal-buttons-col">
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
                         <OverlayTrigger placement="right" overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
@@ -665,7 +689,7 @@ class WeeklyGoalItem extends React.Component {
                                         this.setState({ subgoals });
                                     }}>{subgoal.goaltext}</Checkbox>
                                 </Col>
-                                <Col>
+                                <Col className="goal-buttons-col">
                                     <Button className="remove small-button" onClick={async (event) => {
                                         event.preventDefault();
                                         await axios.delete(`/weeklySubgoal/${subgoal.id}`);
@@ -696,7 +720,7 @@ class WeeklyGoalItem extends React.Component {
                                 <Col className="goal-input">
                                     <Form.Control type="text" className="goalField" value={this.state.subgoalText} onChange={(event) => this.setState({ subgoalText: event.target.value })} />
                                 </Col>
-                                <Col>
+                                <Col className="goal-buttons-col">
                                     <Button type="submit" className="small-button">Add Subgoal</Button>
                                 </Col>
                             </Form.Row>

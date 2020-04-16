@@ -10,9 +10,12 @@ import config from './auth_config.json';
 import { getTodaysDate } from './shared';
 import './Admin.css';
 import Moment from 'moment';
+import DatePicker from "react-datepicker";
 import Chart from 'react-apexcharts';
+import { extendMoment } from 'moment-range';
 
 const todayDate = getTodaysDate();
+const dateDefault = new Date();
 
 class Admin extends React.Component {
     constructor(props) {
@@ -31,6 +34,11 @@ class Admin extends React.Component {
             classNameField: "",
             questions: {},
             editingQuestions: false,
+            goalClass: "",
+            goalText: "",
+            goalLink: "",
+            goalStart: dateDefault,
+            goalEnd: dateDefault,
         }
 
         this.addUser = this.addUser.bind(this);
@@ -344,6 +352,96 @@ class Admin extends React.Component {
                                     <Col >
                                         <h3>Current Reflection Questions:</h3>
                                         { this.state.editingQuestions ? editQuestions : viewQuestions }
+                                    </Col>
+                                </Row>
+
+                                <Row>
+                                    <Col >
+                                        <h3>Add Goal:</h3>
+                                        <Form className="text-block" onSubmit={async (event) => {
+                                            event.preventDefault();
+                                            const aClass = (await axios.get(`/class/${this.state.goalClass}`)).data[0];
+                                            const classUsers = this.state.currentUsers.filter((u) => u.classid === aClass.id);
+                                            for (const u of classUsers) {
+                                                const moment = extendMoment(Moment);
+                                                const dayAfter = Moment(this.state.goalEnd).add(1, 'day').toDate();
+                                                const range =  moment.range(this.state.goalStart, dayAfter);
+
+                                                for (let day of range.by('day')) {
+                                                    day = day.format('YYYY-MM-DD');
+                                                    console.log(day);
+
+                                                    await axios.post(`/goal`, {
+                                                        userid: u.id, 
+                                                        goaldate: day, 
+                                                        goaltext: this.state.goalText, 
+                                                        completed: false, 
+                                                        priority: 0
+                                                    });
+                                
+    
+                                                    if (this.state.goalLink.length > 0) {
+                                                        const goal = (await axios.get(`/goals/${u.id}/${day}`)).data.reduce((memo, g) => {
+                                                            return memo.id > g.id ? memo : g;
+                                                        });
+                                                        const subgoal = {
+                                                            userid: u.id, 
+                                                            parentgoal: goal.id, 
+                                                            goaldate: day, 
+                                                            goaltext: this.state.goalLink, 
+                                                            completed: false
+                                                        }
+                                                        console.log(subgoal);
+                                                        await axios.post(`/subgoal`, subgoal);
+                                                    }
+                                                }
+
+                                            }
+
+                                            this.setState({
+                                                goalLink: "",
+                                                goalText: "",
+                                                goalStart: dateDefault,
+                                                goalEnd: dateDefault
+                                            })
+                                        }}>
+                                            <Form.Row>
+                                                <Col><Form.Label>Class: </Form.Label></Col>
+                                                <Col>
+                                                    <Form.Control as="select" value={this.state.goalClass} onChange={(event) => this.setState({ goalClass: event.target.value })} >
+                                                        <option key={0}>Select...</option>
+                                                        {this.state.currentClasses.map((c) => <option key={c.id}>{c.classname}</option>)}
+                                                    </Form.Control>
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col><Form.Label>Goal: </Form.Label></Col>
+                                                <Col className="goal-input">
+                                                    <Form.Control type="text" className="addGoalField" value={this.state.goalText} onChange={(event) => this.setState({ goalText: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col><Form.Label>(optional) Note: </Form.Label></Col>
+                                                <Col>
+                                                    <Form.Control type="text" className="addGoalField" value={this.state.goalLink} onChange={(event) => this.setState({ goalLink: event.target.value })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col><Form.Label>Start Date: </Form.Label></Col>
+                                                <Col>
+                                                    <DatePicker selected={this.state.goalStart} onChange={(date) => this.setState({ goalStart: date })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Col><Form.Label>End Date: </Form.Label></Col>
+                                                <Col>
+                                                    <DatePicker selected={this.state.goalEnd} onChange={(date) => this.setState({ goalEnd: date })} />
+                                                </Col>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Button type="submit">Add Goal</Button>
+                                            </Form.Row>
+                                        </Form>
                                     </Col>
                                 </Row>
 

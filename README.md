@@ -386,7 +386,7 @@ GET /question		Gets the single set of questions already in the database (returns
 
 PUT /question/:id		Updates the question with given id with body {questionone: string, questiontwo: string, questionthree:string}
 
-### Clas links
+### Class links
 
 GET /classlink/:id Gets the class link with specified id
 

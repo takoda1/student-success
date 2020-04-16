@@ -390,7 +390,7 @@ PUT /question/:id		Updates the question with given id with body {questionone: st
 
 GET /classlink/:id Gets the class link with specified id
 
-GET /allClassLinks/:classid Gets all the links associated to provided classid
+GET /allClasslinks/:classid Gets all the links associated to provided classid
 
 POST /classlink Requires body of {classid: int, linkname: string, linkurl: string}
 

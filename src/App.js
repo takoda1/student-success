@@ -7,9 +7,11 @@ import {
 } from "react-router-dom";
 import { Home } from './Home';
 import { History } from './History';
-import { Admin } from './Admin';
+import { Users } from './Users';
 import { Group } from './Group';
 import { Forum } from './Forum';
+import { Admin } from './Admin';
+import { Links } from './Links';
 import './App.css';
 import NavBar from "./components/NavBar";
 import auth0Client from './Auth';
@@ -55,11 +57,15 @@ class App extends Component {
                     <div style={{ background: '#1c53c9', paddingBottom: 15 }}>
                         <NavButton name="Home" path="/index" />
                         <NavButton name="Timers" path="/timers" />
+                        <NavButton name="Links" path="/links" />
                         <NavButton name="Group" path="/group" />
                         <NavButton name="Forum" path="/forum" />
                         {
                             (this.state.user && auth0Client.getProfile()[config.roleUrl] === 'admin') && 
-                            <NavButton name="Admin" path="/admin" />
+                            <span>
+                                <NavButton name="Users" path="/users" />
+                                <NavButton name="Admin" path="/admin" />
+                            </span>
                         }
                     </div>
                 </nav>
@@ -75,6 +81,9 @@ class App extends Component {
                         <Route path="/timers">
                             <History user={this.state.user} />
                         </Route>
+                        <Route path="/links">
+                            <Links user={this.state.user} />
+                        </Route>
                         <Route path="/group">
                             <Group user={this.state.user} />
                         </Route>
@@ -84,9 +93,10 @@ class App extends Component {
                         {
                             auth0Client.getProfile()[config.roleUrl] === 'admin' ? (
                             <div>
+                                <Route path="/users"><Users user={this.state.user} /></Route>
                                 <Route path="/admin"><Admin user={this.state.user} /></Route>
                             </div>
-                            ) : (<Route path="/admin"><p>You are not an admin, contact your administrator or takoda.ren@gmail.com</p></Route>)
+                            ) : (<Route path="/users"><p>You are not an admin, contact your administrator or takoda.ren@gmail.com</p></Route>)
                         }
                         </div>
                     ) : (
@@ -94,13 +104,19 @@ class App extends Component {
                                 <Route path="/index">
                                     <LoadingText />
                                 </Route>
-                                <Route path="/history">
+                                <Route path="/timers">
+                                    <LoadingText />
+                                </Route>
+                                <Route path="/links">
                                     <LoadingText />
                                 </Route>
                                 <Route path="/group">
                                     <LoadingText />
                                 </Route>
                                 <Route path="/forum">
+                                    <LoadingText />
+                                </Route>
+                                <Route path="/users">
                                     <LoadingText />
                                 </Route>
                                 <Route path="/admin">

@@ -372,7 +372,7 @@ class History extends Component {
         return (
             <div><br />
                 <div className="history-date-picker" >
-                    <h2>Timers</h2>
+                    <h1>Timers</h1>
                     <DatePicker selected={this.state.unformattedDate} onChange={this.onDateChanged} />
                 </div>
                 <div>

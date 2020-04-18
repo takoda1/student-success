@@ -341,7 +341,7 @@ class GroupData extends Component {
             <div key={"div-reflections-" + user.userId}><Reflections key={"reflections-" + user.userId} hide={user.hide} reflections={user.reflections} userName={user.firstName} userLastName={user.lastName} /></div>);
         
         const listUserLinks = this.props.groupLinks.map((user) =>
-            <div key={"div-links-" + user.userId}><Links key={"links-" + user.userId} links={user.links} userName={user.firstName} userLastName={user.lastName} /></div>);
+            <div key={"div-links-" + user.userId}><UserLinks key={"links-" + user.userId} links={user.links} userName={user.firstName} userLastName={user.lastName} /></div>);
         
         const goalsView = (
             <div className="group-data">
@@ -532,7 +532,7 @@ class Goals extends Component {
     }
   }
 
-class Links extends Component {
+class UserLinks extends Component {
     render() {
         return(
             <div className="group-data-item wrap-links" id="group-links">
@@ -548,7 +548,7 @@ class ListLinks extends Component {
         const sortedLinks = this.props.links.sort(function(a, b){return a.id - b.id});
         if(this.props.links.length !== 0) {
             const listLink = sortedLinks.map((link) => 
-                <li className="link-text-div"><a href={link.link} target="_blank">{link.title}</a></li>);
+                <li key={"key-" + link.id} className="link-text-div"><a href={link.link} target="_blank">{link.title}</a></li>);
             return(<div> {listLink} </div>);
         }
         else {
@@ -591,4 +591,4 @@ class GroupMessages extends Component {
 
 
 
-export { Group };
+export { Group, UserLinks };

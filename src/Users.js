@@ -79,11 +79,12 @@ class Users extends React.Component {
     async editUser(user, firstname, lastname, email, groupname, classname) {
         const hidetimer = user.hidetimer ? user.hidetimer : false;
         const hidereflection = user.hidereflection ? user.hidereflection : false;
+        const hideweeklygoals = user.hideweeklygoals ? user.hideweeklygoals : false;
 
         const groupid = (await axios.get(`/group/${groupname}`)).data[0].id;
         const classid = (await axios.get(`/class/${classname}`)).data[0].id;
 
-        await axios.put(`/user/${user.id}`, { firstname, lastname, email, groupid, classid, hidetimer, hidereflection });
+        await axios.put(`/user/${user.id}`, { firstname, lastname, email, groupid, classid, hidetimer, hidereflection, hideweeklygoals });
         const currentUsers = (await axios.get("/users")).data;
             
         this.setState({

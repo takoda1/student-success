@@ -52,11 +52,11 @@ h3 {
 .grid-item {
     width: 100%;
 }
-/* .links-height {
-    max-height: 20vh;
-    overflow: scroll;
-} */
-/* .admin-pg-graph {
-    padding: 1em;
-    margin-left: 1em;
-} */
+.users-list {
+    max-height: 60vh;
+    overflow-y: scroll;
+}
+.groups-list {
+    max-height: 60vh;
+    overflow-y: scroll;
+}

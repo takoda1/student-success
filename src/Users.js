@@ -10,9 +10,7 @@ import config from './auth_config.json';
 import { getTodaysDate } from './shared';
 import './Admin.css';
 import Moment from 'moment';
-import DatePicker from "react-datepicker";
 import Chart from 'react-apexcharts';
-import { extendMoment } from 'moment-range';
 
 const todayDate = getTodaysDate();
 const dateDefault = new Date();
@@ -53,7 +51,7 @@ class Users extends React.Component {
     }
 
     async componentDidMount() {
-        const currentUsers = (await axios.get('/users')).data;
+        const currentUsers = (await axios.get('/users')).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
         const currentGroups = (await axios.get('/groups')).data;
         const currentClasses = (await axios.get('/classes')).data;
         const questions = (await axios.get(`/question`)).data[0];
@@ -65,7 +63,7 @@ class Users extends React.Component {
         const groupid = (await axios.get(`/group/${this.state.groupField}`)).data[0].id;
         const classid = (await axios.get(`/class/${this.state.classField}`)).data[0].id;
         await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid, classid});
-        const currentUsers = (await axios.get("/users")).data;
+        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
             
         this.setState({
             currentUsers,
@@ -96,14 +94,14 @@ class Users extends React.Component {
     async editClass(classname, classid) {
         await axios.put(`/class/${classid}`, { classname });
         const currentClasses = (await axios.get('/classes')).data;
-        const currentUsers = (await axios.get("/users")).data;
+        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
         this.setState({ currentClasses, currentUsers });
     }
 
     async editGroup(groupname, groupid) {
         await axios.put(`/group/${groupid}`, { groupname });
         const currentGroups = (await axios.get('/groups')).data;
-        const currentUsers = (await axios.get("/users")).data;
+        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
         this.setState({ currentGroups, currentUsers });
     }
 
@@ -129,7 +127,7 @@ class Users extends React.Component {
         event.preventDefault();
         if(confirm("Are you sure you want to delete the user " + firstname + " " + lastname + "? All of their data will be deleted and it cannot be undone.")) {
             await axios.delete(`/user/${userid}`);
-            const currentUsers = (await axios.get("/users")).data;
+            const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
             
             this.setState({
                 currentUsers,
@@ -162,20 +160,20 @@ class Users extends React.Component {
 
     async deleteClass(event, classid, classname) {
         event.preventDefault();
+        var studentsInClass = this.state.currentUsers.filter((user) => user.classid === classid);
+        console.log(studentsInClass);
 
-        if(confirm("Are you sure you want to delete the class " + classname + "? You will only be able to delete the class if it is empty, and it cannot be undone.")) {
-            if(this.state.currentUsers.filter((user) => user.classid === classid).length === 0) {
+        if(confirm("WARNING!!! Deleting a class will also delete all the users in it. This CANNOT be undone. Are you sure you want to delete the class " + classname + "?")) {
+                for(var i=0; i<studentsInClass.length; i++) {
+                    await axios.delete(`/user/${studentsInClass[i].id}`);
+                }
                 await axios.delete(`/class/${classid}`);
                 const currentClasses = (await axios.get("/classes")).data;
+                const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
 
                 this.setState({
-                    currentClasses
+                    currentClasses, currentUsers
                 });
-            }
-            else {
-                alert("Sorry, you cannot delete a class that currently has users in it. Please either delete those users or move them to a different class before proceeding.");
-            }
-            
         }
         else {
             // do nothing
@@ -196,7 +194,7 @@ class Users extends React.Component {
                                         <h3>Class list:</h3>
                                         <div className="text-block">
                                             <ul>
-                                                {this.state.currentClasses.map((aClass) => <ClassView editClass={this.editClass} deleteClass={this.deleteClass} class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
+                                                {this.state.currentClasses.sort((a, b) => (a.classname.toLowerCase() > b.classname.toLowerCase()) ? 1 : -1).map((aClass) => <ClassView editClass={this.editClass} deleteClass={this.deleteClass} class={aClass} key={aClass.id} members={this.state.currentUsers.filter((user) => user.classid === aClass.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -221,9 +219,9 @@ class Users extends React.Component {
                                 <Row>
                                     <Col>
                                         <h3>Groups list:</h3>
-                                        <div className="text-block">
+                                        <div className="text-block groups-list">
                                             <ul>
-                                                {this.state.currentGroups.map((group) => <GroupView editGroup={this.editGroup} deleteGroup={this.deleteGroup} group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
+                                                {this.state.currentGroups.sort((a, b) => (a.groupname.toLowerCase() > b.groupname.toLowerCase()) ? 1 : -1).map((group) => <GroupView editGroup={this.editGroup} deleteGroup={this.deleteGroup} group={group} key={group.id} members={this.state.currentUsers.filter((user) => user.groupid === group.id)} />)}
                                             </ul>
                                         </div>
                                     </Col>
@@ -249,7 +247,7 @@ class Users extends React.Component {
                                 <Row>
                                     <Col md={6}>
                                         <h3>Users list:</h3>
-                                        <div className="text-block">
+                                        <div className="text-block users-list">
                                             <ul>
                                                 {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} deleteUser={this.deleteUser} currentClasses={this.state.currentClasses} currentGroups={this.state.currentGroups} />)}
                                             </ul>
@@ -455,7 +453,6 @@ class UserView extends React.Component {
 
         const getTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
         const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
-        console.log(allTimers)
         // var test = Moment().day("Monday").year(2020).week(2).toDate();
         // console.log(test);
 

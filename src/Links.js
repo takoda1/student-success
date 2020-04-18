@@ -86,13 +86,19 @@ class Links extends React.Component {
     } 
 
     render() {
+        var listClassLinks = '';
+        if(this.state.links.length === 0) {
+            listClassLinks = (<p>Your instructor has not given your class any links yet!</p>);
+        }
+        else {
+            listClassLinks = (<ul> {this.state.links.map((link) => <LinkItem key={"class-link-item" + link.id} link={link} />)} </ul>);
+        }
+
         return(
             <div className="div-padding">
                 <h2>Class Links</h2>
                 <div className="text-block">
-                    <ul>
-                        {this.state.links.map((link) => <LinkItem key={"class-link-item" + link.id} link={link} />)}
-                    </ul>
+                    {listClassLinks}
                 </div>
                 <h2>Group Links</h2>
                 <GroupLinks user={this.props.user} groupLinks={this.state.groupLinks} />

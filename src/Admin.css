@@ -39,6 +39,23 @@ h3 {
     margin-bottom: 20px !important;
     padding: 5px !important;
 }
+.div-padding {
+    padding: 1em;
+}
+.admin-grid {
+    padding: 1em 2em;
+    display: grid;
+    grid-template-columns: 46vw 46vw;
+    column-gap: 4vw;
+    justify-items: center;
+}
+.grid-item {
+    width: 100%;
+}
+/* .links-height {
+    max-height: 20vh;
+    overflow: scroll;
+} */
 /* .admin-pg-graph {
     padding: 1em;
     margin-left: 1em;

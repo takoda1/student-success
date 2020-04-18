@@ -72,15 +72,13 @@ button:hover {
   flex-grow: 1.1 !important;
   padding-top: 10px;
 }
-/* .goal-buttons-col {
-  text-align: right;
-} */
-.home-reflections {
+/* .home-reflections {
   width: 93vw;
-}
+} */
 .home-flex-container {
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: 47% 47%;
+  column-gap: 6%;
 }
 .home-bottom-flex {
   display: flex;
@@ -90,9 +88,9 @@ button:hover {
 .home-links {
   width: 45vw;
 }
-.weekly-goals-div {
+/* .weekly-goals-div {
   width: 40%;
-}
+} */
 .sub-goal-row {
   margin-left: 15px !important;
   margin-bottom: 5px;

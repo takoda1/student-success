@@ -97,7 +97,7 @@ class Home extends React.Component {
         }
 
         var thisDaysGoals = [];
-        for(var i=0; i<weekDates.length; i++) {
+        for(i=0; i<weekDates.length; i++) {
             thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
             if(thisDaysGoals.length === 0) {
                 weekCompleted.push(null);
@@ -128,7 +128,7 @@ class Home extends React.Component {
             (
                 <div>
                     <FontAwesomeIcon icon={faCheckCircle} />
-                    <p style={{ display:"inline-block" }}> You've completed all of your goals for today! :) </p> 
+                    <p style={{ display:"inline-block" }}> You've completed all of your goals for today! Good job!</p> 
                 </div>
              
             ) :
@@ -170,7 +170,7 @@ class Home extends React.Component {
         }
 
         var thisDaysGoals = [];
-        for(var i=0; i<weekDates.length; i++) {
+        for(i=0; i<weekDates.length; i++) {
             thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
             if(thisDaysGoals.length === 0) {
                 weekCompleted.push(null);
@@ -214,7 +214,7 @@ class Home extends React.Component {
         }
 
         var thisDaysGoals = [];
-        for(var i=0; i<weekDates.length; i++) {
+        for(i=0; i<weekDates.length; i++) {
             thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
             if(thisDaysGoals.length === 0) {
                 weekCompleted.push(null);
@@ -324,7 +324,7 @@ class Home extends React.Component {
         }
 
         var thisDaysGoals = [];
-        for(var i=0; i<weekDates.length; i++) {
+        for(i=0; i<weekDates.length; i++) {
             thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
             if(thisDaysGoals.length === 0) {
                 weekCompleted.push(null);
@@ -412,13 +412,13 @@ class Home extends React.Component {
         const weekCompleted = [];
         const weekDayNames = [];
 
-        for(var i=0; i<=6; i++) {
+        for(i=0; i<=6; i++) {
             weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
             weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
         }
 
         var thisDaysGoals = [];
-        for(var i=0; i<weekDates.length; i++) {
+        for(i=0; i<weekDates.length; i++) {
             thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
             if(thisDaysGoals.length === 0) {
                 weekCompleted.push(null);
@@ -459,7 +459,7 @@ class Home extends React.Component {
         }
 
         var thisDaysGoals = [];
-        for(var i=0; i<weekDates.length; i++) {
+        for(i=0; i<weekDates.length; i++) {
             thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
             if(thisDaysGoals.length === 0) {
                 weekCompleted.push(null);
@@ -481,7 +481,7 @@ class Home extends React.Component {
         return (
         <div>
                 <Layout >
-                    <h2>Home Page</h2>
+                    <h1>Home Page</h1>
                     {
                         loading ? (<p>Loading...</p>) :
                         (
@@ -491,11 +491,11 @@ class Home extends React.Component {
                                 <div className="home-flex-container">
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
                                     <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} makeDailyGoal={this.makeDailyGoal} />
-                                </div>
-                                <div className="home-bottom-flex">
-                                    <GroupLinks user={this.props.user} />
                                     <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
                                 </div>
+                                {/* <div className="home-bottom-flex">
+                                    
+                                </div> */}
                             </div>
                         )
                     }
@@ -572,8 +572,9 @@ class CompletedGoal extends React.Component {
 class Goals extends React.Component {
     render() {
         return (
-            <div style={{ display: "inline-block", width: '35%', verticalAlign: 'top'}}>
-                <h3>Daily Goals</h3>
+            <div style={{ display: "inline-block", verticalAlign: 'top'}}>
+                <h2 style={{textAlign: 'center', textDecoration: 'underline'}}>Daily</h2>
+                <h3>Goals</h3>
                 <div>
                     <GoalList goals={this.props.goals} goalsCompleted={this.props.goalsCompleted} onGoalCheck={this.props.onGoalCheck} checkTotalGoals={this.props.checkTotalGoals} onGoalAdded={this.props.onGoalAdded} onGoalTyped={this.props.onGoalTyped} onGoalEdited={this.props.onGoalEdited} onGoalRemoved={this.props.onGoalRemoved} newGoalText={this.props.newGoalText} ></GoalList>
                 </div>
@@ -586,7 +587,8 @@ class WeeklyGoals extends React.Component {
     render() {
         return(
             <div className="weekly-goals-div">
-                <h3>Long Term Goals</h3>
+                <h2 style={{textAlign: 'center', textDecoration: 'underline'}}>Long Term</h2>
+                <h3>Goals</h3>
                 <div>
                     <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} unfilteredWeeklyGoals={this.props.unfilteredWeeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} />
                 </div>
@@ -668,7 +670,7 @@ class WeeklyGoalItem extends React.Component {
                     <Col className="goal-buttons-col">
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
-                        <OverlayTrigger placement="right" overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
+                        <OverlayTrigger overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
                             <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.id, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
                                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
                             </Button>
@@ -732,147 +734,6 @@ class WeeklyGoalItem extends React.Component {
         return(
             <div className="goals">
                 {this.state.editing? editMode : viewMode }
-            </div>
-        );
-    }
-}
-
-class GroupLinks extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            newLinkText: '',
-            newLinkName: '',
-            editedLinkText: '',
-            editedLinkName: '',
-            links: []
-        };
-
-        this.onLinkTyped = this.onLinkTyped.bind(this);
-        this.onLinkSubmitted = this.onLinkSubmitted.bind(this);
-        this.onLinkNameTyped = this.onLinkNameTyped.bind(this);
-        this.onLinkEdited = this.onLinkEdited.bind(this);
-        this.onLinkRemoved = this.onLinkRemoved.bind(this);
-        this.onLinkUpdated = this.onLinkUpdated.bind(this);
-    }
-
-    async componentDidMount() {
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-        this.setState({links});
-    }
-
-    async onLinkEdited(event, newLink, newTitle, linkId) {
-        event.preventDefault();
-        const updatedLink = {link: newLink, title: newTitle };
-        await axios.put(`/grouplinks/${linkId}`, updatedLink);
-
-    }
-
-    async onLinkRemoved(linkId) {
-        event.preventDefault();
-        await axios.delete(`/grouplinks/${linkId}`);
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-        this.setState({links});
-    }
-    async onLinkUpdated(linkId, newLinkName, newLinkText) {
-        event.preventDefault();
-        await axios.put(`grouplinks/${linkId}`, {link: newLinkText, title: newLinkName});
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-        this.setState({links});
-    }
-
-    onLinkTyped(event) {
-        this.setState({ newLinkText: event.target.value });
-    }
-
-    onLinkNameTyped(event) {
-        this.setState({newLinkName: event.target.value});
-    }
-
-    async onLinkSubmitted(event) {
-        event.preventDefault();
-        if(this.state.newLinkText !== '' && this.state.newLinkName !== '') {
-            const newLink = { groupid: this.props.user.groupid, link: this.state.newLinkText, title: this.state.newLinkName, linkdate: todayDate, userid: this.props.user.id, username: this.props.user.firstname };
-            await axios.post('/grouplinks', newLink);
-            const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-            const links = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-            this.setState({newLinkText: '', newLinkName: '', links });
-        }
-    } 
-
-    render() {
-        const sortedLinks = this.state.links.sort(function(a, b){return a.id - b.id});
-        const listLink = sortedLinks.map((link) => 
-                <LinkItem key={"link-" + link.id} link={link} onLinkRemoved={this.onLinkRemoved} onLinkUpdated={this.onLinkUpdated} />);
-        return(
-            <div className="home-links">
-                <h3>Group Links</h3>
-                <div className="text-block">
-                    <p>Enter links that you would like to share with your group</p>
-                    <Form onSubmit={this.onLinkSubmitted}>
-                        <Form.Row>
-                            <Col>
-                                <Form.Control type="text" onChange={this.onLinkNameTyped} value={this.newLinkName} placeholder="Link Name" />
-                            </Col>
-                            <Col>
-                                <Form.Control type="text" onChange={this.onLinkTyped} value={this.newLinkText} placeholder="Link URL" />
-                            </Col>
-                            <Button variant="primary" type="submit">Submit</Button>
-                        </Form.Row>
-                    </Form>
-                    {listLink}
-                </div>
-            </div>
-        );
-    }
-}
-
-class LinkItem extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            newLinkName: props.link.title,
-            newLinkText: props.link.link,
-            linkId: props.link.id,
-            editing: false,
-        };
-    }
-
-    render() {
-        const editMode = (
-            <Form onSubmit={() => {this.props.onLinkUpdated(this.state.linkId, this.state.newLinkName, this.state.newLinkText); this.setState({editing: !this.state.editing})}}>
-                <Form.Row>
-                    <Col>
-                        <Form.Control type="text" value={this.state.newLinkName} onChange={(event) => {this.setState({newLinkName: event.target.value})}}></Form.Control>
-                    </Col>
-                    <Col>
-                        <Form.Control type="text" value={this.state.newLinkText} onChange={(event) => {this.setState({newLinkText: event.target.value})}}></Form.Control>
-                    </Col>
-                    <Button type="submit" className="update">Update</Button>
-                </Form.Row>
-            </Form>
-        );
-        const viewMode = (
-            <Form>
-                <Form.Row>
-                    <Col sm="8" className="edit-links">
-                        <a href={this.state.newLinkText} target='_blank'>{this.state.newLinkName}</a>
-                    </Col>
-                    <Col className="links-buttons">
-                        <Button className="remove" onClick={() => this.props.onLinkRemoved(this.state.linkId)}>Remove</Button>
-                        <Button className="edit" onClick={() => this.setState({editing: !this.state.editing})}>Edit</Button>
-                    </Col>
-                </Form.Row>
-            </Form>
-        );
-        return(
-            <div>
-                {this.state.editing? editMode : viewMode}
             </div>
         );
     }

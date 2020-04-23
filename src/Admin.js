@@ -4,7 +4,7 @@ import auth0Client from './Auth';
 import config from './auth_config.json';
 import './Admin.css';
 import Moment from 'moment';
-import { extendMoment } from 'moment-range';
+import { fixDateWithYear } from './shared';
 import DatePicker from "react-datepicker";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -262,9 +262,8 @@ class ClassGoals extends React.Component {
             currentUsers: [],
             goalClass: "",
             goalText: "",
-            goalLink: "",
-            goalStart: dateDefault,
-            goalEnd: dateDefault,
+            goalDescription: "",
+            goalDate: dateDefault,
         }
     }
 
@@ -282,42 +281,47 @@ class ClassGoals extends React.Component {
                         event.preventDefault();
                         const aClass = (await axios.get(`/class/${this.state.goalClass}`)).data[0];
                         const classUsers = this.state.currentUsers.filter((u) => u.classid === aClass.id);
+                        const dueDate = fixDateWithYear(this.state.goalDate);
+                        const formattedDate = Moment(this.state.goalDate).format("YYYY-MM-DD");
                         for (const u of classUsers) {
-                            const moment = extendMoment(Moment);
-                            const dayAfter = Moment(this.state.goalEnd).add(1, 'day').toDate();
-                            const range =  moment.range(this.state.goalStart, dayAfter);
+                            await axios.post(`/weeklyGoal`, {
+                                userid: u.id, 
+                                goaldate: formattedDate, 
+                                goaltext: this.state.goalText, 
+                                completed: false, 
+                                completedate: "2100-01-01"
+                            });
 
-                            for (let day of range.by('day')) {
-                                day = day.format('YYYY-MM-DD');
-                                await axios.post(`/goal`, {
+                            const goal = (await axios.get(`/weeklyGoals/${u.id}`)).data.reduce((memo, g) => {
+                                return (memo.id > g.id) ? memo : g;
+                            });
+
+                            if (this.state.goalDescription.length > 0) {
+                                const subgoal = {
                                     userid: u.id, 
-                                    goaldate: day, 
-                                    goaltext: this.state.goalText, 
-                                    completed: false, 
-                                    priority: 0
-                                });
-                                if (this.state.goalLink.length > 0) {
-                                    const goal = (await axios.get(`/goals/${u.id}/${day}`)).data.reduce((memo, g) => {
-                                        return memo.id > g.id ? memo : g;
-                                    });
-                                    const subgoal = {
-                                        userid: u.id, 
-                                        parentgoal: goal.id, 
-                                        goaldate: day, 
-                                        goaltext: this.state.goalLink, 
-                                        completed: false
-                                    }
-                                    await axios.post(`/subgoal`, subgoal);
+                                    parentgoal: goal.id, 
+                                    goaldate: formattedDate, 
+                                    goaltext: this.state.goalDescription, 
+                                    completed: false
                                 }
+                                await axios.post(`/weeklySubgoal`, subgoal);
                             }
+
+                            const dueDate_subgoal = {
+                                userid: u.id, 
+                                parentgoal: goal.id, 
+                                goaldate: formattedDate, 
+                                goaltext: `DUE: ${dueDate}`, 
+                                completed: false
+                            }
+                            await axios.post(`/weeklySubgoal`, dueDate_subgoal);
 
                         }
 
                         this.setState({
-                            goalLink: "",
+                            goalDescription: "",
                             goalText: "",
-                            goalStart: dateDefault,
-                            goalEnd: dateDefault
+                            goalDate: dateDefault,
                         })
                     }}>
                         <Form.Row>
@@ -336,21 +340,15 @@ class ClassGoals extends React.Component {
                             </Col>
                         </Form.Row>
                         <Form.Row>
-                            <Col><Form.Label>(optional) Note: </Form.Label></Col>
+                            <Col><Form.Label>(optional) Description: </Form.Label></Col>
                             <Col>
-                                <Form.Control type="text" className="addGoalField" value={this.state.goalLink} onChange={(event) => this.setState({ goalLink: event.target.value })} />
+                                <Form.Control type="text" className="addGoalField" value={this.state.goalDescription} onChange={(event) => this.setState({ goalDescription: event.target.value })} />
                             </Col>
                         </Form.Row>
                         <Form.Row>
-                            <Col><Form.Label>Start Date: </Form.Label></Col>
+                            <Col><Form.Label>Due Date: </Form.Label></Col>
                             <Col>
-                                <DatePicker selected={this.state.goalStart} onChange={(date) => this.setState({ goalStart: date })} />
-                            </Col>
-                        </Form.Row>
-                        <Form.Row>
-                            <Col><Form.Label>End Date: </Form.Label></Col>
-                            <Col>
-                                <DatePicker selected={this.state.goalEnd} onChange={(date) => this.setState({ goalEnd: date })} />
+                                <DatePicker selected={this.state.goalDate} onChange={(date) => this.setState({ goalDate: date })} />
                             </Col>
                         </Form.Row>
                         <Form.Row>

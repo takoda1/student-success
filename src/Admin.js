@@ -191,6 +191,8 @@ class ReflectionQuestions extends React.Component {
         super(props);
 
         this.state = {
+            currentClasses: [],
+            selectedClass: "",
             questions: {},
             editingQuestions: false,
         }
@@ -199,16 +201,16 @@ class ReflectionQuestions extends React.Component {
     }
 
     async componentDidMount() {
-        const questions = (await axios.get(`/question`)).data[0];
-        this.setState({ questions });
+        const currentClasses = (await axios.get('/classes')).data;
+        const selectedClass = currentClasses[0].classname;
+        const questions = (await axios.get(`/question/${currentClasses[0].id}`)).data[0];
+        this.setState({ questions, currentClasses, selectedClass });
     }
 
     async updateQuestions(event) {
         event.preventDefault();
-
         await axios.put(`/question/${this.state.questions.id}`, this.state.questions);
         const questions = (await axios.get(`/question`)).data[0];
-
         this.setState({ questions, editingQuestions: false });
     }
 
@@ -216,6 +218,7 @@ class ReflectionQuestions extends React.Component {
 
         let viewQuestions = (
             <div>
+                <h5>Class: {this.state.selectedClass}</h5>
                 <p>1. {this.state.questions.questionone}</p>
                 <p>2. {this.state.questions.questiontwo}</p>
                 <p>3. {this.state.questions.questionthree}</p>
@@ -225,6 +228,20 @@ class ReflectionQuestions extends React.Component {
 
         let editQuestions = (
             <Form onSubmit={this.updateQuestions} >
+                <Form.Row>
+                    <Col><Form.Label>Class: </Form.Label></Col>
+                    <Col>
+                        <Form.Control as="select" value={this.state.goalClass} onChange={async (event) => {
+                            const goalClass = event.target.value;
+                            const aClass = (await axios.get(`/class/${goalClass}`)).data[0];
+                            const questions = (await axios.get(`/question/${aClass.id}`)).data[0];
+                            this.setState({ goalClass, questions });
+                        }}>
+                            <option key={0}>Select...</option>
+                            {this.state.currentClasses.map((c) => <option key={c.id}>{c.classname}</option>)}
+                        </Form.Control>
+                    </Col>
+                </Form.Row>
                 <Form.Row>
                     <Col sm={0} ><Form.Label>1. </Form.Label></Col>
                     <Col><Form.Control value={this.state.questions.questionone} onChange={(event) => this.setState({ questions: {...this.state.questions, questionone: event.target.value } })} /></Col>

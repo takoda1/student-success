@@ -11,6 +11,7 @@ import { getTodaysDate } from './shared';
 import './Admin.css';
 import Moment from 'moment';
 import Chart from 'react-apexcharts';
+import Papa from 'papaparse';
 
 const todayDate = getTodaysDate();
 
@@ -29,6 +30,7 @@ class Admin extends React.Component {
             classField: "",
             groupNameField: "",
             classNameField: "",
+            userFile: null,
             questions: {},
             editingQuestions: false,
         }
@@ -287,7 +289,40 @@ class Admin extends React.Component {
                                     </Col>
                                     <Col md={6}>
                                         <h3>New User:</h3>
+                                        <Form onSubmit={async (event) => {
+                                            event.preventDefault();
+                                            console.log(this.state.userFile);
+                                            Papa.parse(this.state.userFile, {
+                                                header: true,
+                                                complete: (result) => {
+                                                    const jsonArray = result.data;
+                                                    jsonArray.map(async (row) => {
+                                                        this.setState({
+                                                            firstField: row["First Name"],
+                                                            lastField: row["Last Name"],
+                                                            emailField: row.Email,
+                                                            groupField: row.Group,
+                                                            classField: row.Class
+                                                        });
+                                                        await this.addUser(event);
+                                                    })
+                                                }
+                                            });
+                                            
+                                        }}>
+                                            <h4>Enter Multiple Users:</h4>
+                                            <Form.Control
+                                                id="fileUpload"
+                                                type="file"
+                                                accept=".csv"
+                                                onChange={(event) => this.setState({ userFile: event.target.files[0] })}
+                                                // style={{ display: "none" }}
+                                            />
+                                            <Button type="submit">Add</Button>
+                                        </Form>
+
                                         <Form onSubmit={this.addUser} className="text-block" >
+                                            <h4>Enter User Manually: </h4>
                                             <Form.Row>
                                                 <Col>
                                                     <Form.Label>First Name: </Form.Label>

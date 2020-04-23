@@ -5,15 +5,20 @@ Requires param of groupname
 */
 
 const getQuestion = (request, response) => {
+    const classid = parseInt(request.params.classid)
 
-    pool.query('SELECT * FROM reflectionquestion', (error, results) => {
-        if (error) {
-            throw error
-        }
-        else {
-            response.status(200).json(results.rows);
-        }
-    })
+    if (!isNaN(classid)) {
+        pool.query('SELECT * FROM reflectionquestion where classid = $1 ', [classid], (error, results) => {
+            if (error) {
+                throw error
+            }
+            else {
+                response.status(200).json(results.rows);
+            }
+        })
+    } else {
+        response.status(400).json({ "Error": "Parameter classid not a number" })
+    }
 }
 
 const addQuestion = (request, response) => {

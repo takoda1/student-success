@@ -139,7 +139,7 @@ app.post('/comment', commentQueries.addComment)
 app.put('/comment/:id', commentQueries.putComment)
 app.delete('/comment/:id', commentQueries.deleteComment)
 
-app.get('/question', questionQueries.getQuestion)
+app.get('/question/:classid', questionQueries.getQuestion)
 app.put('/question/:id', questionQueries.putQuestion)
 
 app.get('/classlink/:id', classLinkQueries.getClassLink)

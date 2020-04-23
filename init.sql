@@ -138,6 +138,7 @@ CREATE TABLE notes (
 
 CREATE TABLE reflectionquestion (
 	id SERIAL PRIMARY KEY,
+	classid INTEGER REFERENCES classes(id) ON DELETE CASCADE,
 	questionone TEXT,
 	questiontwo TEXT,
 	questionthree TEXT
@@ -150,5 +151,5 @@ CREATE TABLE classlinks (
 	linkurl TEXT
 );
 
-INSERT INTO reflectionquestion (questionone, questiontwo, questionthree)
-VALUES ('What obstacles did you encounter, if any?', 'What are some opportunities for improvement?', 'Any wins for the day worth recording?');
+INSERT INTO reflectionquestion (classid, questionone, questiontwo, questionthree)
+VALUES (1, 'What obstacles did you encounter, if any?', 'What are some opportunities for improvement?', 'Any wins for the day worth recording?');

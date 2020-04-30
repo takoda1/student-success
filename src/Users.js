@@ -65,107 +65,148 @@ class Users extends React.Component {
 
     async addUser(event) {
         event.preventDefault();
-        const groupid = (await axios.get(`/group/${this.state.groupField}`)).data[0].id;
-        const classid = (await axios.get(`/class/${this.state.classField}`)).data[0].id;
-        await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid, classid});
-        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-        var filteredUsers;
-
-        if(this.state.selectedGroupId === -1) {
-            filteredUsers = currentUsers;
+        if(this.state.firstField === "" || this.state.lastField === "" || this.emailField === "") {
+            alert("Error: the name and/or email field is empty. Please make sure everything is filled out correctly and try again.");
+        }
+        else if(this.state.classField === "" || this.state.groupField === "") {
+            alert("Error: the class and/or group field is empty. Please make sure everything is filled out correctly and try again.");
         }
         else {
-            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
-        }
+            const groupid = (await axios.get(`/group/${this.state.groupField}`)).data[0].id;
+            const classid = (await axios.get(`/class/${this.state.classField}`)).data[0].id;
+            await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid, classid}).then((response) => { }, (error) => {
+                alert("There was an error trying to edit the student. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
+            const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+            var filteredUsers;
 
-            
-        this.setState({
-            currentUsers,
-            filteredUsers,
-            firstField: "",
-            lastField: "",
-            emailField: "",
-            groupField: "",
-            classField: "",
-        });
+            if(this.state.selectedGroupId === -1) {
+                filteredUsers = currentUsers;
+            }
+            else {
+                filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            }
+
+                
+            this.setState({
+                currentUsers,
+                filteredUsers,
+                firstField: "",
+                lastField: "",
+                emailField: "",
+                groupField: "",
+                classField: "",
+            });
+         }
         
     }
 
     async editUser(user, firstname, lastname, email, groupname, classname) {
-        const hidetimer = user.hidetimer ? user.hidetimer : false;
-        const hidereflection = user.hidereflection ? user.hidereflection : false;
-        const hideweeklygoals = user.hideweeklygoals ? user.hideweeklygoals : false;
-
-        const groupid = (await axios.get(`/group/${groupname}`)).data[0].id;
-        const classid = (await axios.get(`/class/${classname}`)).data[0].id;
-
-        await axios.put(`/user/${user.id}`, { firstname, lastname, email, groupid, classid, hidetimer, hidereflection, hideweeklygoals });
-        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-        var filteredUsers;
-
-        if(this.state.selectedGroupId === -1) {
-            filteredUsers = currentUsers;
+        if(groupname === "" || classname === "") {
+            alert("Either the student's group or class was empty. Please make sure you fill out everything in order for changes to be saved.");
+        }
+        else if(firstname === "" || lastname === "" || email === "") {
+            alert("Either the student's name or email field was empty. Please make sure you fill out everything in order for changes to be saved.")
         }
         else {
-            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            const hidetimer = user.hidetimer ? user.hidetimer : false;
+            const hidereflection = user.hidereflection ? user.hidereflection : false;
+            const hideweeklygoals = user.hideweeklygoals ? user.hideweeklygoals : false;
+
+            const groupid = (await axios.get(`/group/${groupname}`)).data[0].id;
+            const classid = (await axios.get(`/class/${classname}`)).data[0].id;
+
+            await axios.put(`/user/${user.id}`, { firstname, lastname, email, groupid, classid, hidetimer, hidereflection, hideweeklygoals }).then((response) => { }, (error) => { console.log(error);
+                alert("There was an error trying to edit the student. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
+            const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+            var filteredUsers;
+
+            if(this.state.selectedGroupId === -1) {
+                filteredUsers = currentUsers;
+            }
+            else {
+                filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            }
+                
+            this.setState({
+                currentUsers,
+                filteredUsers
+            });
         }
-            
-        this.setState({
-            currentUsers,
-            filteredUsers
-        });
     }
 
     async editClass(classname, classid) {
-        await axios.put(`/class/${classid}`, { classname });
-        const currentClasses = (await axios.get('/classes')).data;
-        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-        var filteredUsers;
-        if(this.state.selectedGroupId === -1) {
-            filteredUsers = currentUsers;
+        if(classname === "") {
+            alert("Error: you must give the class a name");
         }
         else {
-            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            await axios.put(`/class/${classid}`, { classname }).then((response) => { }, (error) => {
+                alert("There was an error trying to edit the class. Contact your developers if the issue persists"); });
+            const currentClasses = (await axios.get('/classes')).data;
+            const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+            var filteredUsers;
+            if(this.state.selectedGroupId === -1) {
+                filteredUsers = currentUsers;
+            }
+            else {
+                filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            }
+            this.setState({ currentClasses, currentUsers, filteredUsers });
         }
-        this.setState({ currentClasses, currentUsers, filteredUsers });
     }
 
     async editGroup(groupname, groupid) {
-        await axios.put(`/group/${groupid}`, { groupname });
-        const currentGroups = (await axios.get('/groups')).data;
-        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-        var filteredUsers;
-        if(this.state.selectedGroupId === -1) {
-            filteredUsers = currentUsers;
+        if(groupname === "") {
+            alert("Error: you must give the group a name.");
         }
         else {
-            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            await axios.put(`/group/${groupid}`, { groupname }).then((response) => { }, (error) => {
+                alert("There was an error trying to edit the group. Contact your developers if the issue persists"); });
+            const currentGroups = (await axios.get('/groups')).data;
+            const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+            var filteredUsers;
+            if(this.state.selectedGroupId === -1) {
+                filteredUsers = currentUsers;
+            }
+            else {
+                filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            }
+            this.setState({ currentGroups, currentUsers, filteredUsers });
         }
-        this.setState({ currentGroups, currentUsers, filteredUsers });
     }
 
     async addGroup(event) {
         event.preventDefault();
-
-        await axios.post(`/group`, { groupname: this.state.groupNameField });
-        const currentGroups = (await axios.get("/groups")).data;
-
-        this.setState({ currentGroups, groupNameField: "" });
+        if(this.state.groupNameField === "") {
+            alert("Error: cannot add a group without a name");
+        }
+        else {
+            await axios.post(`/group`, { groupname: this.state.groupNameField }).then((response) => { }, (error) => {
+                alert("There was an error trying to add the group. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists"); });
+            const currentGroups = (await axios.get("/groups")).data;
+    
+            this.setState({ currentGroups, groupNameField: "" });
+        }
     }
 
     async addClass(event) {
         event.preventDefault();
+        if(this.state.classNameField === "") {
+            alert("Error: cannot add a class without a name.");
+        }
+        else {
+            await axios.post(`/class`, { classname: this.state.classNameField }).then((response) => { }, (error) => {
+                alert("There was an error trying to add the class. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists"); });
+            const currentClasses = (await axios.get("/classes")).data;
 
-        await axios.post(`/class`, { classname: this.state.classNameField });
-        const currentClasses = (await axios.get("/classes")).data;
-
-        this.setState({ currentClasses, classNameField: "" });
+            this.setState({ currentClasses, classNameField: "" });
+        }
     }
 
     async deleteUser(event, firstname, lastname, userid) {
         event.preventDefault();
         if(confirm("Are you sure you want to delete the user " + firstname + " " + lastname + "? All of their data will be deleted and it cannot be undone.")) {
-            await axios.delete(`/user/${userid}`);
+            await axios.delete(`/user/${userid}`).then((response) => { }, (error) => {
+                alert("There was an error trying to edit the class. Please contact your developers and let them know of the issue.", error); });
             const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
             var filteredUsers;
             if(this.state.selectedGroupId === -1) {
@@ -190,7 +231,8 @@ class Users extends React.Component {
         event.preventDefault();
         if(confirm("Are you sure you want to delete the group " + groupname + "? You will only be able to delete the group if it is empty, and it cannot be undone.")) {
             if((await axios.get(`/userByGroup/${groupid}`)).data.length === 0) {
-                await axios.delete(`/group/${groupid}`);
+                await axios.delete(`/group/${groupid}`).then((response) => { }, (error) => {
+                    alert("There was an error trying to delete the group. Contact your developers if the issue persists"); });
                 const currentGroups = (await axios.get("/groups")).data;
 
                 this.setState({
@@ -209,13 +251,13 @@ class Users extends React.Component {
     async deleteClass(event, classid, classname) {
         event.preventDefault();
         var studentsInClass = this.state.currentUsers.filter((user) => user.classid === classid);
-        console.log(studentsInClass);
 
         if(confirm("WARNING!!! Deleting a class will also delete all the users in it. This CANNOT be undone. Are you sure you want to delete the class " + classname + "?")) {
                 for(var i=0; i<studentsInClass.length; i++) {
                     await axios.delete(`/user/${studentsInClass[i].id}`);
                 }
-                await axios.delete(`/class/${classid}`);
+                await axios.delete(`/class/${classid}`).then((response) => { }, (error) => {
+                    alert("There was an error trying to add the class. Contact your developers if the issue persists"); });
                 const currentClasses = (await axios.get("/classes")).data;
                 const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
                 var filteredUsers;
@@ -687,7 +729,7 @@ class UserView extends React.Component {
                 data: customDataPoints
             }
         ];
-        this.setState({options, series, className, groupName});
+        this.setState({options, series, className, classField: className, groupName, groupField: groupName});
     }
 
     render() {
@@ -758,7 +800,6 @@ class UserView extends React.Component {
                             </Col>
                             <Col>
                                 <Form.Control as="select" value={this.state.groupField} onChange={(event) => this.setState({ groupField: event.target.value })} >
-                                    <option key={0}>Select...</option>
                                     {this.props.currentGroups.map((group) => <option key={group.id}>{group.groupname}</option>)}
                                 </Form.Control>
                             </Col>
@@ -769,7 +810,6 @@ class UserView extends React.Component {
                             </Col>
                             <Col>
                                 <Form.Control as="select" value={this.state.classField} onChange={(event) => this.setState({ classField: event.target.value })} >
-                                    <option key={0}>Select...</option>
                                     {this.props.currentClasses.map((c) => <option key={c.id}>{c.classname}</option>)}
                                 </Form.Control>
                             </Col>

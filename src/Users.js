@@ -195,13 +195,14 @@ class Users extends React.Component {
                 alert("There was an error trying to add the class. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists"); });
             const currentClasses = (await axios.get("/classes")).data;
             const classid = currentClasses.filter((c) => c.classname === this.state.classNameField)[0].id;
-            console.log(classid);
+            
             await axios.post(`/question`, { 
                 classid, 
                 questionone: 'What obstacles did you encounter, if any?', 
                 questiontwo: 'What are some opportunities for improvement?', 
                 questionthree: 'Any wins for the day worth recording?' 
             });
+            
             this.setState({ currentClasses, classNameField: "" });
         }
     }

@@ -4,8 +4,6 @@ import auth0Client from './Auth';
 import config from './auth_config.json';
 import './Admin.css';
 import Moment from 'moment';
-import Chart from 'react-apexcharts';
-import Papa from 'papaparse';
 import { fixDateWithYear } from './shared';
 import DatePicker from "react-datepicker";
 import Button from 'react-bootstrap/Button';

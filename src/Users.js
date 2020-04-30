@@ -11,6 +11,7 @@ import { getTodaysDate } from './shared';
 import './Admin.css';
 import Moment from 'moment';
 import Chart from 'react-apexcharts';
+import Papa from 'papaparse';
 
 const todayDate = getTodaysDate();
 const dateDefault = new Date();
@@ -61,7 +62,9 @@ class Users extends React.Component {
     }
 
     async addUser(event) {
-        event.preventDefault();
+        if (event) {
+            event.preventDefault();
+        }
         if(this.state.firstField === "" || this.state.lastField === "" || this.emailField === "") {
             alert("Error: the name and/or email field is empty. Please make sure everything is filled out correctly and try again.");
         }
@@ -72,7 +75,7 @@ class Users extends React.Component {
             const groupid = (await axios.get(`/group/${this.state.groupField}`)).data[0].id;
             const classid = (await axios.get(`/class/${this.state.classField}`)).data[0].id;
             await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid, classid}).then((response) => { }, (error) => {
-                alert("There was an error trying to edit the student. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
+                alert("There was an error trying to add the student. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
             const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
             var filteredUsers;
 
@@ -381,6 +384,41 @@ class Users extends React.Component {
                                     </Col>
                                     <Col md={6}>
                                         <h3>New User:</h3>
+                                        <Form onSubmit={async (event) => {
+                                            event.preventDefault();
+                                            console.log(this.state.userFile);
+                                            Papa.parse(this.state.userFile, {
+                                                header: true,
+                                                complete: async (result) => {
+                                                    const jsonArray = result.data;
+                                                    console.log(jsonArray);
+                                                    for (const row of jsonArray) {
+                                                        this.setState({
+                                                            firstField: row["First Name"],
+                                                            lastField: row["Last Name"],
+                                                            emailField: row.Email,
+                                                            groupField: row.Group,
+                                                            classField: row.Class
+                                                        });
+                                                        await this.addUser();
+                                                    }
+                                                }
+                                            });
+                                            
+                                        }}>
+                                            <h4>Enter Multiple Users:</h4>
+                                            <Form.Row className="text-block">
+                                                <Col><Form.Control
+                                                    id="fileUpload"
+                                                    type="file"
+                                                    accept=".csv"
+                                                    onChange={(event) => this.setState({ userFile: event.target.files[0] })}
+                                                    style={{ paddingTop: "10px" }}
+                                                /></Col>
+                                                <Col><Button type="submit">Add</Button></Col>
+                                            </Form.Row>
+                                        </Form>
+                                        <h4>Enter User Manually:</h4>
                                         <Form onSubmit={this.addUser} className="text-block" >
                                             <Form.Row>
                                                 <Col>

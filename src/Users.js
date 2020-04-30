@@ -31,8 +31,6 @@ class Users extends React.Component {
             classField: "",
             groupNameField: "",
             classNameField: "",
-            questions: {},
-            editingQuestions: false,
             goalClass: "",
             goalText: "",
             goalLink: "",
@@ -59,8 +57,7 @@ class Users extends React.Component {
         const filteredUsers = currentUsers;
         const currentGroups = (await axios.get('/groups')).data;
         const currentClasses = (await axios.get('/classes')).data;
-        const questions = (await axios.get(`/question`)).data[0];
-        this.setState({ currentUsers, currentGroups, currentClasses, questions, filteredUsers });
+        this.setState({ currentUsers, currentGroups, currentClasses, filteredUsers });
     }
 
     async addUser(event) {

@@ -21,6 +21,7 @@ class Users extends React.Component {
 
         this.state = {
             currentUsers: [],
+            filteredUsers: [],
             currentGroups: [],
             currentClasses: [],
             firstField: "",
@@ -37,6 +38,8 @@ class Users extends React.Component {
             goalLink: "",
             goalStart: dateDefault,
             goalEnd: dateDefault,
+            selectedGroupSort: "",
+            selectedGroupId: -1,
         }
 
         this.addUser = this.addUser.bind(this);
@@ -48,14 +51,16 @@ class Users extends React.Component {
         this.deleteUser = this.deleteUser.bind(this);
         this.deleteGroup = this.deleteGroup.bind(this);
         this.deleteClass = this.deleteClass.bind(this);
+        this.filterUsers = this.filterUsers.bind(this);
     }
 
     async componentDidMount() {
         const currentUsers = (await axios.get('/users')).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+        const filteredUsers = currentUsers;
         const currentGroups = (await axios.get('/groups')).data;
         const currentClasses = (await axios.get('/classes')).data;
         const questions = (await axios.get(`/question`)).data[0];
-        this.setState({ currentUsers, currentGroups, currentClasses, questions });
+        this.setState({ currentUsers, currentGroups, currentClasses, questions, filteredUsers });
     }
 
     async addUser(event) {
@@ -64,9 +69,19 @@ class Users extends React.Component {
         const classid = (await axios.get(`/class/${this.state.classField}`)).data[0].id;
         await axios.post("/user", { firstname: this.state.firstField, lastname: this.state.lastField, email: this.state.emailField, groupid, classid});
         const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+        var filteredUsers;
+
+        if(this.state.selectedGroupId === -1) {
+            filteredUsers = currentUsers;
+        }
+        else {
+            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+        }
+
             
         this.setState({
             currentUsers,
+            filteredUsers,
             firstField: "",
             lastField: "",
             emailField: "",
@@ -85,10 +100,19 @@ class Users extends React.Component {
         const classid = (await axios.get(`/class/${classname}`)).data[0].id;
 
         await axios.put(`/user/${user.id}`, { firstname, lastname, email, groupid, classid, hidetimer, hidereflection, hideweeklygoals });
-        const currentUsers = (await axios.get("/users")).data;
+        const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+        var filteredUsers;
+
+        if(this.state.selectedGroupId === -1) {
+            filteredUsers = currentUsers;
+        }
+        else {
+            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+        }
             
         this.setState({
             currentUsers,
+            filteredUsers
         });
     }
 
@@ -96,14 +120,28 @@ class Users extends React.Component {
         await axios.put(`/class/${classid}`, { classname });
         const currentClasses = (await axios.get('/classes')).data;
         const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-        this.setState({ currentClasses, currentUsers });
+        var filteredUsers;
+        if(this.state.selectedGroupId === -1) {
+            filteredUsers = currentUsers;
+        }
+        else {
+            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+        }
+        this.setState({ currentClasses, currentUsers, filteredUsers });
     }
 
     async editGroup(groupname, groupid) {
         await axios.put(`/group/${groupid}`, { groupname });
         const currentGroups = (await axios.get('/groups')).data;
         const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-        this.setState({ currentGroups, currentUsers });
+        var filteredUsers;
+        if(this.state.selectedGroupId === -1) {
+            filteredUsers = currentUsers;
+        }
+        else {
+            filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+        }
+        this.setState({ currentGroups, currentUsers, filteredUsers });
     }
 
     async addGroup(event) {
@@ -129,9 +167,18 @@ class Users extends React.Component {
         if(confirm("Are you sure you want to delete the user " + firstname + " " + lastname + "? All of their data will be deleted and it cannot be undone.")) {
             await axios.delete(`/user/${userid}`);
             const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
-            
+            var filteredUsers;
+            if(this.state.selectedGroupId === -1) {
+                filteredUsers = currentUsers;
+            }
+            else {
+                filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+            }
+
+
             this.setState({
                 currentUsers,
+                filteredUsers
             });
         }
         else {
@@ -171,13 +218,34 @@ class Users extends React.Component {
                 await axios.delete(`/class/${classid}`);
                 const currentClasses = (await axios.get("/classes")).data;
                 const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+                var filteredUsers;
+                if(this.state.selectedGroupId === -1) {
+                    filteredUsers = currentUsers;
+                }
+                else {
+                    filteredUsers = currentUsers.filter(user => user.groupid === this.state.selectedGroupId);
+                }
 
                 this.setState({
-                    currentClasses, currentUsers
+                    currentClasses, currentUsers, filteredUsers
                 });
         }
         else {
             // do nothing
+        }
+    }
+
+    async filterUsers(groupName) {
+        event.preventDefault();
+        if(groupName === "All Students") {
+            const currentUsers = (await axios.get('/users')).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+            this.setState({selectedGroupSort: groupName, selectedGroupId: -1, filteredUsers: currentUsers});
+        }
+        else {
+            const groupid = (await axios.get(`/group/${groupName}`)).data[0].id;
+            const currentUsers = (await axios.get('/users')).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
+            const filteredUsers = currentUsers.filter(user => user.groupid === groupid);
+            this.setState({selectedGroupSort: groupName, selectedGroupId: groupid, filteredUsers});
         }
     }
 
@@ -248,9 +316,16 @@ class Users extends React.Component {
                                 <Row>
                                     <Col md={6}>
                                         <h3>Users list:</h3>
+                                        <Form>
+                                            <Form.Label>Show users in group: </Form.Label>
+                                            <Form.Control as="select" value={this.state.selectedGroupSort} onChange={(event) => this.filterUsers(event.target.value)} >
+                                                    <option key={0} >All Students</option>
+                                                    {this.state.currentGroups.map((group) => <option key={group.id}>{group.groupname}</option>)}
+                                            </Form.Control>
+                                        </Form>
                                         <div className="text-block users-list">
                                             <ul>
-                                                {this.state.currentUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} deleteUser={this.deleteUser} currentClasses={this.state.currentClasses} currentGroups={this.state.currentGroups} />)}
+                                                {this.state.filteredUsers.map((user) => <UserView key={user.id} user={user} editUser={this.editUser} deleteUser={this.deleteUser} currentClasses={this.state.currentClasses} currentGroups={this.state.currentGroups} />)}
                                             </ul>
                                         </div>
                                     </Col>

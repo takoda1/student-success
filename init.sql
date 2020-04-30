@@ -141,7 +141,8 @@ CREATE TABLE reflectionquestion (
 	classid INTEGER REFERENCES classes(id) ON DELETE CASCADE,
 	questionone TEXT,
 	questiontwo TEXT,
-	questionthree TEXT
+	questionthree TEXT,
+	additionalquestions TEXT ARRAY
 );
 
 CREATE TABLE classlinks (
@@ -151,5 +152,5 @@ CREATE TABLE classlinks (
 	linkurl TEXT
 );
 
-INSERT INTO reflectionquestion (classid, questionone, questiontwo, questionthree)
-VALUES (1, 'What obstacles did you encounter, if any?', 'What are some opportunities for improvement?', 'Any wins for the day worth recording?');
+INSERT INTO reflectionquestion (classid, questionone, questiontwo, questionthree, additionalquestions)
+VALUES (1, 'What obstacles did you encounter, if any?', 'What are some opportunities for improvement?', 'Any wins for the day worth recording?', '{}');

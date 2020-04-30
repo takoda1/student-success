@@ -139,8 +139,10 @@ app.post('/comment', commentQueries.addComment)
 app.put('/comment/:id', commentQueries.putComment)
 app.delete('/comment/:id', commentQueries.deleteComment)
 
-app.get('/question', questionQueries.getQuestion)
+app.get('/question/:classid', questionQueries.getQuestion)
+app.post(`/question`, questionQueries.addQuestion)
 app.put('/question/:id', questionQueries.putQuestion)
+app.delete('/question/:classid', questionQueries.deleteQuestion)
 
 app.get('/classlink/:id', classLinkQueries.getClassLink)
 app.get('/allClasslinks/:classid', classLinkQueries.getAllClassLinks)

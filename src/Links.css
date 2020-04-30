@@ -1,0 +1,14 @@
+.links-grid {
+    display: grid;
+    grid-template-columns: 24.25% 24.25% 24.25% 24.25%;
+    grid-gap: 1%;
+}
+.border-grid-item {
+    border-radius: 10px;
+    border: 1px solid black;
+}
+.addlinks-grid {
+    display: grid;
+    grid-template-columns: 48% 48%;
+    grid-gap: 4%;
+}

@@ -151,7 +151,7 @@ Classes:
 { id: int, classname: string }
 
 Reflectionquestions:
-{id: int, questionone: string, questiontwo: string, questionthree:string }
+{id: int, classid: int, questionone: string, questiontwo: string, questionthree: string, additionalquestions: string array }
 
 Forumcomments:
 {id: int, body: string, userid: int, postid: int, username: string, commentdate: string}
@@ -382,9 +382,11 @@ DELETE /comment/:id		Deletes the comment with the associated id
 
 ### Reflection questions
 
-GET /question		Gets the single set of questions already in the database (returns {id: int, questionone: string, questiontwo: string, questionthree:string})
+GET /question/:classid		Gets the single set of questions already in the database for that class (returns {id: int, classid: int, questionone: string, questiontwo: string, questionthree: string, additionalquestions: string array})
 
-PUT /question/:id		Updates the question with given id with body {questionone: string, questiontwo: string, questionthree:string}
+POST /question  Requires body of {classid: int, questionone: string, questiontwo: string, questionthree: string}
+
+PUT /question/:id		Updates the question with given id with body {questionone: string, questiontwo: string, questionthree: string, additionalquestions: string array}
 
 ### Class links
 

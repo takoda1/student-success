@@ -68,7 +68,7 @@ class Home extends React.Component {
 
     async componentDidMount() {
         const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
-        const questions = (await axios.get(`/question`)).data[0];
+        const questions = (await axios.get(`/question/${this.props.user.classid}`)).data[0];
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${this.state.selectedMomentDate}`)).data[0];
 
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;

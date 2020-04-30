@@ -191,6 +191,8 @@ class ReflectionQuestions extends React.Component {
         super(props);
 
         this.state = {
+            currentClasses: [],
+            selectedClass: "",
             questions: {},
             editingQuestions: false,
         }
@@ -199,32 +201,55 @@ class ReflectionQuestions extends React.Component {
     }
 
     async componentDidMount() {
-        const questions = (await axios.get(`/question`)).data[0];
-        this.setState({ questions });
+        const currentClasses = (await axios.get('/classes')).data;
+        const selectedClass = currentClasses[0].classname;
+        const questions = (await axios.get(`/question/${currentClasses[0].id}`)).data[0];
+        this.setState({ questions, currentClasses, selectedClass });
     }
 
     async updateQuestions(event) {
         event.preventDefault();
-
         await axios.put(`/question/${this.state.questions.id}`, this.state.questions);
-        const questions = (await axios.get(`/question`)).data[0];
-
+        const aClass = (await axios.get(`/class/${this.state.selectedClass}`)).data[0];
+        const questions = (await axios.get(`/question/${aClass.id}`)).data[0];
         this.setState({ questions, editingQuestions: false });
     }
 
     render() {
-
         let viewQuestions = (
             <div>
+                <Form.Row>
+                    <Col><Form.Label>Class: </Form.Label></Col>
+                    <Col>
+                        <Form.Control as="select" value={this.state.selectedClass} onChange={async (event) => {
+                            const selectedClass = event.target.value;
+                            const aClass = (await axios.get(`/class/${selectedClass}`)).data[0];
+                            const questions = (await axios.get(`/question/${aClass.id}`)).data[0];
+                            this.setState({ selectedClass, questions });
+                        }}>
+                            <option key={0}>Select...</option>
+                            {this.state.currentClasses.map((c) => <option key={c.id}>{c.classname}</option>)}
+                        </Form.Control>
+                    </Col>
+                </Form.Row>
                 <p>1. {this.state.questions.questionone}</p>
                 <p>2. {this.state.questions.questiontwo}</p>
                 <p>3. {this.state.questions.questionthree}</p>
+                {this.state.questions.additionalquestions ? this.state.questions.additionalquestions.map((question, index) => {
+                    return <p key={index} >{4 + index}. {question}</p>
+                }) : null}
                 <Button onClick={() => this.setState({ editingQuestions: true })} >Edit Questions</Button>
             </div>
         );
 
         let editQuestions = (
             <Form onSubmit={this.updateQuestions} >
+                <Form.Row>
+                    <Col><Form.Label>Class: </Form.Label></Col>
+                    <Col><h5>
+                        {this.state.selectedClass}
+                    </h5></Col>
+                </Form.Row>
                 <Form.Row>
                     <Col sm={0} ><Form.Label>1. </Form.Label></Col>
                     <Col><Form.Control value={this.state.questions.questionone} onChange={(event) => this.setState({ questions: {...this.state.questions, questionone: event.target.value } })} /></Col>
@@ -237,7 +262,29 @@ class ReflectionQuestions extends React.Component {
                     <Col sm={0} ><Form.Label>3. </Form.Label></Col>
                     <Col><Form.Control value={this.state.questions.questionthree} onChange={(event) => this.setState({ questions: {...this.state.questions, questionthree: event.target.value } })} /></Col>
                 </Form.Row>
-
+                {this.state.questions.additionalquestions ? this.state.questions.additionalquestions.map((question, index) => {
+                    return (<Form.Row key={index}>
+                        <Col sm={0} ><Form.Label>{4 + index}. </Form.Label></Col>
+                        <Col><Form.Control value={question} onChange={(event) => {
+                            event.preventDefault();
+                            const additionalquestions = this.state.questions.additionalquestions;
+                            additionalquestions[index] = event.target.value;
+                            this.setState({ questions: {...this.state.questions, additionalquestions } });
+                        }} /></Col>
+                        <Col><Button onClick={(event) => {
+                            event.preventDefault();
+                            const additionalquestions = this.state.questions.additionalquestions;
+                            additionalquestions.splice(index, 1);
+                            this.setState({ questions: {...this.state.questions, additionalquestions } });
+                        }}>Remove</Button></Col>
+                    </Form.Row>)
+                }) : null }
+                <Button onClick={(event) => {
+                    event.preventDefault();
+                    const additionalquestions = this.state.questions.additionalquestions;
+                    additionalquestions[additionalquestions.length] = 'Another question...';
+                    this.setState({ questions: {...this.state.questions, additionalquestions } });
+                }}>Add Question</Button>
                 <Button type="submit">Save</Button>
             </Form>
         );

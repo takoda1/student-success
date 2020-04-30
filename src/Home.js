@@ -62,13 +62,14 @@ class Home extends React.Component {
         this.onReflectionOneChanged = this.onReflectionOneChanged.bind(this);
         this.onReflectionTwoChanged = this.onReflectionTwoChanged.bind(this);
         this.onReflectionThreeChanged = this.onReflectionThreeChanged.bind(this);
+        this.onExtraReflectionChanged = this.onExtraReflectionChanged.bind(this);
         this.onEditButtonClick = this.onEditButtonClick.bind(this);
 
     }
 
     async componentDidMount() {
         const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
-        const questions = (await axios.get(`/question`)).data[0];
+        const questions = (await axios.get(`/question/${this.props.user.classid}`)).data[0];
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${this.state.selectedMomentDate}`)).data[0];
 
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
@@ -355,17 +356,30 @@ class Home extends React.Component {
 
     onReflectionOneChanged(event) {
         event.preventDefault();
-        this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 0, 1) });
+        const reflectionQuestions = this.state.reflectionQuestions;
+        reflectionQuestions[0] = event.target.value;
+        this.setState({ reflectionQuestions });
     }
 
     onReflectionTwoChanged(event) {
         event.preventDefault();
-        this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 1, 2) });
+        const reflectionQuestions = this.state.reflectionQuestions;
+        reflectionQuestions[1] = event.target.value;
+        this.setState({ reflectionQuestions });
     }
 
     onReflectionThreeChanged(event) {
         event.preventDefault();
-        this.setState({ reflectionQuestions: this.state.reflectionQuestions.fill(event.target.value, 2) });
+        const reflectionQuestions = this.state.reflectionQuestions;
+        reflectionQuestions[2] = event.target.value;
+        this.setState({ reflectionQuestions });
+    }
+
+    onExtraReflectionChanged(event, index) {
+        event.preventDefault();
+        const reflectionQuestions = this.state.reflectionQuestions;
+        reflectionQuestions[index] = event.target.value;
+        this.setState({ reflectionQuestions });
     }
 
     onEditButtonClick(event) {
@@ -446,7 +460,7 @@ class Home extends React.Component {
         if (reflections) {
             this.setState({ reflections, completedReflections: true, reflectionQuestions: reflections.reflectiontext.split(delimiter), goals, selectedDate: date, selectedMomentDate });
         } else {
-            this.setState({ reflections: {}, reflectionQuestions: ["", "", ""], completedReflections: false, goals, selectedDate: date, selectedMomentDate });
+            this.setState({ reflections: {}, reflectionQuestions: [].fill("", 0, 3 + this.state.questions.additionalquestions.length), completedReflections: false, goals, selectedDate: date, selectedMomentDate });
         }
 
         const weekDates = [];
@@ -491,7 +505,7 @@ class Home extends React.Component {
                                 <div className="home-flex-container">
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
                                     <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} makeDailyGoal={this.makeDailyGoal} />
-                                    <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
+                                    <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onExtraReflectionChanged={this.onExtraReflectionChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
                                 </div>
                                 {/* <div className="home-bottom-flex">
                                     
@@ -755,6 +769,14 @@ class Reflections extends React.Component {
                 <p>
                     {this.props.reflectionQuestions[2]}
                 </p>
+                {this.props.questions.additionalquestions ? this.props.questions.additionalquestions.map((question, index) => {
+                    return (
+                        <div key={index}>
+                            <p>{4 + index}. {question}</p>
+                            <p>{this.props.reflectionQuestions[index + 3]}</p>
+                        </div>
+                    )
+                }) : null}
                 <Button className="editReflection" onClick={() => this.props.onEditButtonClick(event)}>Edit</Button>
             </div>
         );
@@ -770,6 +792,14 @@ class Reflections extends React.Component {
                     <br/>
                     <p>{this.props.questions.questionthree || "Loading Question 3..."}</p>
                     <Form.Control className="questionThree" as="textarea" rows="5" value={this.props.reflectionQuestions[2]} onChange={() => this.props.onReflectionThreeChanged(event)} />
+                    {this.props.questions.additionalquestions ? this.props.questions.additionalquestions.map((question, index) => {
+                        return (
+                            <div key={index}>
+                                <p>{4 + index}. {question}</p>
+                                <Form.Control as="textarea" rows="5" value={this.props.reflectionQuestions[index + 3]} onChange={() => this.props.onExtraReflectionChanged(event, index + 3)} />
+                            </div>
+                        )
+                    }) : null}
                 </div>
                 <Button type="submit" className="save-reflection">Save</Button>
             </Form>

@@ -31,8 +31,6 @@ class Users extends React.Component {
             classField: "",
             groupNameField: "",
             classNameField: "",
-            questions: {},
-            editingQuestions: false,
             goalClass: "",
             goalText: "",
             goalLink: "",
@@ -59,8 +57,7 @@ class Users extends React.Component {
         const filteredUsers = currentUsers;
         const currentGroups = (await axios.get('/groups')).data;
         const currentClasses = (await axios.get('/classes')).data;
-        const questions = (await axios.get(`/question`)).data[0];
-        this.setState({ currentUsers, currentGroups, currentClasses, questions, filteredUsers });
+        this.setState({ currentUsers, currentGroups, currentClasses, filteredUsers });
     }
 
     async addUser(event) {
@@ -197,7 +194,15 @@ class Users extends React.Component {
             await axios.post(`/class`, { classname: this.state.classNameField }).then((response) => { }, (error) => {
                 alert("There was an error trying to add the class. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists"); });
             const currentClasses = (await axios.get("/classes")).data;
-
+            const classid = currentClasses.filter((c) => c.classname === this.state.classNameField)[0].id;
+            
+            await axios.post(`/question`, { 
+                classid, 
+                questionone: 'What obstacles did you encounter, if any?', 
+                questiontwo: 'What are some opportunities for improvement?', 
+                questionthree: 'Any wins for the day worth recording?' 
+            });
+            
             this.setState({ currentClasses, classNameField: "" });
         }
     }
@@ -257,7 +262,10 @@ class Users extends React.Component {
                     await axios.delete(`/user/${studentsInClass[i].id}`);
                 }
                 await axios.delete(`/class/${classid}`).then((response) => { }, (error) => {
-                    alert("There was an error trying to add the class. Contact your developers if the issue persists"); });
+                    alert("There was an error trying to delete the class. Contact your developers if the issue persists"); });
+                
+                await axios.delete(`/question/${classid}`); // Quietly delete that class' questions
+
                 const currentClasses = (await axios.get("/classes")).data;
                 const currentUsers = (await axios.get("/users")).data.sort((a,b) => (a.lastname.toLowerCase() > b.lastname.toLowerCase()) ? 1 : -1);
                 var filteredUsers;

@@ -1,6 +1,6 @@
 {
   "domain": "dev-6qx1x460.auth0.com",
   "clientId": "VMOCaokV3GbrOOL2xK13RJixTAfaYeYm",
-  "env": "development",
+  "env": "production",
   "roleUrl": "https://student-success.herokuapp.com/role"
 }

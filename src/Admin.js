@@ -79,11 +79,18 @@ class LinkForm extends React.Component {
 
     async onLinkSubmitted(event) {
         event.preventDefault();
-        if(this.state.newLinkName !== '' && this.state.newLinkUrl !== '') {
+        if(this.state.newLinkName !== '' && this.state.newLinkUrl !== '' && this.state.classid !== -1) {
             const newLink = { classid: this.state.classid, linkname: this.state.newLinkName, linkurl: this.state.newLinkUrl }
-            await axios.post('/classlink', newLink);
+            await axios.post('/classlink', newLink).then((response) => { }, (error) => {
+                alert("There was an error trying to add the link. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
             const classLinks = ((await axios.get(`/allClasslinks/${this.state.classid}`)).data).sort((a, b) => (a.id > b.id) ? 1 : -1);
             this.setState({ newLinkName: '', newLinkUrl: '', classLinks });
+        }
+        else if(this.state.classid === -1) {
+            alert("You have not selected a class. Please select a class and try again.");
+        }
+        else {
+            alert("The link name and/or URL is empty. Please make sure both fields are filled in and try again.");
         }
     }
 
@@ -209,10 +216,16 @@ class ReflectionQuestions extends React.Component {
 
     async updateQuestions(event) {
         event.preventDefault();
-        await axios.put(`/question/${this.state.questions.id}`, this.state.questions);
-        const aClass = (await axios.get(`/class/${this.state.selectedClass}`)).data[0];
-        const questions = (await axios.get(`/question/${aClass.id}`)).data[0];
-        this.setState({ questions, editingQuestions: false });
+        if(this.state.selectedClass !== "" && this.state.selectedClass !== "Select...") {
+            await axios.put(`/question/${this.state.questions.id}`, this.state.questions).then((response) => { }, (error) => {
+                alert("There was an error trying to update the reflection questions. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
+            const aClass = (await axios.get(`/class/${this.state.selectedClass}`)).data[0];
+            const questions = (await axios.get(`/question/${aClass.id}`)).data[0];
+            this.setState({ questions, editingQuestions: false });
+        }
+        else {
+            alert("Please select a class from the drop down and try again.");
+        }
     }
 
     render() {
@@ -326,50 +339,77 @@ class ClassGoals extends React.Component {
                 <h3>Class Goals</h3>
                     <Form className="text-block" onSubmit={async (event) => {
                         event.preventDefault();
-                        const aClass = (await axios.get(`/class/${this.state.goalClass}`)).data[0];
-                        const classUsers = this.state.currentUsers.filter((u) => u.classid === aClass.id);
-                        const dueDate = fixDateWithYear(this.state.goalDate);
-                        const formattedDate = Moment(this.state.goalDate).format("YYYY-MM-DD");
-                        for (const u of classUsers) {
-                            await axios.post(`/weeklyGoal`, {
-                                userid: u.id, 
-                                goaldate: formattedDate, 
-                                goaltext: this.state.goalText, 
-                                completed: false, 
-                                completedate: "2100-01-01"
-                            });
-
-                            const goal = (await axios.get(`/weeklyGoals/${u.id}`)).data.reduce((memo, g) => {
-                                return (memo.id > g.id) ? memo : g;
-                            });
-
-                            if (this.state.goalDescription.length > 0) {
-                                const subgoal = {
+                        if(this.state.goalClass !== "" && this.state.goalClass !== "Select..." && this.state.goalText !== "") {
+                            const aClass = (await axios.get(`/class/${this.state.goalClass}`)).data[0];
+                            const classUsers = this.state.currentUsers.filter((u) => u.classid === aClass.id);
+                            const dueDate = fixDateWithYear(this.state.goalDate);
+                            const formattedDate = Moment(this.state.goalDate).format("YYYY-MM-DD");
+                            for (const u of classUsers) {
+                                var breakLoop = false;
+                                await axios.post(`/weeklyGoal`, {
                                     userid: u.id, 
-                                    parentgoal: goal.id, 
                                     goaldate: formattedDate, 
-                                    goaltext: this.state.goalDescription, 
-                                    completed: false
-                                }
-                                await axios.post(`/weeklySubgoal`, subgoal);
+                                    goaltext: this.state.goalText, 
+                                    completed: false, 
+                                    completedate: "2100-01-01"
+                                }).then((response) => { }, (error) => {
+                                    alert("There was an error trying to add the class goal. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists.");
+                                    breakLoop = true; });
+
+                                    if(breakLoop === true) {
+                                        break;
+                                    }
+                                    else {
+                                        const goal = (await axios.get(`/weeklyGoals/${u.id}`)).data.reduce((memo, g) => {
+                                            return (memo.id > g.id) ? memo : g;
+                                        });
+        
+                                        if (this.state.goalDescription.length > 0) {
+                                            const subgoal = {
+                                                userid: u.id, 
+                                                parentgoal: goal.id, 
+                                                goaldate: formattedDate, 
+                                                goaltext: this.state.goalDescription, 
+                                                completed: false
+                                            }
+                                            await axios.post(`/weeklySubgoal`, subgoal).then((response) => { }, (error) => {
+                                                alert("There was an error trying to add the optional description subgoal. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists.");
+                                            breakLoop = true });
+                                        }
+                                        if(breakLoop === true) {
+                                            break;
+                                        }
+                                        else {
+                                            const dueDate_subgoal = {
+                                                userid: u.id, 
+                                                parentgoal: goal.id, 
+                                                goaldate: formattedDate, 
+                                                goaltext: `DUE: ${dueDate}`, 
+                                                completed: false
+                                            }
+                                            await axios.post(`/weeklySubgoal`, dueDate_subgoal).then((response) => { }, (error) => {
+                                                alert("There was an error trying to add the due date subgoal. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists.");
+                                                breakLoop = true });
+                                            if(breakLoop === true) {
+                                                break;
+                                            }
+                                        }
+                                    }
                             }
 
-                            const dueDate_subgoal = {
-                                userid: u.id, 
-                                parentgoal: goal.id, 
-                                goaldate: formattedDate, 
-                                goaltext: `DUE: ${dueDate}`, 
-                                completed: false
-                            }
-                            await axios.post(`/weeklySubgoal`, dueDate_subgoal);
+                            this.setState({
+                                goalDescription: "",
+                                goalText: "",
+                                goalDate: dateDefault,
+                            });
 
                         }
-
-                        this.setState({
-                            goalDescription: "",
-                            goalText: "",
-                            goalDate: dateDefault,
-                        })
+                        else if(this.state.goalClass === "" || this.state.goalClass === "Select...") {
+                            alert("No class has been selected. Please select a class from the drop down and try again.");
+                        }
+                        else {
+                            alert("Error: cannot have an empty goal. Please fill out the goal field and try again.");
+                        }
                     }}>
                         <Form.Row>
                             <Col><Form.Label>Class: </Form.Label></Col>

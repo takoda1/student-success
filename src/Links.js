@@ -53,7 +53,8 @@ class Links extends React.Component {
 
     async onLinkRemoved(linkId) {
         event.preventDefault();
-        await axios.delete(`/grouplinks/${linkId}`);
+        await axios.delete(`/grouplinks/${linkId}`).then((response) => { }, (error) => {
+            alert("There was an error trying to update your link. Contact your instructor if the issue persists."); });
         const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
         const personalLinks = allGroupLinks.filter((link) => link.userid === this.props.user.id);
         const groupUsers = ((await axios.get(`/userByGroup/${this.props.user.groupid}`)).data).sort((a, b) => a.id - b.id);
@@ -63,25 +64,35 @@ class Links extends React.Component {
     }
     async onLinkUpdated(linkId, newLinkName, newLinkText) {
         event.preventDefault();
-        await axios.put(`grouplinks/${linkId}`, {link: newLinkText, title: newLinkName});
-        const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        const personalLinks = allGroupLinks.filter((link) => link.userid === this.props.user.id);
-        const groupUsers = ((await axios.get(`/userByGroup/${this.props.user.groupid}`)).data).sort((a, b) => a.id - b.id);
-        const groupLinksApi = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
-        var groupLinks = generateGroupLinksArray(groupUsers, groupLinksApi);
-        this.setState({newLinkText: '', newLinkName: '', groupLinks, personalLinks});
+        if(newLinkName !== '' && newLinkText !== '') {
+            await axios.put(`grouplinks/${linkId}`, {link: newLinkText, title: newLinkName}).then((response) => { }, (error) => {
+                alert("There was an error trying to update your link. Contact your instructor if the issue persists."); });
+            const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
+            const personalLinks = allGroupLinks.filter((link) => link.userid === this.props.user.id);
+            const groupUsers = ((await axios.get(`/userByGroup/${this.props.user.groupid}`)).data).sort((a, b) => a.id - b.id);
+            const groupLinksApi = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
+            var groupLinks = generateGroupLinksArray(groupUsers, groupLinksApi);
+            this.setState({newLinkText: '', newLinkName: '', groupLinks, personalLinks});
+        }
+        else {
+            alert("Error: either the link name or URL is empty. Please make sure to fill out all the fields and try again.");
+        }
     }
     async onLinkSubmitted(event) {
         event.preventDefault();
         if(this.state.newLinkText !== '' && this.state.newLinkName !== '') {
             const newLink = { groupid: this.props.user.groupid, link: this.state.newLinkText, title: this.state.newLinkName, linkdate: todayDate, userid: this.props.user.id, username: this.props.user.firstname };
-            await axios.post('/grouplinks', newLink);
+            await axios.post('/grouplinks', newLink).then((response) => { }, (error) => {
+                alert("There was an error trying to submit your link. Contact your instructor if the issue persists."); });
             const allGroupLinks = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
             const personalLinks = allGroupLinks.filter((link) => link.userid === this.props.user.id);
             const groupUsers = ((await axios.get(`/userByGroup/${this.props.user.groupid}`)).data).sort((a, b) => a.id - b.id);
             const groupLinksApi = (await axios.get(`/grouplinks/${this.props.user.groupid}`)).data;
             var groupLinks = generateGroupLinksArray(groupUsers, groupLinksApi);
             this.setState({newLinkText: '', newLinkName: '', groupLinks, personalLinks });
+        }
+        else {
+            alert("Error: either the link name or URL is empty. Pleae make sure to fill out all the fields and try again.");
         }
     } 
 

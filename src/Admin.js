@@ -96,13 +96,15 @@ class LinkForm extends React.Component {
 
     async onLinkRemoved(linkId) {
         event.preventDefault();
-        await axios.delete(`/classlink/${linkId}`);
+        await axios.delete(`/classlink/${linkId}`).then((response) => { }, (error) => {
+            alert("There was an error trying to delete the link. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
         const classLinks = ((await axios.get(`/allClasslinks/${this.state.classid}`)).data).sort((a, b) => (a.id > b.id) ? 1 : -1);
         this.setState({ classLinks });
     }
     async onLinkUpdated(linkId, newLinkName, newLinkUrl) {
         event.preventDefault();
-        await axios.put(`classlink/${linkId}`, {linkname: newLinkName, linkurl: newLinkUrl});
+        await axios.put(`classlink/${linkId}`, {linkname: newLinkName, linkurl: newLinkUrl}).then((response) => { }, (error) => {
+            alert("There was an error trying to update the link. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists."); });
         const classLinks = ((await axios.get(`/allClasslinks/${this.state.classid}`)).data).sort((a, b) => (a.id > b.id) ? 1 : -1);
         this.setState({classLinks});
     }

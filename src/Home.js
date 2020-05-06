@@ -199,7 +199,8 @@ class Home extends React.Component {
             completed: false, 
             priority: (this.state.goals.length + 1) 
         };
-        await axios.post('/goal', newGoal);
+        await axios.post('/goal', newGoal).then((response) => { }, (error) => {
+            alert("There was an error trying to add the goal. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
         const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
         this.setState(() => {
             return { goals, newGoalText: '' };
@@ -257,7 +258,8 @@ class Home extends React.Component {
             completed: false, 
             completedate: "2100-01-01" 
         };
-        await axios.post('/weeklyGoal', newGoal);
+        await axios.post('/weeklyGoal', newGoal).then((response) => { }, (error) => {
+            alert("There was an error trying to submit the long term goal. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
         const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
         this.setState(() => {
@@ -344,10 +346,12 @@ class Home extends React.Component {
         event.preventDefault();
 
         if (this.state.completedReflections) {
-            await axios.put(`/reflection/${this.state.reflections.id}`, { reflectiontext: this.state.reflectionQuestions.join(delimiter) });
+            await axios.put(`/reflection/${this.state.reflections.id}`, { reflectiontext: this.state.reflectionQuestions.join(delimiter) }).then((response) => { }, (error) => {
+                alert("There was an error trying to update your reflection response. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
         } else {
             await axios.post(`/reflection`, { userid: this.props.user.id, reflectiondate: this.state.selectedMomentDate, reflectiontext: this.state.reflectionQuestions.join(delimiter) });
-            this.setState({ completedReflections: true });
+            this.setState({ completedReflections: true }).then((response) => { }, (error) => {
+                alert("There was an error trying to submit your reflection response. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
         }
 
         const reflections = (await axios.get(`/reflection/${this.props.user.id}/${this.state.selectedMomentDate}`)).data[0];

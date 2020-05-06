@@ -243,9 +243,11 @@ class History extends Component {
         timerTemplate[which] += time;
 
         if (this.state.timers) {
-            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate });
+            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate }).then((response) => { }, (error) => {
+                alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
         } else {
-            await axios.post(`/timer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate });
+            await axios.post(`/timer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
+                alert("There was an error trying to submit the submit your time. Contact your instructor if the issue persists."); });
         }
 
         const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
@@ -268,9 +270,11 @@ class History extends Component {
             timerTemplate[which] += time;
 
             if (this.state.timers) {
-                await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate });
+                await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate }).then((response) => { }, (error) => {
+                    alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
             } else {
-                await axios.post(`/timer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate });
+                await axios.post(`/timer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
+                    alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
             }
 
             const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
@@ -289,15 +293,19 @@ class History extends Component {
         timerTemplate2["customtime"] += time;
 
         if (savedTimer == null) {
-            await axios.post(`/customTimer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate });
+            await axios.post(`/customTimer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
+                alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
         } else {
-            await axios.put(`/customTimer/${savedTimer.id}`, timerTemplate);
+            await axios.put(`/customTimer/${savedTimer.id}`, timerTemplate).then((response) => { }, (error) => {
+                alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
         }
 
         if (this.state.timers) {
-            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate2 });
+            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate2 }).then((response) => { }, (error) => {
+                alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
         } else {
-            await axios.post(`/timer`, { ...timerTemplate2, userid: this.props.user.id, timerdate: this.state.selectedDate });
+            await axios.post(`/timer`, { ...timerTemplate2, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
+                alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
         }
 
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;

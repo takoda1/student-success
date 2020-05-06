@@ -141,7 +141,8 @@ class Group extends Component {
         event.preventDefault();
         if(this.state.newMessageText !== '') {
             const newMessage = { groupid: this.props.user.groupid, chattext: this.state.newMessageText, chatdate: today, userid: this.props.user.id, username: this.props.user.firstname };
-            await axios.post('/groupchat', newMessage);
+            await axios.post('/groupchat', newMessage).then((response) => { }, (error) => {
+                alert("There was an error trying to send your message. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
             const messages = (await axios.get(`groupchat/${this.props.user.groupid}`)).data;
             this.setState({ messages, newMessageText: '' });
         }

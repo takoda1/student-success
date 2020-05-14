@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import './History.css';
+import './Timers.css';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Moment from 'moment';
@@ -15,11 +15,8 @@ import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 const today = new Date();
-var writingDataPoints = [];
-var researchDataPoints = [];
-var customDataPoints = [];
 
-class History extends Component {
+class TimerPage extends Component {
     constructor(props) {
         super(props);
 
@@ -100,6 +97,9 @@ class History extends Component {
 
             var filterByName;
             var filterByWeek;
+
+            // this depends on distinctCustomNames being sorted. Currently sorted alphabetically, can be changed
+            // as long as it is consistenly sorted the same way throughout the page
 
             for(var i=0; i<distinctCustomNames.length; i++) {
                 filterByName = allCustom.filter((timer) => timer.name === distinctCustomNames[i].name);
@@ -625,4 +625,4 @@ function askNotificationPermission() {
         }
     }
 }
-export { History };
+export { TimerPage };

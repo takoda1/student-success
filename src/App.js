@@ -6,7 +6,7 @@ import {
   Redirect
 } from "react-router-dom";
 import { Home } from './Home';
-import { History } from './History';
+import { TimerPage } from './Timers';
 import { Users } from './Users';
 import { Group } from './Group';
 import { Forum } from './Forum';
@@ -79,7 +79,7 @@ class App extends Component {
                             <Home user={this.state.user} />
                         </Route>
                         <Route path="/timers">
-                            <History user={this.state.user} />
+                            <TimerPage user={this.state.user} />
                         </Route>
                         <Route path="/links">
                             <Links user={this.state.user} />

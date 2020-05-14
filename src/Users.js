@@ -638,6 +638,9 @@ class UserView extends React.Component {
             var filterByName;
             var filterByWeek;
 
+            // this depends on distinctCustomNames being sorted. Currently sorted alphabetically, can be changed
+            // as long as it is consistenly sorted the same way throughout the page
+
             for(var i=0; i<distinctCustomNames.length; i++) {
                 filterByName = allCustom.filter((timer) => timer.name === distinctCustomNames[i].name);
                 for(var j=0; j<momentWeeks.length; j++) {

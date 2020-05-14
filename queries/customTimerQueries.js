@@ -23,6 +23,23 @@ const getCustomTimer = (request, response) => {
     }
 }
 
+const getAllCustomTimers = (request, response) => {
+    const userid = parseInt(request.params.userid)
+    if (!isNaN(userid)) {
+        pool.query('SELECT * FROM customtimers WHERE userid = $1', [userid], (error, results) => {
+            if (error) {
+                throw error
+            }
+            else {
+                response.status(200).json(results.rows);
+            }
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter userid not a number" })
+    }
+}
+
 const getCustomTimerByUserid = (request, response) => {
     const userid = parseInt(request.params.userid)
     if (!isNaN(userid)) {
@@ -143,11 +160,30 @@ const deleteCustomTimer = (request, response) => {
     }
 }
 
+const deleteCustomTimerName = (request, response) => {
+    const name = request.params.name;
+
+    if (name !== null) {
+        pool.query('DELETE FROM customtimers WHERE name = $1', [name], (error, result) => {
+            if (error) { throw error }
+            else {
+                response.status(200).send(`Timer name deleted with name: ${name}`)
+            }
+        })
+    }
+    else {
+        response.status(400).json({ "Error": "Parameter name is null." })
+    }
+
+}
+
 module.exports = {
     getCustomTimer,
+    getAllCustomTimers,
     getCustomTimerById,
     getCustomTimerByUserid,
     putCustomTimer,
     addCustomTimer,
-    deleteCustomTimer
+    deleteCustomTimer,
+    deleteCustomTimerName
 }

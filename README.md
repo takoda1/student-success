@@ -271,6 +271,9 @@ Returns all custom timer names ever used for a specified user (userid, reference
 GET /customTimer/:id
 Returns a single timer referenced by the timer primary key id
 
+GET /allCustomTimers/:userid
+Returns all custom timer entires for every date for a specified user
+
 POST /customTimer   (Requires json/js body of {userid: number, timerdate: "yyyy-mm-dd", time: int, name: string})
 
 PUT /customTimer/:id (Requires json/js body of {time: int, name: string})

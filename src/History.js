@@ -76,199 +76,61 @@ class History extends Component {
 
         askNotificationPermission();
 
-        const getTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
-        const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
         const getCustom = (await axios.get(`/allCustomTimers/${this.props.user.id}`)).data;
         const allCustom  = getCustom.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
-        console.log(allCustom);
-        var startWeek = Moment(allTimers[0].timerdate).week();
-        // var startWeek = Moment(allTimers[0].timerdate).isBefore(Moment(allCustom[0].timerdate)) ? Moment(allTimers[0].timerdate.week()) : Moment(allTimers[0].timerdate.week());
-        // var startWeek;
-        // if(Moment(allTimers[0].timerdate).isBefore(Moment(allCustom[0].timerdate))) {
-        //     startWeek = Moment(allTimers[0].timerdate).week();
-        // }
-        // else {
-        //     startWeek = Moment(allCustom[0].timerdate).week();
-        // }
+        var graphSeries = [];
+        if(allCustom.length > 0) {
+            var startWeek = Moment(allCustom[0].timerdate).week();
 
-        var graphSeries = [
-            {
-                name: 'Writing Timers',
-                data: writingDataPoints
-            },
-            {
-                name: "Research Timers",
-                data: researchDataPoints
-            },
-        ];
-        for(i = 0; i< distinctCustomNames.length; i++) {
-            graphSeries.push({
-                name: distinctCustomNames[i].name.concat(" Timers"),
-                data: []
-            })
-        }
+            graphSeries = distinctCustomNames.map(timer => { return { name: timer.name, data: [] }});
 
-        var thisWeek = startWeek;
-        var writing = 0;
-        var research = 0;
-        var custom = 0;
+            var weeks = [];
+            var momentWeeks = [];
+            var startDate = Moment(allCustom[0].timerdate).weekday(0);
 
-        var weeks = [];
-        var startDate = Moment(allTimers[0].timerdate).weekday(0);
-
-        var today = Moment(allTimers[allTimers.length-1].timerdate).weekday(7);
-        while(startDate.isBefore(today)) {
-            let startDateWeek = startDate.weekday(0).format('MM/DD');
-            let endDateWeek = startDate.weekday(6).format('MM/DD');
-            startDate.add(7,'days');
-            weeks.push(startDateWeek.concat(" - ", endDateWeek));
-        }
-
-        for (var i = 0; i < allTimers.length; i++) {
-            if (Moment(allTimers[i].timerdate).week() === thisWeek) {
-                writing += allTimers[i].writingtime;
-                research += allTimers[i].researchtime;
-                custom += allTimers[i].customtime;
-                if (i === allTimers.length - 1) {
-                    writingDataPoints.push(writing / 3600);
-                    researchDataPoints.push(research / 3600);
-                    customDataPoints.push(custom / 3600);
-                }
+            var today = Moment(allCustom[allCustom.length-1].timerdate).weekday(7);
+            while(startDate.isBefore(today)) {
+                let startDateWeek = startDate.weekday(0).format('MM/DD');
+                let endDateWeek = startDate.weekday(6).format('MM/DD');
+                startDate.add(7,'days');
+                weeks.push(startDateWeek.concat(" - ", endDateWeek));
+                momentWeeks.push(startWeek);
+                startWeek += 1;
             }
-            else {
-                writingDataPoints.push(writing / 3600);
-                researchDataPoints.push(research / 3600);
-                customDataPoints.push(custom / 3600);
 
-                writing = 0;
-                research = 0;
-                custom = 0;
+            var filterByName;
+            var filterByWeek;
 
-                var numWeeks = 0;
-                if(Moment(allTimers[i-1].timerdate).week() < Moment(allTimers[i].timerdate).week()) {
-                    numWeeks = (Moment(allTimers[i].timerdate).week() - Moment(allTimers[i-1].timerdate).week()-1);
-                }
-                else {
-                    numWeeks = (52 - Moment(allTimers[i-1].timerdate).week() + Moment(allTimers[i].timerdate).week()-1);
-                }
-
-                if(numWeeks >= 1) {
-                    for(var j = 0; j< numWeeks; j++) {
-                        writingDataPoints.push(0);
-                        researchDataPoints.push(0);
-                        customDataPoints.push(0);
+            for(var i=0; i<distinctCustomNames.length; i++) {
+                filterByName = allCustom.filter((timer) => timer.name === distinctCustomNames[i].name);
+                for(var j=0; j<momentWeeks.length; j++) {
+                    filterByWeek = filterByName.filter((timer) => Moment(timer.timerdate).week() === momentWeeks[j]);
+                    if(filterByWeek.length > 0) {
+                        var totalHrs = filterByWeek.reduce((a, b) => a + b.time, 0) / 3600;
+                        graphSeries[i].data.push(totalHrs);
                     }
-                    writing = 0;
-                    research = 0;
-                    custom = 0;
-                    thisWeek += 1;
-                }
+                    else {
+                        graphSeries[i].data.push(0)
+                    }
 
-                thisWeek = Moment(allTimers[i].timerdate).week();
-                writing += allTimers[i].writingtime;
-                research += allTimers[i].researchtime;
-                custom += allTimers[i].customtime;
-
-                if (i === allTimers.length - 1) {
-                    writingDataPoints.push(allTimers[i].writingtime / 3600);
-                    researchDataPoints.push(allTimers[i].researchtime / 3600);
-                    customDataPoints.push(allTimers[i].customtime / 3600);
                 }
             }
-
+        }
+        else {
+            graphSeries = [];
         }
 
-        // var weeklyCustomValues = new Map();
-        // var totalCustomData = new Map();
-        // for(i=0; i<distinctCustomNames.length; i++) {
-        //     weeklyCustomValues.set(distinctCustomNames[i].name, 0);
-        //     totalCustomData.set(distinctCustomNames[i].name, []);
-        // }
-        // console.log(weeklyCustomValues);
 
-        // for (var i = 0; i < allCustom.length; i++) {
-        //     if (Moment(allCustom[i].timerdate).week() === thisWeek) {
-        //         var temp = weeklyCustomValues.get(allCustom[i].name) + allCustom[i].time;
-        //         weeklyCustomValues.delete(allCustom[i].name);
-        //         weeklyCustomValues.set(allCustom[i].name, temp);
-        //         if (i === allCustom.length - 1) {
-        //             for(j = 0; j < weeklyCustomValues.length; j++) {
-        //                 var tempArr = totalC
-        //             }
-        //             writingDataPoints.push(writing / 3600);
-        //             researchDataPoints.push(research / 3600);
-        //             customDataPoints.push(custom / 3600);
-        //         }
-        //     }
-        //     else {
-        //         writingDataPoints.push(writing / 3600);
-        //         researchDataPoints.push(research / 3600);
-        //         customDataPoints.push(custom / 3600);
+        var maxArray = [];
 
-        //         writing = 0;
-        //         research = 0;
-        //         custom = 0;
+        for(i=0; i<graphSeries.length; i++) {
+            maxArray.push(Math.max(...graphSeries[i].data));
+        }
 
-        //         var numWeeks = 0;
-        //         if(Moment(allCustom[i-1].timerdate).week() < Moment(allCustom[i].timerdate).week()) {
-        //             numWeeks = (Moment(allCustom[i].timerdate).week() - Moment(allCustom[i-1].timerdate).week()-1);
-        //         }
-        //         else {
-        //             numWeeks = (52 - Moment(allCustom[i-1].timerdate).week() + Moment(allCustom[i].timerdate).week()-1);
-        //         }
-
-        //         if(numWeeks >= 1) {
-        //             for(var j = 0; j< numWeeks; j++) {
-        //                 writingDataPoints.push(0);
-        //                 researchDataPoints.push(0);
-        //                 customDataPoints.push(0);
-        //             }
-        //             writing = 0;
-        //             research = 0;
-        //             custom = 0;
-        //             thisWeek += 1;
-        //         }
-
-        //         thisWeek = Moment(allCustom[i].timerdate).week();
-        //         writing += allCustom[i].writingtime;
-        //         research += allCustom[i].researchtime;
-        //         custom += allCustom[i].customtime;
-
-        //         if (i === allCustom.length - 1) {
-        //             writingDataPoints.push(allCustom[i].writingtime / 3600);
-        //             researchDataPoints.push(allCustom[i].researchtime / 3600);
-        //             customDataPoints.push(allCustom[i].customtime / 3600);
-        //         }
-        //     }
-
-        // }
-
-
-        var graphSeries = [
-            {
-                name: 'Writing Timers',
-                data: writingDataPoints
-            },
-            {
-                name: "Research Timers",
-                data: researchDataPoints
-            },
-            {
-                name: "Custom Timers",
-                data: customDataPoints
-            }
-        ];
-        // for(i = 0; i< distinctCustomNames.length; i++) {
-        //     graphSeries.push({
-        //         name: distinctCustomNames[i].name.concat(" Timers"),
-        //         data: []
-        //     })
-        // }
-
-        var maxY = Math.max(...writingDataPoints, ...researchDataPoints, ...customDataPoints);
+        var maxY = Math.max(...maxArray);
 
         var options = {
-            colors: ['#4B9CD3', '#13294B', '#6AC9D2'],
+            colors: ['#0b476b', '#106699', '#329c8d', '#7abe9a', '#ebefcd', '#d3b276'],
             chart: {
                 id: 'Timer Stats',
                 background: '#fff'
@@ -297,8 +159,8 @@ class History extends Component {
                     }
                 },
                 min: 0,
-                max: Math.ceil(maxY) + 2,
-                tickAmount: (Math.ceil(maxY) + 2)/2,
+                max: Math.ceil(maxY) + 1,
+                tickAmount: (Math.ceil(maxY) + 1)/2,
                 labels: {
                     style: {
                         fontSize: '14px'
@@ -403,23 +265,28 @@ class History extends Component {
     async deleteCustomTimer(name) {
         event.preventDefault();
 
-        await axios.delete(`/customTimerName/${name}`);
-        const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
-        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
+        if(confirm("WARNING: Deleting your timer '" + name + "' will also delete any previous times submitted for this timer. It will also no longer be shown in the graph below. This CANNOT be undone. Are you sure you want to delete '" + name + "'?" )) {
+            await axios.delete(`/customTimerName/${name}`);
+            const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
+            const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
 
-        var allCustomTimers = [];
-        for(var i=0; i<distinctCustomNames.length; i++) {
-            var time = customTimers.filter((timer) => timer.name === distinctCustomNames[i].name);
-            var pushTimer = {};
-            if(time.length === 0) {
-                pushTimer = {name: distinctCustomNames[i].name, time: 0};
+            var allCustomTimers = [];
+            for(var i=0; i<distinctCustomNames.length; i++) {
+                var time = customTimers.filter((timer) => timer.name === distinctCustomNames[i].name);
+                var pushTimer = {};
+                if(time.length === 0) {
+                    pushTimer = {name: distinctCustomNames[i].name, time: 0};
+                }
+                else {
+                    pushTimer = {name: distinctCustomNames[i].name, time: time[0].time};
+                }
+                allCustomTimers.push(pushTimer);
             }
-            else {
-                pushTimer = {name: distinctCustomNames[i].name, time: time[0].time};
-            }
-            allCustomTimers.push(pushTimer);
+            this.setState({distinctCustomNames, allCustomTimers});
         }
-        this.setState({distinctCustomNames, allCustomTimers});
+        else {
+            // do nothing
+        }
     }
 
     async onDateChanged(date) {

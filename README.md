@@ -278,6 +278,9 @@ PUT /customTimer/:id (Requires json/js body of {time: int, name: string})
 DELETE /customTimer/:id
 Deletes the custom timer specified by its unique id
 
+DELETE /customTimerName/:name
+Deletes all custom timer entries with the given name (effectively deleting that custom timer)
+
 ### Reflections
 
 GET /reflection/:userid/:date

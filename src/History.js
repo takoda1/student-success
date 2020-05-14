@@ -10,6 +10,8 @@ import Col from 'react-bootstrap/Col';
 import soundfile from '../public/alarm.mp3';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 const todayDate = Moment().format('YYYY-MM-DD');
 const today = new Date();
@@ -27,9 +29,9 @@ class History extends Component {
             unformattedDate: today,
             options: {},
             series: [],
-            customName: "Writing",
+            customName: "",
             manualTime: 0,
-            manualCategory: "Writing",
+            manualCategory: "",
             alarm: false,
 
             customTimers: [],
@@ -44,13 +46,14 @@ class History extends Component {
         this.onChangeManualCategory = this.onChangeManualCategory.bind(this);
         this.onChangeManualTime = this.onChangeManualTime.bind(this);
         this.onSubmitManualTime = this.onSubmitManualTime.bind(this);
+        this.deleteCustomTimer = this.deleteCustomTimer.bind(this);
 
     }
 
     async componentDidMount() {
         const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
-        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
+        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
 
         var allCustomTimers = [];
         for(var i=0; i<distinctCustomNames.length; i++) {
@@ -65,7 +68,7 @@ class History extends Component {
             allCustomTimers.push(pushTimer);
         }
 
-        this.setState({ timers, customTimers, distinctCustomNames, allCustomTimers });
+        this.setState({ timers, customTimers, distinctCustomNames, allCustomTimers, customName: distinctCustomNames[0].name, manualCategory: distinctCustomNames[0].name });
 
         window.gtag('event', 'Page View', {
             'event_category': 'Timers',
@@ -76,7 +79,36 @@ class History extends Component {
 
         const getTimers = (await axios.get(`/timerByUser/${this.props.user.id}`)).data;
         const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
+        const getCustom = (await axios.get(`/allCustomTimers/${this.props.user.id}`)).data;
+        const allCustom  = getCustom.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
+        console.log(allCustom);
         var startWeek = Moment(allTimers[0].timerdate).week();
+        // var startWeek = Moment(allTimers[0].timerdate).isBefore(Moment(allCustom[0].timerdate)) ? Moment(allTimers[0].timerdate.week()) : Moment(allTimers[0].timerdate.week());
+        // var startWeek;
+        // if(Moment(allTimers[0].timerdate).isBefore(Moment(allCustom[0].timerdate))) {
+        //     startWeek = Moment(allTimers[0].timerdate).week();
+        // }
+        // else {
+        //     startWeek = Moment(allCustom[0].timerdate).week();
+        // }
+
+        var graphSeries = [
+            {
+                name: 'Writing Timers',
+                data: writingDataPoints
+            },
+            {
+                name: "Research Timers",
+                data: researchDataPoints
+            },
+        ];
+        for(i = 0; i< distinctCustomNames.length; i++) {
+            graphSeries.push({
+                name: distinctCustomNames[i].name.concat(" Timers"),
+                data: []
+            })
+        }
+
         var thisWeek = startWeek;
         var writing = 0;
         var research = 0;
@@ -98,7 +130,6 @@ class History extends Component {
                 writing += allTimers[i].writingtime;
                 research += allTimers[i].researchtime;
                 custom += allTimers[i].customtime;
-                console.log(thisWeek, Moment(allTimers[i]).week());
                 if (i === allTimers.length - 1) {
                     writingDataPoints.push(writing / 3600);
                     researchDataPoints.push(research / 3600);
@@ -123,7 +154,6 @@ class History extends Component {
                 }
 
                 if(numWeeks >= 1) {
-                    // console.log(numWeeks, Moment(allTimers[i-1].timerdate).format('MM/DD/YY'), Moment(allTimers[i].timerdate).format('MM/DD/YY'));
                     for(var j = 0; j< numWeeks; j++) {
                         writingDataPoints.push(0);
                         researchDataPoints.push(0);
@@ -148,6 +178,93 @@ class History extends Component {
             }
 
         }
+
+        // var weeklyCustomValues = new Map();
+        // var totalCustomData = new Map();
+        // for(i=0; i<distinctCustomNames.length; i++) {
+        //     weeklyCustomValues.set(distinctCustomNames[i].name, 0);
+        //     totalCustomData.set(distinctCustomNames[i].name, []);
+        // }
+        // console.log(weeklyCustomValues);
+
+        // for (var i = 0; i < allCustom.length; i++) {
+        //     if (Moment(allCustom[i].timerdate).week() === thisWeek) {
+        //         var temp = weeklyCustomValues.get(allCustom[i].name) + allCustom[i].time;
+        //         weeklyCustomValues.delete(allCustom[i].name);
+        //         weeklyCustomValues.set(allCustom[i].name, temp);
+        //         if (i === allCustom.length - 1) {
+        //             for(j = 0; j < weeklyCustomValues.length; j++) {
+        //                 var tempArr = totalC
+        //             }
+        //             writingDataPoints.push(writing / 3600);
+        //             researchDataPoints.push(research / 3600);
+        //             customDataPoints.push(custom / 3600);
+        //         }
+        //     }
+        //     else {
+        //         writingDataPoints.push(writing / 3600);
+        //         researchDataPoints.push(research / 3600);
+        //         customDataPoints.push(custom / 3600);
+
+        //         writing = 0;
+        //         research = 0;
+        //         custom = 0;
+
+        //         var numWeeks = 0;
+        //         if(Moment(allCustom[i-1].timerdate).week() < Moment(allCustom[i].timerdate).week()) {
+        //             numWeeks = (Moment(allCustom[i].timerdate).week() - Moment(allCustom[i-1].timerdate).week()-1);
+        //         }
+        //         else {
+        //             numWeeks = (52 - Moment(allCustom[i-1].timerdate).week() + Moment(allCustom[i].timerdate).week()-1);
+        //         }
+
+        //         if(numWeeks >= 1) {
+        //             for(var j = 0; j< numWeeks; j++) {
+        //                 writingDataPoints.push(0);
+        //                 researchDataPoints.push(0);
+        //                 customDataPoints.push(0);
+        //             }
+        //             writing = 0;
+        //             research = 0;
+        //             custom = 0;
+        //             thisWeek += 1;
+        //         }
+
+        //         thisWeek = Moment(allCustom[i].timerdate).week();
+        //         writing += allCustom[i].writingtime;
+        //         research += allCustom[i].researchtime;
+        //         custom += allCustom[i].customtime;
+
+        //         if (i === allCustom.length - 1) {
+        //             writingDataPoints.push(allCustom[i].writingtime / 3600);
+        //             researchDataPoints.push(allCustom[i].researchtime / 3600);
+        //             customDataPoints.push(allCustom[i].customtime / 3600);
+        //         }
+        //     }
+
+        // }
+
+
+        var graphSeries = [
+            {
+                name: 'Writing Timers',
+                data: writingDataPoints
+            },
+            {
+                name: "Research Timers",
+                data: researchDataPoints
+            },
+            {
+                name: "Custom Timers",
+                data: customDataPoints
+            }
+        ];
+        // for(i = 0; i< distinctCustomNames.length; i++) {
+        //     graphSeries.push({
+        //         name: distinctCustomNames[i].name.concat(" Timers"),
+        //         data: []
+        //     })
+        // }
 
         var maxY = Math.max(...writingDataPoints, ...researchDataPoints, ...customDataPoints);
 
@@ -214,20 +331,7 @@ class History extends Component {
                 }
             }
         };
-        var series = [
-            {
-                name: 'Writing Timers',
-                data: writingDataPoints
-            },
-            {
-                name: "Research Timers",
-                data: researchDataPoints
-            },
-            {
-                name: "Custom Timers",
-                data: customDataPoints
-            }
-        ];
+        var series = graphSeries;
         this.setState({ options, series });
     }
 
@@ -262,25 +366,25 @@ class History extends Component {
             'value': time
         });
 
-        if (category === 'Writing' || category === 'Research') {
-            const which = `${category.toLowerCase()}time`;
-            const timerTemplate = this.state.timers ?
-                { writingtime: this.state.timers.writingtime, researchtime: this.state.timers.researchtime, customtime: this.state.timers.customtime } :
-                { writingtime: 0, researchtime: 0, customtime: 0 };
-            timerTemplate[which] += time;
+        // if (category === 'Writing' || category === 'Research') {
+        //     const which = `${category.toLowerCase()}time`;
+        //     const timerTemplate = this.state.timers ?
+        //         { writingtime: this.state.timers.writingtime, researchtime: this.state.timers.researchtime, customtime: this.state.timers.customtime } :
+        //         { writingtime: 0, researchtime: 0, customtime: 0 };
+        //     timerTemplate[which] += time;
 
-            if (this.state.timers) {
-                await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate }).then((response) => { }, (error) => {
-                    alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
-            } else {
-                await axios.post(`/timer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
-                    alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
-            }
+        //     if (this.state.timers) {
+        //         await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate }).then((response) => { }, (error) => {
+        //             alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
+        //     } else {
+        //         await axios.post(`/timer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
+        //             alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
+        //     }
 
-            const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
-            this.setState({ timers })
-            return;
-        }
+        //     const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
+        //     this.setState({ timers })
+        //     return;
+        // }
 
         const filtered = this.state.customTimers.filter((timer) => timer.name === category);
         const savedTimer = filtered.length === 0 ? null : filtered[0];
@@ -292,7 +396,7 @@ class History extends Component {
             { writingtime: 0, researchtime: 0, customtime: 0 };
         timerTemplate2["customtime"] += time;
 
-        if (savedTimer == null) {
+        if (savedTimer === null) {
             await axios.post(`/customTimer`, { ...timerTemplate, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
                 alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
         } else {
@@ -300,16 +404,16 @@ class History extends Component {
                 alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
         }
 
-        if (this.state.timers) {
-            await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate2 }).then((response) => { }, (error) => {
-                alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
-        } else {
-            await axios.post(`/timer`, { ...timerTemplate2, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
-                alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
-        }
+        // if (this.state.timers) {
+        //     await axios.put(`/timer/${this.state.timers.id}`, { ...timerTemplate2 }).then((response) => { }, (error) => {
+        //         alert("There was an error trying to update your time. Contact your instructor if the issue persists."); });
+        // } else {
+        //     await axios.post(`/timer`, { ...timerTemplate2, userid: this.props.user.id, timerdate: this.state.selectedDate }).then((response) => { }, (error) => {
+        //         alert("There was an error trying to submit your time. Contact your instructor if the issue persists."); });
+        // }
 
         const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
-        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data;
+        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
         const timers = (await axios.get(`/timer/${this.props.user.id}/${this.state.selectedDate}`)).data[0];
 
         var allCustomTimers = [];
@@ -340,12 +444,35 @@ class History extends Component {
         event.preventDefault();
         const time = Number.parseInt(this.state.manualTime) * 60;
         if (time) {
-            if (this.state.manualCategory === "Writing" || this.state.manualCategory === "Research") {
-                await this.updateTimers(time, this.state.manualCategory.toLowerCase());
-            } else {
-                await this.updateCustomTimer(time, this.state.manualCategory);
-            }
+            await this.updateCustomTimer(time, this.state.manualCategory);
+            // if (this.state.manualCategory === "Writing" || this.state.manualCategory === "Research") {
+            //     await this.updateTimers(time, this.state.manualCategory.toLowerCase());
+            // } else {
+            //     await this.updateCustomTimer(time, this.state.manualCategory);
+            // }
         }
+    }
+
+    async deleteCustomTimer(name) {
+        event.preventDefault();
+
+        await axios.delete(`/customTimerName/${name}`);
+        const customTimers = (await axios.get(`/customTimer/${this.props.user.id}/${this.state.selectedDate}`)).data;
+        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
+
+        var allCustomTimers = [];
+        for(var i=0; i<distinctCustomNames.length; i++) {
+            var time = customTimers.filter((timer) => timer.name === distinctCustomNames[i].name);
+            var pushTimer = {};
+            if(time.length === 0) {
+                pushTimer = {name: distinctCustomNames[i].name, time: 0};
+            }
+            else {
+                pushTimer = {name: distinctCustomNames[i].name, time: time[0].time};
+            }
+            allCustomTimers.push(pushTimer);
+        }
+        this.setState({distinctCustomNames, allCustomTimers});
     }
 
     async onDateChanged(date) {
@@ -385,7 +512,7 @@ class History extends Component {
                 </div>
                 <div>
                     <div className="history-grid-goals">
-                        <Timers timers={this.state.timers} customTimers={this.state.customTimers} allCustomTimers={this.state.allCustomTimers} distinctCustomNames={this.state.distinctCustomNames} user={this.props.user} selectedDate={this.state.selectedDate} customName={this.state.customName} manualTime={this.state.manualTime} manualCategory={this.state.manualCategory} alarm={this.state.alarm} updateTimers={this.updateTimers} updateCustomTimer={this.updateCustomTimer} updateCustomName={this.updateCustomName} onChangeManualCategory={this.onChangeManualCategory} onChangeManualTime={this.onChangeManualTime} onSubmitManualTime={this.onSubmitManualTime} />
+                        <Timers timers={this.state.timers} customTimers={this.state.customTimers} allCustomTimers={this.state.allCustomTimers} distinctCustomNames={this.state.distinctCustomNames} user={this.props.user} selectedDate={this.state.selectedDate} customName={this.state.customName} manualTime={this.state.manualTime} manualCategory={this.state.manualCategory} alarm={this.state.alarm} updateTimers={this.updateTimers} updateCustomTimer={this.updateCustomTimer} updateCustomName={this.updateCustomName} onChangeManualCategory={this.onChangeManualCategory} onChangeManualTime={this.onChangeManualTime} onSubmitManualTime={this.onSubmitManualTime} deleteCustomTimer={this.deleteCustomTimer} />
                     </div>
                 </div><br /><br />
                 <div className="history-graph">
@@ -400,36 +527,47 @@ class History extends Component {
 class Timers extends Component {
     render() {
         const ready = this.props.timers;
+        var returnAllTimers = "";
+        if(this.props.allCustomTimers.length === 0) {
+            returnAllTimers = (<div className="no-timers-div">You currently have no timers. You can add a new timer by clicking the "Add New Timer" button on the right. Please note that you are allowed a maximum of 6 timers.</div>);
+        }
+
+        var all = this.props.allCustomTimers.length > 0 ? this.props.allCustomTimers.map((timer) => {
+            return (
+                <TimerEntry key={timer.name} name={timer.name} time={timer.time}
+                    updateCustomTimer={this.props.updateCustomTimer} deleteCustomTimer={this.props.deleteCustomTimer} />
+            )
+        }) : <div className="no-timers-div">You currently have no timers. You can add a new timer by clicking the "Add New Timer" button on the right. Please note that you are allowed a maximum of 6 timers.</div>;
 
         return (
-            <div style={{ display: "inline-block", paddingLeft: '100px', width: '100%', verticalAlign: 'top' }}>
-                    <h3 style={{ display: "inline-block", width: '30%' }} >Recorded Times</h3>
+            <div style={{ display: "inline-block", width: '100%', verticalAlign: 'top' }}>
+                    <h3 style={{ display: "inline-block", width: '30%', marginLeft: '3vw' }} >Recorded Times</h3>
                 <div>
-                    <div style={{ display: "inline-block", verticalAlign: 'top' }}>
+                    <div style={{ display: "inline-block", verticalAlign: 'top', marginLeft: '3vw' }}>
                         <div className="timer-pls-work">
                         <div className="timers-table" >
                             <div className="timer-table-body">
-                                <TimerEntry name="Writing" time={ready ? this.props.timers.writingtime : 0 } 
+                                {/* <TimerEntry name="Writing" time={ready ? this.props.timers.writingtime : 0 } 
                                     updateCustomTimer={this.props.updateCustomTimer} 
                                     updateTimers={this.props.updateTimers} />
                                 <TimerEntry name="Research" time={ready ? this.props.timers.researchtime : 0 } 
                                     updateCustomTimer={this.props.updateCustomTimer} 
-                                    updateTimers={this.props.updateTimers} />
-                                {
+                                    updateTimers={this.props.updateTimers} /> */}
+                                    {all}
+                                {/* {
                                     this.props.allCustomTimers.map((timer) => {
                                         return (
                                             <TimerEntry key={timer.name} name={timer.name} time={timer.time}
-                                                updateCustomTimer={this.props.updateCustomTimer} 
-                                                updateTimers={this.props.updateTimers} />
+                                                updateCustomTimer={this.props.updateCustomTimer} deleteCustomTimer={this.props.deleteCustomTimer} />
                                         )
                                     })
-                                }
+                                } */}
                             </div>
                         </div>
                         </div>
                     </div>
 
-                    <div className="timers-list" style={{ display: "inline-block", width: '70%', verticalAlign: 'top', marginLeft: 15, paddingLeft: 25, borderLeft: '2px solid #DDD' }}>
+                    <div className="timers-list" style={{ display: "inline-block", width: '65%', marginLeft: '2vw', verticalAlign: 'top' }}>
                         <Timer customTimers={this.props.customTimers} distinctCustomNames={this.props.distinctCustomNames} name={this.props.customName} updateTimers={this.props.updateCustomTimer} updateCustomName={this.props.updateCustomName} category="custom" />
                         <br />
                     </div>
@@ -456,8 +594,9 @@ class TimerEntry extends Component {
                 <Form.Row key={this.props.name}>
                     <Col>{this.props.name}</Col>
                     <Col>{secondsToHms(this.props.time)}</Col>
-                    <Button size="sml" onClick={() => this.setState({ editing: true, adding: true })}>Add</Button>
-                    <Button onClick={() => this.setState({ editing: true, adding: false })}>Subtract</Button>
+                    <Button size="sml" onClick={() => this.setState({ editing: true, adding: true })}> <FontAwesomeIcon icon={faPlus} /> </Button>
+                    <Button onClick={() => this.setState({ editing: true, adding: false })}> <FontAwesomeIcon icon={faMinus} /> </Button>
+                    <Button size="sml" onClick={() => this.props.deleteCustomTimer(this.props.name)}>Delete</Button>
                 </Form.Row>
             </Form>
         )
@@ -468,21 +607,22 @@ class TimerEntry extends Component {
                 const modifier = this.state.adding ? 1 : -1;
                 const time = Number.parseInt(this.state.time) * 60 * modifier;
                 if (time) {
-                    if (this.props.name === "Writing" || this.props.name === "Research") {
-                        await this.props.updateTimers(time, this.props.name.toLowerCase());
-                    } else {
-                        await this.props.updateCustomTimer(time, this.props.name);
-                    }
+                    await this.props.updateCustomTimer(time, this.props.name);
+                    // if (this.props.name === "Writing" || this.props.name === "Research") {
+                    //     await this.props.updateTimers(time, this.props.name.toLowerCase());
+                    // } else {
+                    //     await this.props.updateCustomTimer(time, this.props.name);
+                    // }
                 }
                 this.setState({ editing: false })
             }}>
                 <Form.Row >
                     <Col>{this.props.name}</Col>
                     <Col>{secondsToHms(this.props.time)}</Col>
-                    <Button type="submit">{this.state.adding ? "Add" : "Subtract"}</Button>
+                    <Button type="submit">{this.state.adding ? <FontAwesomeIcon icon={faPlus} /> : <FontAwesomeIcon icon={faMinus} />}</Button>
                     <Button onClick={() => this.setState({ editing: false })}>Cancel</Button>
                 </Form.Row>
-                <Form.Control placeholder="Enter time in minutes..." type="number" 
+                <Form.Control placeholder={this.state.adding ?  "Enter time in minutes to add..." : "Enter time in minutes to subtract..."} type="number" 
                     onChange={() => this.setState({ time: event.target.value })} />
             </Form>
         )
@@ -501,13 +641,14 @@ class Timer extends Component {
             editingTime: false,
             editingName: false,
             newName: false,
-            active: false
+            active: false,
         }
 
         this.startTimer = this.startTimer.bind(this);
         this.stopTimer = this.stopTimer.bind(this);
         this.resetTimer = this.resetTimer.bind(this);
         this.timerFinished = this.timerFinished.bind(this);
+        this.checkCustomNames = this.checkCustomNames.bind(this);
     }
 
     startTimer() {
@@ -552,6 +693,18 @@ class Timer extends Component {
         this.resetTimer();
     }
 
+    async checkCustomNames(time, category) {
+        const newName = this.props.distinctCustomNames.filter((timer) => timer.name === category);
+
+        if(newName.length === 0 && this.props.distinctCustomNames.length >= 6) {
+            alert("Error: you are only allowed a maximum of 6 timers. Please delete one of your current timers before adding a new one. Warning, deleting a timer will delete all the time data associated with it.");
+        }
+        else {
+            this.props.updateTimers(time, category);
+            this.setState({ newName: false })
+        }
+    }
+
     render() {
         const editTimeMode = (
             <Form style={ { 'padding': '30px' } } onSubmit={() => this.setState({ editingTime: false })}>
@@ -575,8 +728,6 @@ class Timer extends Component {
                     </Col>
                     <Col>
                         <Form.Control as="select" value={this.props.name} onChange={() => this.props.updateCustomName(event.target.value)}>
-                            <option>Writing</option>
-                            <option>Research</option>
                             {
                                 this.props.distinctCustomNames.map((timer) => <option key={timer.name}>{timer.name}</option>)
                             }
@@ -590,8 +741,7 @@ class Timer extends Component {
         const newNameMode = (
             <Form style={ { 'padding': '30px' } } onSubmit={async () => {
                 event.preventDefault();
-                await this.props.updateTimers(0, this.props.name);
-                this.setState({ newName: false })
+                await this.checkCustomNames(0, this.props.name);
             }}>
                 <Form.Row>
                     <Col><Form.Label>New Timer Name: </Form.Label></Col>

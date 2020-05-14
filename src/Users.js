@@ -631,7 +631,10 @@ class UserView extends React.Component {
                 let endDateWeek = startDate.weekday(6).format('MM/DD');
                 startDate.add(7,'days');
                 weeks.push(startDateWeek.concat(" - ", endDateWeek));
-                momentWeeks.push(startWeek);
+                momentWeeks.push({week: startWeek, year: Moment(startDate.weekday(0)).year()});
+                if(startWeek === 52) {
+                    startWeek = 0;
+                }
                 startWeek += 1;
             }
 
@@ -644,7 +647,7 @@ class UserView extends React.Component {
             for(var i=0; i<distinctCustomNames.length; i++) {
                 filterByName = allCustom.filter((timer) => timer.name === distinctCustomNames[i].name);
                 for(var j=0; j<momentWeeks.length; j++) {
-                    filterByWeek = filterByName.filter((timer) => Moment(timer.timerdate).week() === momentWeeks[j]);
+                    filterByWeek = filterByName.filter((timer) => Moment(timer.timerdate).week() === momentWeeks[j].week && Moment(timer.timerdate).year() === momentWeeks[j].year);
                     if(filterByWeek.length > 0) {
                         var totalHrs = filterByWeek.reduce((a, b) => a + b.time, 0) / 3600;
                         graphSeries[i].data.push(totalHrs);

@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
+import auth0Client from './Auth';
+import config from './auth_config.json';
 
 const todayDate = getTodaysDate();
 
@@ -17,8 +19,14 @@ class Forum extends Component {
             forumPosts: [],
             activePost: null,
             makingPost: false,
+            makingNote: false,
             newPostTitle: '',
             newPostText: '',
+            selectedView: this.props.user.classid,
+            classList: [],
+            privateNoteUsers: [],
+            // can be changed by Admin only:
+            selectedClass: this.props.user.classid,
         };
 
         this.onPost = this.onPost.bind(this);
@@ -27,18 +35,31 @@ class Forum extends Component {
     }
 
     async componentDidMount() {
-        const forumPosts = await this.getPosts();
-        this.setState({ forumPosts });
+        const classList = (await axios.get('/classes')).data;
+        const forumPosts = await this.getPosts(this.state.selectedView);
+        const notes = await this.getPosts(-1);
+        const privateNoteUsers = [];
+        for (const n of notes) {
+            if (!privateNoteUsers.includes(n.username))  {
+                privateNoteUsers[privateNoteUsers.length] = n.username;
+            }
+        }
+        this.setState({ classList, forumPosts, privateNoteUsers });
         window.gtag('event', 'Page View', {
             'event_category': 'Forum',
             'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
         });
     }
 
-    async onPost() {
-        const newPost = { title: this.state.newPostTitle, body: this.state.newPostText, userid: this.props.user.id, username: this.props.user.firstname, postdate: todayDate };
+    async onPost(isAdmin) {
+        // if Admin, this is an announcement
+        const title = isAdmin ? "Announcement: " + this.state.newPostTitle : this.state.newPostTitle;
+        const newPost = { title, body: this.state.newPostText, userid: this.props.user.id, username: `${this.props.user.firstname} ${this.props.user.lastname}`, postdate: todayDate, classid: this.state.selectedClass };
         await axios.post('/forum', newPost);
-        const forumPosts = await this.getPosts();
+
+        // Send email ?
+
+        const forumPosts = await this.getPosts(this.state.selectedView);
         this.setState({ forumPosts, newPostTitle: '', newPostText: '', makingPost: false });
     }
 
@@ -49,41 +70,58 @@ class Forum extends Component {
         }
 
         await axios.put(`/forum/${postId}`, post);
-        const forumPosts = await this.getPosts();
+        const forumPosts = await this.getPosts(this.state.selectedView);
         const activePost = (await axios.get(`/forum/${postId}`)).data[0];
         this.setState({ forumPosts, activePost });
     }
 
-    async getPosts() {
-        const allPosts = (await axios.get(`/forumPosts`)).data;        
-        const forumPosts = [];
-        for (const post of allPosts) {
-            const classId = (await axios.get(`/user/${post.userid}`)).data[0].classid;
-            if (classId === this.props.user.classid) {
-                forumPosts.push(post);
-            }
-        }
+    async getPosts(classCode) {
+    
+        // Forum Posts with classCode as classid
+        // Private notes have classCode == -1
+        let forumPosts = (await axios.get(`/forumPosts/${classCode}`)).data;        
 
+        // Users should only see their private posts
+        if (classCode === -1 && (auth0Client.getProfile()[config.roleUrl] !== 'admin')) {
+            forumPosts = forumPosts.filter((post) => post.userid === this.props.user.id);
+        }
         return forumPosts;
     }
 
     render() {
         let dates = [];
+        let chosenView;
+        const isAdmin = auth0Client.getProfile()[config.roleUrl] === 'admin';
 
-        return(
+        return (
             <div className="forum-body">
                 <div className="sidebar">
                     <div className="post-button">
-                        <Button onClick={() => this.setState({ makingPost: true })}>+ New Post</Button>
+                        <Button onClick={() => this.setState({ makingPost: true })}>{isAdmin ? '+ New Announcement' : '+ New Post'}</Button>
+                        { isAdmin ? null : <Button onClick={() => this.setState({ makingNote: true, selectedClass: -1 })}>+ Instructor Note</Button> }
+
                         <Modal id="new-post" size="lg" show={this.state.makingPost} onHide={() => this.setState({makingPost: false})}>
                             <Modal.Header>
                                 <Modal.Title>New Post:</Modal.Title>
                             </Modal.Header>
-                            <Form onSubmit={(event) => {
+                            <Form onSubmit={async (event) => {
                                 event.preventDefault()
                                 this.setState({makingPost: false});
-                                this.onPost();
+                                await this.onPost(isAdmin);
                             }}>
+                                {isAdmin ? (<Form.Row>
+                                    <Form.Label>Class: </Form.Label>
+                                    <Form.Control as="select" onChange={(event) => {
+                                        event.preventDefault();
+                                        // Use regex to find classid, e.g. "My Class (3)"
+                                        const matches = event.target.value.match(/\(-?([0-9]+)\)/);
+                                        const idValue = parseInt(matches[0].slice(1, matches[0].length - 1));
+                                        this.setState({ selectedClass: idValue })
+                                    }} >
+                                        <option key={0}>Select... (0)</option>
+                                        {this.state.classList.map((c) => <option key={c.id}>{`${c.classname} (${c.id})`}</option>)}
+                                    </Form.Control>
+                                </Form.Row>) : null}
                                 <Form.Row>
                                     <Form.Label>Title: </Form.Label>
                                     <Form.Control value={this.state.newPostTitle} onChange={(event) => this.setState({ newPostTitle: event.target.value })} />
@@ -98,6 +136,76 @@ class Forum extends Component {
                                 </Button>
                             </Form>
                         </Modal>
+
+                        <Modal id="new-note" size="lg" show={this.state.makingNote} onHide={() => this.setState({ makingNote: false, selectedClass: this.props.user.classid })}>
+                            <Modal.Header>
+                                <Modal.Title>New Private Post:</Modal.Title>
+                            </Modal.Header>
+                            <Form onSubmit={async (event) => {
+                                event.preventDefault()
+                                console.log(this.state.selectedClass);
+                                await this.onPost(isAdmin);
+                                this.setState({
+                                    makingNote: false,
+                                    selectedClass: this.props.user.classid
+                                })
+                            }}>
+                                <Form.Row>
+                                    <Form.Label>Subject: </Form.Label>
+                                    <Form.Control value={this.state.newPostTitle} onChange={(event) => this.setState({ newPostTitle: event.target.value })} />
+                                </Form.Row>
+                                <Form.Row>
+                                    <Form.Label>Body: </Form.Label>
+                                    <Form.Control value={this.state.newPostText} onChange={(event) => this.setState({ newPostText: event.target.value })} />
+                                </Form.Row>
+                                <Button variant="primary" type="submit">Post</Button>
+                                <Button variant="secondary" onClick={() => this.setState({ makingNote: false, selectedClass: this.props.user.classid })}>
+                                    Cancel
+                                </Button>
+                            </Form>
+                        </Modal>
+
+                        <Form onSubmit={async (event) => {
+                            event.preventDefault();
+                            const forumPosts = await this.getPosts(this.state.selectedView);
+                            this.setState({ forumPosts }); // selectedView: chosenView });
+                        }}>
+                            <Form.Label>View: </Form.Label>
+                            <Form.Control as="select" onChange={(event) => {
+                                event.preventDefault();
+                                // Use regex to find classid, e.g. "My Class (3)"
+                                const matches = event.target.value.match(/\(-?([0-9]+)\)/);
+                                const idValue = parseInt(matches[0].slice(1, matches[0].length - 1));
+                                this.setState({ selectedView: idValue })
+                            }} >
+                                <option key={0}>Select... (0) </option>
+                                <option key={-1}>Instructor Notes (-1)</option>
+                                {isAdmin ? this.state.classList.map((c) => <option key={c.id}>{`${c.classname} (${c.id})`}</option>) 
+                                    : <option key={this.props.user.classid}>My Class ({this.props.user.classid})</option>}
+                            </Form.Control>
+                            <Button type="submit">Change View</Button>
+                        </Form>
+                        {(isAdmin && this.state.selectedView === -1) ? (
+                            <Form onSubmit={async (event) => {
+                                event.preventDefault();
+                                let forumPosts = await this.getPosts(-1);
+                                forumPosts = (this.state.filter === "View All") ? forumPosts :
+                                    (this.state.filter === "View Today's Posts") ? forumPosts.filter((post) => post.postdate === todayDate) :
+                                    forumPosts.filter((post) => this.state.filter === post.username);
+                                this.setState({ forumPosts });
+                            }}>
+                                <Form.Label>Filter: </Form.Label>
+                                <Form.Control as="select" onChange={(event) => {
+                                    event.preventDefault();
+                                    this.setState({ filter: event.target.value });
+                                }} >
+                                    <option key={-1}>View All</option>
+                                    <option key={0}>View Today's Posts</option>
+                                    {this.state.privateNoteUsers.map((username) => <option key={username}>{username}</option>)}
+                                </Form.Control>
+                                <Button type="submit">Submit</Button>
+                            </Form>
+                        ) : null}
                     </div>
                     <br />
                     <div className="post-list">

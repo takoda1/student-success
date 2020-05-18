@@ -142,7 +142,7 @@ Grouplinks:
 {id: int, groupid: foreignKey(groups: id), link: string, title: string, linkdate: string, userid: foreignKey(users: id), username: string}
 
 Forum:
-{id: int, title: string, body: string, userid: int, username: string, postdate: string}
+{id: int, title: string, body: string, userid: int, username: string, postdate: string, classid: int}
 
 Notes:
 { id: int, userid: int, notedate: "yyyy-mm-dd", notetext: string }
@@ -331,11 +331,13 @@ DELETE /grouplinks/:id      Deletes a link by its id
 
 GET /forumPosts       Gets all forum posts
 
+GET /forumPosts/:classid    Gets all forum posts with given classid (Private notes have classid = -1)
+
 GET /forum/:id		Gets a forum post by its id
 
 PUT /forum/:id		Updates a forum post by its id, requires body of {title: string, body: string}
 
-POST /forum			Posts a forum post, requires body of  {title: string, body: string, userid: int, username: string, postdate: string}
+POST /forum			Posts a forum post, requires body of  {title: string, body: string, userid: int, username: string, postdate: string, classid: int}
 
 DELETE /forum/:id	Deletes a forum post by its id 
 

@@ -114,6 +114,7 @@ app.put('/grouplinks/:id', linkQueries.putLink)
 app.delete('/grouplinks/:id', linkQueries.deleteLink)
 
 app.get('/forumPosts', forumQueries.getAllPosts)
+app.get('/forumPosts/:classid', forumQueries.getPostsByClass)
 app.get('/forum/:id', forumQueries.getPost)
 app.put('/forum/:id', forumQueries.putPost)
 app.post('/forum', forumQueries.addPost)

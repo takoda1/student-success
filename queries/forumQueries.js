@@ -7,6 +7,22 @@ const getAllPosts = (request, response) => {
     })
 }
 
+const getPostsByClass = (request, response) => {
+    const classid = parseInt(request.params.classid);
+
+    if (!isNaN(classid)) {
+        pool.query('SELECT * FROM forum WHERE classid = $1', [classid], (error, results) => {
+            if (error) {
+                throw error
+            } else {
+                response.status(200).json(results.rows);
+            }
+        })
+    } else {
+        response.status(400).json({ "Error": "Parameter classid not a number" })
+    }
+}
+
 const getPost = (request, response) => {
     const id = parseInt(request.params.id)
 
@@ -27,10 +43,10 @@ const getPost = (request, response) => {
 
 
 const addPost = (request, response) => {
-    const { title, body, userid, username, postdate } = request.body;
+    const { title, body, userid, username, postdate, classid } = request.body;
 
-    if (title != null && body != null && !isNaN(userid) && username != null && postdate != null) {
-        pool.query('INSERT INTO forum (title, body, userid, username, postdate) VALUES ($1, $2, $3, $4, $5)', [title, body, userid, username, postdate], (error) => {
+    if (title != null && body != null && !isNaN(userid) && username != null && postdate != null && !isNaN(classid)) {
+        pool.query('INSERT INTO forum (title, body, userid, username, postdate, classid) VALUES ($1, $2, $3, $4, $5, $6)', [title, body, userid, username, postdate, classid], (error) => {
             if (error) {
                 throw error
             }
@@ -40,7 +56,7 @@ const addPost = (request, response) => {
         })
     }
     else {
-        response.status(400).send("Error: One of the 5 fields do not exist or are named incorrectly or are null")
+        response.status(400).send("Error: One of the 6 fields do not exist or are named incorrectly or are null")
     }
     
 }
@@ -83,6 +99,7 @@ const deletePost = (request, response) => {
 
 module.exports = {
     getAllPosts,
+    getPostsByClass,
     getPost,
     addPost,
     putPost,

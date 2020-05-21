@@ -15,4 +15,7 @@ const pool = new Pool({
     ssl: isProduction,
 })
 
-module.exports = { pool }
+const emailAddress = isProduction ? process.env.EMAIL_ADDR : process.env.DEV_EMAIL_ADDR;
+const emailPassword = isProduction ? process.env.EMAIL_PASS : process.env.DEV_EMAIL_PASS;
+
+module.exports = { pool, emailAddress, emailPassword }

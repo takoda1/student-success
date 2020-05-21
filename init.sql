@@ -115,11 +115,12 @@ CREATE TABLE forum (
 	body TEXT,
 	userid INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	username TEXT,
-	postdate TEXT
+	postdate TEXT,
+	classid INTEGER
 );
 
-INSERT INTO forum (id, title, body, userid, username, postdate)
-VALUES (1, 'a title', 'a body', 1, 'A username', '2019-09-09');
+INSERT INTO forum (id, title, body, userid, username, postdate, classid)
+VALUES (1, 'a title', 'a body', 1, 'A username', '2019-09-09', 1);
 
 CREATE TABLE forumcomment (
 	id SERIAL PRIMARY KEY,

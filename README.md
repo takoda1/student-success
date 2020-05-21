@@ -30,6 +30,8 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_DATABASE=<database name>
 PORT=3005
+DEV_EMAIL_ADDR=testaddress@email.com
+DEV_EMAIL_PASS=testemailpassword
 
 - Fork the project https://github.com/takoda1/student-success, then clone it
 -`cd student-success`
@@ -142,7 +144,7 @@ Grouplinks:
 {id: int, groupid: foreignKey(groups: id), link: string, title: string, linkdate: string, userid: foreignKey(users: id), username: string}
 
 Forum:
-{id: int, title: string, body: string, userid: int, username: string, postdate: string}
+{id: int, title: string, body: string, userid: int, username: string, postdate: string, classid: int}
 
 Notes:
 { id: int, userid: int, notedate: "yyyy-mm-dd", notetext: string }
@@ -160,6 +162,9 @@ Classlinks:
 {id: int, classid: int, linkname: string, linkurl: string}
 
 ## Current endpoints:
+
+### Send Email
+POST /send  Sends an email to specified recipients, requires a body of {recipients: string[], subject: string, message: string} (message is expected in HTML format)
 
 ### Users
 
@@ -337,11 +342,13 @@ DELETE /grouplinks/:id      Deletes a link by its id
 
 GET /forumPosts       Gets all forum posts
 
+GET /forumPosts/:classid    Gets all forum posts with given classid (Private notes have classid = -1)
+
 GET /forum/:id		Gets a forum post by its id
 
 PUT /forum/:id		Updates a forum post by its id, requires body of {title: string, body: string}
 
-POST /forum			Posts a forum post, requires body of  {title: string, body: string, userid: int, username: string, postdate: string}
+POST /forum			Posts a forum post, requires body of  {title: string, body: string, userid: int, username: string, postdate: string, classid: int}
 
 DELETE /forum/:id	Deletes a forum post by its id 
 

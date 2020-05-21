@@ -32,14 +32,11 @@ app.
 */
 
 //Load connection pool for postgres
-const { pool } = require('./config')
+const { pool, emailAddress, emailPassword } = require('./config')
 
 const port = 3000
 
 // EMAIL SETUP
-const emailAddress = process.env.NODE_ENV === 'production' ? process.env.EMAIL_ADDR : process.env.DEV_EMAIL_ADDR;
-const emailPassword = process.env.NODE_ENV === 'production' ? process.env.EMAIL_PASS : process.env.DEV_EMAIL_PASS;
-
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     secure: true,

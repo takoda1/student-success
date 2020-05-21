@@ -49,12 +49,12 @@ Expects: request.body to have json:
 }
 */
 const addWeeklyGoal = (request, response) => {
-    const { userid, goaldate, goaltext, completed, completedate } = request.body;
+    const { userid, goaldate, goaltext, completed, completedate, priority } = request.body;
 
     if (userid != null && goaldate != null) {
         if (goaldate.match(dateReg) != null && typeof completed === "boolean" && 
-            completedate.match(dateReg)) {
-            pool.query('INSERT INTO weeklygoals (userid, goaldate, goaltext, completed, completedate) VALUES ($1, $2, $3, $4, $5)', [userid, goaldate, goaltext, completed, completedate], (error) => {
+            completedate.match(dateReg) && !isNaN(priority)) {
+            pool.query('INSERT INTO weeklygoals (userid, goaldate, goaltext, completed, completedate, priority) VALUES ($1, $2, $3, $4, $5, $6)', [userid, goaldate, goaltext, completed, completedate, priority], (error) => {
                 if (error) {
                     throw error
                 }
@@ -64,7 +64,7 @@ const addWeeklyGoal = (request, response) => {
             })
         }
         else {
-            response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean')
+            response.status(400).send('Failure. Either the date is not in the format yyyy-mm-dd, or completed is not a boolean, or priority is not a number')
         }
     }
     else {
@@ -78,9 +78,9 @@ const addWeeklyGoal = (request, response) => {
 const putWeeklyGoal = (request, response) => {
     const id = parseInt(request.params.id)
 
-    const { goaltext, completed, completedate } = request.body;
-    if (!isNaN(id) && typeof completed === "boolean" && completedate.match(dateReg)) {
-        pool.query('UPDATE weeklygoals SET goaltext = $2, completed = $3, completedate = $4 WHERE id = $1', [id, goaltext, completed, completedate], (error) => {
+    const { goaltext, completed, completedate, priority } = request.body;
+    if (!isNaN(id) && typeof completed === "boolean" && completedate.match(dateReg) && !isNaN(priority)) {
+        pool.query('UPDATE weeklygoals SET goaltext = $2, completed = $3, completedate = $4, priority = $5 WHERE id = $1', [id, goaltext, completed, completedate, priority], (error) => {
             if (error) {
                 throw error
             }
@@ -90,7 +90,7 @@ const putWeeklyGoal = (request, response) => {
         });
     }
     else {
-        response.status(400).send('Failure. Either the id provided is not a number, completed is not a boolean, or completedate is not in the yyyy-mm-dd format')
+        response.status(400).send('Failure. Either the id or priority provided is not a number, completed is not a boolean, or completedate is not in the yyyy-mm-dd format')
     }
     
 }

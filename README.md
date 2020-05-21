@@ -123,7 +123,7 @@ Subgoals:
 {id: int, userid: foreignKey(Users: id), parentgoal: foreignKey(Goals: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean}
 
 Weeklygoals:
-{id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean, completedate: yyyy-mm-dd}
+{id: int, userid: foreignKey(Users: id), goaldate: yyyy-mm-dd, goaltext: string, completed: boolean, completedate: yyyy-mm-dd, priority: int}
 
 Timers:
 {id: int, userid: foreignKey(Users: id), timerdate: yyyy-mm-dd, researchtime: int, writingtime: int, customtime: int}    (time is in seconds)
@@ -232,7 +232,7 @@ Returns all weekly goals for a specified user (userid, references primary key of
 GET /weeklyGoal/:id
 Returns a single goal referenced by the goal primary key id
 
-POST /weeklyGoal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean, completedate: "yyyy-mm-dd"})
+POST /weeklyGoal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean, completedate: "yyyy-mm-dd", priority: number})
 Posts a weekly goal with specified values
 
 PUT /weeklyGoal/:id  (Requires json/js body of {goaltext: string, completed: boolean, completedate: "yyyy-mm-dd", priority: number})

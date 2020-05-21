@@ -312,6 +312,28 @@ class ActivePost extends Component {
         };
         await axios.post(`/comment`, reply);
         const comments = (await axios.get(`commentsByPost/${this.props.post.id}`)).data;
+
+        // If Private note, send email notification
+        console.log(this.props.post);
+        if (this.props.post.classid === -1) {             
+            const isAdmin = auth0Client.getProfile()[config.roleUrl] === 'admin';
+            const recipients = [];
+            recipients.push(isAdmin ? (await axios.get(`/user/${this.props.post.userid}`)).data[0].email : this.props.user.email);
+            
+            const message = {
+                recipients,
+                subject: `New Comment on a Private Note`, // Subject line
+                messageHtml: `<h4>Your Note "${this.state.titleText}" has a new comment</h4>
+                                <p>${reply.username}: ${this.state.newCommentText}</p>
+                                </br>
+                                <p>Visit <a href="https://student-success.herokuapp.com/forum">here</a> and select Instructor Notes to view the post.</p>
+                             `, // html body
+            }
+
+            await axios.post('/send', message); // Send the email!
+        }
+
+
         this.setState({ comments, newCommentText: "" });
     }
 

@@ -37,7 +37,7 @@
 }
 .history-grid-goals {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 .history-goals-aside {
   text-align: center;
@@ -165,4 +165,7 @@
   background-color: #A6C4FF;
   border-radius: 10px;
   padding-left: 3px;
+}
+.no-timers-div {
+  width: 20vw;
 }

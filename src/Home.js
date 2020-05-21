@@ -55,6 +55,7 @@ class Home extends React.Component {
         this.onWeeklyGoalRemoved = this.onWeeklyGoalRemoved.bind(this);
         this.onWeeklyGoalCheck = this.onWeeklyGoalCheck.bind(this);
         this.makeDailyGoal = this.makeDailyGoal.bind(this);
+        this.makeDailyGoalFromSub = this.makeDailyGoalFromSub.bind(this);
 
         this.onDateChanged = this.onDateChanged.bind(this);
 
@@ -256,7 +257,8 @@ class Home extends React.Component {
             goaldate: this.state.selectedMomentDate, 
             goaltext: this.state.newWeeklyText, 
             completed: false, 
-            completedate: "2100-01-01" 
+            completedate: "2100-01-01",
+            priority: (this.state.unfilteredWeeklyGoals.length + 1) 
         };
         await axios.post('/weeklyGoal', newGoal).then((response) => { }, (error) => {
             alert("There was an error trying to submit the long term goal. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
@@ -267,12 +269,13 @@ class Home extends React.Component {
         });
     }
 
-    async onWeeklyGoalEdited(event, newText, goalId, completed, completeDate) {
+    async onWeeklyGoalEdited(event, newText, goalId, completed, completeDate, priority) {
         event.preventDefault();
         const updatedGoal = { 
             goaltext: newText, 
             completed: completed, 
-            completedate: Moment(completeDate).format("YYYY-MM-DD") 
+            completedate: Moment(completeDate).format("YYYY-MM-DD"),
+            priority
         };
         await axios.put(`/weeklyGoal/${goalId}`, updatedGoal);
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
@@ -295,10 +298,10 @@ class Home extends React.Component {
     async onWeeklyGoalCheck(completed, goal) {
         var updatedGoal;
         if(completed === true) {
-            updatedGoal = { goaltext: goal.goaltext, completed, completedate: this.state.selectedMomentDate };
+            updatedGoal = { goaltext: goal.goaltext, completed, completedate: this.state.selectedMomentDate, priority: goal.priority };
         }
         else {
-            updatedGoal = { goaltext: goal.goaltext, completed, completedate: "2100-01-01" };
+            updatedGoal = { goaltext: goal.goaltext, completed, completedate: "2100-01-01", priority: goal.priority };
         }
         await axios.put(`/weeklyGoal/${goal.id}`, updatedGoal);
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
@@ -392,11 +395,8 @@ class Home extends React.Component {
         this.setState({ editingReflections });
     }
 
-    async makeDailyGoal(event, goalId, completed, text, subgoals) {
+    async makeDailyGoal(event, completed, text, subgoals) {
         event.preventDefault();
-        await axios.delete(`/weeklyGoal/${goalId}`);
-        const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
-        const filteredWeeklyGoals = weeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
 
         const newGoal = { 
             userid: this.props.user.id, 
@@ -412,7 +412,6 @@ class Home extends React.Component {
             var newDailyGoal = goals.filter(goal => goal.goaltext === text);
 
             for(var i=0; i<subgoals.length; i++) {
-                await axios.delete(`/weeklySubgoal/${subgoals[i].id}`);
                 var newSubGoal = {
                     userid: this.props.user.id,
                     parentgoal: newDailyGoal[0].id,
@@ -424,13 +423,54 @@ class Home extends React.Component {
             }
         }
 
-        this.setState({weeklyGoals, filteredWeeklyGoals, unfilteredWeeklyGoals: weeklyGoals, goals});
+        this.setState({goals});
 
         const weekDates = [];
         const weekCompleted = [];
         const weekDayNames = [];
 
         for(i=0; i<=6; i++) {
+            weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
+            weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
+        }
+
+        var thisDaysGoals = [];
+        for(i=0; i<weekDates.length; i++) {
+            thisDaysGoals = (await axios.get(`/goals/${this.props.user.id}/${weekDates[i]}`)).data;
+            if(thisDaysGoals.length === 0) {
+                weekCompleted.push(null);
+            }
+            else {
+                weekCompleted.push(thisDaysGoals.reduce((memo, goal) => { return memo ? goal.completed : false }, true));
+            }
+            
+        }
+        this.setState({weekDates, weekCompleted, weekDayNames});
+        
+        this.checkTotalGoals();
+
+    }
+
+    async makeDailyGoalFromSub(event, completed, text) {
+        event.preventDefault();
+
+        const newGoal = { 
+            userid: this.props.user.id, 
+            goaldate: this.state.selectedMomentDate, 
+            goaltext: text, 
+            completed: completed, 
+            priority: (this.state.goals.length + 1) 
+        };
+        await axios.post('/goal', newGoal);
+        const goals = (await axios.get(`/goals/${this.props.user.id}/${this.state.selectedMomentDate}`)).data;
+
+        this.setState({goals});
+
+        const weekDates = [];
+        const weekCompleted = [];
+        const weekDayNames = [];
+
+        for(var i=0; i<=6; i++) {
             weekDates.push(Moment(this.state.selectedDate).weekday(i).format("YYYY-MM-DD"));
             weekDayNames.push(Moment(this.state.selectedDate).weekday(i).format("dddd"));
         }
@@ -508,12 +548,9 @@ class Home extends React.Component {
                                 <WeekView weekDates={this.state.weekDates} weekCompleted={this.state.weekCompleted} weekDayNames={this.state.weekDayNames} />
                                 <div className="home-flex-container">
                                     <Goals goals={this.state.goals} goalsCompleted={this.state.goalsCompleted} onGoalCheck={this.onGoalCheck} onGoalAdded={this.onGoalSubmitted} onGoalTyped={this.onGoalTyped} onGoalEdited={this.onGoalEdited} onGoalRemoved={this.onGoalRemoved} newGoalText={this.state.newGoalText} selectedMomentDate={this.state.selectedMomentDate} />
-                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} makeDailyGoal={this.makeDailyGoal} />
+                                    <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} makeDailyGoal={this.makeDailyGoal} makeDailyGoalFromSub={this.makeDailyGoalFromSub} />
                                     <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onExtraReflectionChanged={this.onExtraReflectionChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
                                 </div>
-                                {/* <div className="home-bottom-flex">
-                                    
-                                </div> */}
                             </div>
                         )
                     }
@@ -608,7 +645,7 @@ class WeeklyGoals extends React.Component {
                 <h2 style={{textAlign: 'center', textDecoration: 'underline'}}>Long Term</h2>
                 <h3>Goals</h3>
                 <div>
-                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} unfilteredWeeklyGoals={this.props.unfilteredWeeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} />
+                    <WeeklyGoalList user={this.props.user} selectedMomentDate={this.props.selectedMomentDate} weeklyGoals={this.props.weeklyGoals} unfilteredWeeklyGoals={this.props.unfilteredWeeklyGoals} newWeeklyText={this.props.newWeeklyText} onWeeklyGoalTyped={this.props.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.props.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} makeDailyGoalFromSub={this.props.makeDailyGoalFromSub} />
                 </div>
             </div>
         );
@@ -616,24 +653,63 @@ class WeeklyGoals extends React.Component {
 }
 
 class WeeklyGoalList extends React.Component {
+    constructor(props) {
+        super(props);
+    
+        this.state = {
+          prioritizing: false,
+        }
+      }
+
     render() {
-        const sortedWeeklyGoals = this.props.unfilteredWeeklyGoals.sort(function(a, b){return a.id - b.id});
-        const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} />);
-        return(
-            <ul className="goal-list">
-                {listWeeklyGoals}
-                <Form className="addGoal" onSubmit={this.props.onWeeklyGoalSubmitted}>
-                    <Form.Row>
-                        <Col className="goal-input">
-                            <Form.Control type="text" className="addGoalField" value={this.props.newWeeklyText} onChange={this.props.onWeeklyGoalTyped} />
-                        </Col>
-                        <Col className="goal-buttons-col">
-                            <Button type="submit">Add Goal</Button>
-                        </Col>
-                    </Form.Row>
-                </Form>
-            </ul>
+        const sortedWeeklyGoals = this.props.unfilteredWeeklyGoals.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
+        const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} makeDailyGoalFromSub={this.props.makeDailyGoalFromSub} />);
+
+        const viewMode = (
+            <div>
+                <Button onClick={() => this.setState({ prioritizing: true })}>Reorder List</Button>
+                <ul className="goal-list">
+                    {listWeeklyGoals}
+                    <Form className="addGoal" onSubmit={this.props.onWeeklyGoalSubmitted}>
+                        <Form.Row>
+                            <Col className="goal-input">
+                                <Form.Control type="text" className="addGoalField" value={this.props.newWeeklyText} onChange={this.props.onWeeklyGoalTyped} />
+                            </Col>
+                            <Col className="goal-buttons-col">
+                                <Button type="submit">Add Goal</Button>
+                            </Col>
+                        </Form.Row>
+                    </Form>
+                </ul>
+            </div>
         );
+
+        const priorityMode = (
+            <div>
+              <ul className="goal-list">
+                <Form onSubmit={ () => this.setState({ prioritizing: false }) }>
+                  {sortedWeeklyGoals.map((goal) => {
+                    return (
+                      <Form.Row key={goal.id}>
+                        <Col>{goal.goaltext}</Col>
+                        <Col>
+                          <Form.Control as="select" value={goal.priority} onChange={async (event) => {
+                            event.preventDefault();
+                            await this.props.onWeeklyGoalEdited(event, goal.goaltext, goal.id, goal.completed, goal.completedate, event.target.value);
+                          }}>
+                              <option key={0} >{0}</option>
+                              {this.props.unfilteredWeeklyGoals.map((group, index) => <option key={index+1}>{index+1}</option>)}
+                          </Form.Control>
+                        </Col>
+                      </Form.Row>
+                    );
+                  })}
+                  <Button type="submit">Close</Button>
+                </Form>
+              </ul>
+            </div>
+          );
+          return this.state.prioritizing ? priorityMode : viewMode;
     }
 }
 
@@ -664,7 +740,8 @@ class WeeklyGoalItem extends React.Component {
                     this.state.goaltext, 
                     this.props.goal.id, 
                     this.props.goal.completed, 
-                    this.props.goal.completedate
+                    this.props.goal.completedate,
+                    this.props.goal.priority
                 );
             }}>
                 <Form.Row className="goal-row">
@@ -688,8 +765,8 @@ class WeeklyGoalItem extends React.Component {
                     <Col className="goal-buttons-col">
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
-                        <OverlayTrigger overlay={<Tooltip className="make-daily-goal-tooltip">Move to Daily Goal List</Tooltip>}>
-                            <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.id, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
+                        <OverlayTrigger overlay={<Tooltip className="make-daily-goal-tooltip">Create Daily Goal</Tooltip>}>
+                            <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
                                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
                             </Button>
                         </OverlayTrigger>
@@ -716,6 +793,11 @@ class WeeklyGoalItem extends React.Component {
                                         const subgoals = (await axios.get(`/weeklySubgoalByParent/${this.props.goal.id}`)).data;
                                         this.setState({ subgoals });
                                     }}>Remove</Button>
+                                    <OverlayTrigger overlay={<Tooltip className="make-daily-goal-tooltip">Create Daily Goal</Tooltip>}>
+                                        <Button onClick={(event) => this.props.makeDailyGoalFromSub(event, subgoal.completed, subgoal.goaltext)} size="sm" id="weeklySubgoalToggle">
+                                            <FontAwesomeIcon icon={faAngleDoubleLeft} />
+                                        </Button>
+                                    </OverlayTrigger>
                                 </Col>
                             </Form.Row>
                         );

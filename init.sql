@@ -53,7 +53,8 @@ CREATE TABLE weeklygoals (
 	goaldate DATE NOT NULL,
 	goaltext TEXT,
 	completed BOOLEAN NOT NULL,
-	completedate DATE
+	completedate DATE,
+	priority INTEGER
 );
 
 CREATE TABLE weeklysubgoals (

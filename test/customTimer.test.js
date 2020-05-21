@@ -13,9 +13,9 @@ describe('CUSTOM TIMER API', () => {
 
     var customTimer = {
         userid: 1,
-        timerdate: '2019-09-09',
-        time: 3600,
-        name: "running"
+        timerdate: '2020-05-13',
+        time: 300,
+        name: "DeleteThis"
     }
 
     var timerId = ''
@@ -96,6 +96,24 @@ describe('CUSTOM TIMER API', () => {
             .then((res) => {
                 res.should.have.status(200)
                 res.text.should.contain('Timer deleted')
+            })
+    })
+
+    it('Deletes all instances of a timer\'s name', () => {
+        // var newtimer = {
+        //     userid: 1,
+        //     timerdate: '2020-05-12',
+        //     time: 300,
+        //     name: "DeleteThis"
+        // }
+        return chai.request(server)
+            .delete('/customTimerName/"DeleteThis')
+            .then((res) => {
+                res.text.should.contain('Timer name deleted')
+                return chai.request(server).get('/customTimer/' + timerId).then((result) => {
+                    res.should.have.status(200);
+                    result.body.should.not.contain("DeleteThis")
+                })
             })
     })
 })

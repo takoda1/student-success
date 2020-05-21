@@ -65,7 +65,7 @@ class GoalList extends React.Component {
                 <Form.Row key={goal.id}>
                   <Col>{goal.goaltext}</Col>
                   <Col>
-                    <Form.Control as="select" onChange={async (event) => {
+                    <Form.Control as="select" value={goal.priority} onChange={async (event) => {
                       event.preventDefault();
                       await this.props.onGoalEdited(event, goal.goaltext, goal.id, goal.completed, event.target.value);
                     }}>
@@ -76,7 +76,7 @@ class GoalList extends React.Component {
                 </Form.Row>
               );
             })}
-            <Button type="submit">Save</Button>
+            <Button type="submit">Close</Button>
           </Form>
         </ul>
       </div>

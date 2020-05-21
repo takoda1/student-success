@@ -89,7 +89,6 @@ class Group extends Component {
             if(hideThisWeekly === null) {
                 hideThisWeekly = false;
             }
-            // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
             for (const goal of thisWeeklyGoals) {
                 const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
                 goal.subgoals = subgoals;
@@ -97,11 +96,10 @@ class Group extends Component {
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals, hide: hideThisWeekly};
             groupWeeklyGoals.push(theseWeeklyGoals);
 
-            var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
             var thisCustomTimers = (await axios.get(`/customTimer/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
-            var distinctCustomNames = (await axios.get(`/customTimerByUser/${groupUsers[i].id}`)).data;
+            var distinctCustomNames = (await axios.get(`/customTimerByUser/${groupUsers[i].id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
             var hideThisTimer = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hidetimer;
-            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, timers: thisTimers, customTimers: thisCustomTimers, distinctCustomNames: distinctCustomNames, hide: hideThisTimer};
+            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, customTimers: thisCustomTimers, distinctCustomNames: distinctCustomNames, hide: hideThisTimer};
             groupTimers.push(theseTimers);
 
             var thisReflections = (await axios.get(`/reflection/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
@@ -112,10 +110,6 @@ class Group extends Component {
             var thisLink = groupLinksApi.filter((link) => link.userid === groupUsers[i].id);
             var thisNewLink = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, links: thisLink}
             groupLinks.push(thisNewLink);
-
-            // var thisCustomTimers = (await axios.get(`/customTimer/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
-            // var theseCustomTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, customTimers: thisCustomTimers, hide: hideThisTimer};
-            // groupCustomTimers.push(theseCustomTimers);
         }
 
 
@@ -225,10 +219,6 @@ class Group extends Component {
         })
 
         this.setState({ hideWeekly: checked, groupWeeklyGoals, hideTimer: getNewHideTimer, hideReflection: getNewHideReflection })
-
-        // const editUser = { firstname: this.props.user.firstname, lastname: this.props.user.lastname, email: this.props.user.email, groupid: this.props.user.groupid, hidetimer: notNull, hidereflection: checked, classid: this.props.user.classid};
-        // await axios.put(`/user/${this.props.user.id}`, editUser);
-        // this.setState({hideWeekly: !this.state.hideWeekly});
     }
 
     async onDateChanged(date) {
@@ -249,12 +239,10 @@ class Group extends Component {
                 const subgoals = (await axios.get(`/subgoalByParent/${goal.id}`)).data;
                 goal.subgoals = subgoals;
             } 
-            // thisGoals = thisGoals.sort(function(a, b){return a.id - b.id});
             var theseGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, goals: thisGoals};
             groupGoals.push(theseGoals);
 
             var thisWeeklyGoals = (await axios.get(`/weeklyGoals/${groupUsers[i].id}`)).data;
-            // const filteredWeeklyGoals = thisWeeklyGoals.filter(goal => (Moment(goal.completedate).format("YYYY-MM-DD") === "2100-01-01" || Moment(goal.completedate).format("YYYY-MM-DD") === this.state.selectedMomentDate));
             for (const goal of thisWeeklyGoals) {
                 const subgoals = (await axios.get(`/weeklySubgoalByParent/${goal.id}`)).data;
                 goal.subgoals = subgoals;
@@ -263,11 +251,10 @@ class Group extends Component {
             var theseWeeklyGoals = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, weeklyGoals: thisWeeklyGoals, hide: hideThisWeekly};
             groupWeeklyGoals.push(theseWeeklyGoals);
 
-            var thisTimers = (await axios.get(`/timer/${groupUsers[i].id}/${selectedMomentDate}`)).data;
             var thisCustomTimers = (await axios.get(`/customTimer/${groupUsers[i].id}/${this.state.selectedMomentDate}`)).data;
-            var distinctCustomNames = (await axios.get(`/customTimerByUser/${groupUsers[i].id}`)).data;
+            var distinctCustomNames = (await axios.get(`/customTimerByUser/${groupUsers[i].id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
             var hideThisTimer = (await axios.get(`/user/${groupUsers[i].id}`)).data[0].hidetimer;
-            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, timers: thisTimers, customTimers: thisCustomTimers, distinctCustomNames: distinctCustomNames, hide: hideThisTimer};
+            var theseTimers = {userId: groupUsers[i].id, firstName: groupUsers[i].firstname, lastName: groupUsers[i].lastname, customTimers: thisCustomTimers, distinctCustomNames: distinctCustomNames, hide: hideThisTimer};
             groupTimers.push(theseTimers);
 
             var thisReflections = (await axios.get(`/reflection/${groupUsers[i].id}/${selectedMomentDate}`)).data;
@@ -336,7 +323,7 @@ class GroupData extends Component {
             <div key={"div-weeklyGoals-" + user.userId}><WeeklyGoals key={"weeklyGoals-" + user.userId} hide={user.hide} weeklyGoals={user.weeklyGoals} userName={user.firstName} userLastName={user.lastName} /></div>);
 
         const listUserTimers = this.props.groupTimers.map((user) =>
-            <div key={"div-timers-" + user.userId}><Timers key={"timers-" + user.userId} hide={user.hide} timers={user.timers} customTimers={user.customTimers} distinctCustomNames={user.distinctCustomNames} userName={user.firstName} userLastName={user.lastName} /></div>);
+            <div key={"div-timers-" + user.userId}><Timers key={"timers-" + user.userId} hide={user.hide} customTimers={user.customTimers} distinctCustomNames={user.distinctCustomNames} userName={user.firstName} userLastName={user.lastName} /></div>);
 
         const listUserRefelections = this.props.groupReflections.map((user) =>
             <div key={"div-reflections-" + user.userId}><Reflections key={"reflections-" + user.userId} hide={user.hide} reflections={user.reflections} userName={user.firstName} userLastName={user.lastName} /></div>);
@@ -436,13 +423,6 @@ class Goals extends Component {
               </div>
             );
         }
-
-        //   return(
-        //       <div className="group-data-item">
-        //           <h4>{this.props.userName} {this.props.userLastName}</h4><br/>
-        //           <CheckboxGoals goals={this.props.weeklyGoals} />
-        //       </div>
-        //   )
       }
   }
 
@@ -463,13 +443,11 @@ class Goals extends Component {
 
         const listAllCustom = allCustomTimers.map((timer) =>
     <li key={"distinct-timer-" + timer.name}> <b>{timer.name}</b>: {secondsToHms(timer.time)}</li>);
-        if(this.props.timers.length > 0 && this.props.hide !== true) {
+        if(allCustomTimers.length > 0 && this.props.hide !== true) {
             return(
                 <div className="group-data-item" id="group-timers">
                     <h4>{this.props.userName} {this.props.userLastName}</h4><br/>
                     <ul className="history-timers-list">
-                        <li><b>Writing</b>: {secondsToHms(this.props.timers[0].writingtime)}</li>
-                        <li><b>Research</b>: {secondsToHms(this.props.timers[0].researchtime)}</li>
                         { listAllCustom }
                     </ul>
                 </div>
@@ -485,13 +463,9 @@ class Goals extends Component {
         }
         else {
             return(
-                <div className="group-data-item" id="group-timers">
+                <div className="group-data-item">
                     <h4>{this.props.userName} {this.props.userLastName}</h4><br/>
-                    <ul className="history-timers-list">
-                        <li><b>Writing</b>: {secondsToHms(0)}</li>
-                        <li><b>Research</b>: {secondsToHms(0)}</li>
-                        { listAllCustom }
-                    </ul>
+                    <div className="no-timers">No timers.</div>
                 </div>
             );
         }

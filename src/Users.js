@@ -611,96 +611,70 @@ class UserView extends React.Component {
         const groupName = (await axios.get(`/grou/${this.props.user.groupid}`)).data[0].groupname;
         const className = (await axios.get(`/clas/${this.props.user.classid}`)).data[0].classname;
 
-        var writingDataPoints = [];
-        var researchDataPoints = [];
-        var customDataPoints = [];
+        const distinctCustomNames = (await axios.get(`/customTimerByUser/${this.props.user.id}`)).data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
 
-        const getTimers = (await axios.get(`/timerByUser/${this.state.userid}`)).data;
-        const allTimers  = getTimers.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
-        // var test = Moment().day("Monday").year(2020).week(2).toDate();
-        // console.log(test);
+        const getCustom = (await axios.get(`/allCustomTimers/${this.props.user.id}`)).data;
+        const allCustom  = getCustom.sort((a,b) => new Moment(a.timerdate).format('YYYYMMDD') - new Moment(b.timerdate).format('YYYYMMDD'));
+        var graphSeries = [];
+        if(allCustom.length > 0) {
+            var startWeek = Moment(allCustom[0].timerdate).week();
+            graphSeries = distinctCustomNames.map(timer => { return { name: timer.name, data: [] }});
 
-
-
-        if (allTimers.length > 0) {
-            var startWeek = Moment(allTimers[0].timerdate).week();
-            var thisWeek = startWeek;
-            var writing = 0;
-            var research = 0;
-            var custom = 0;
 
             var weeks = [];
-            var startDate = Moment(allTimers[0].timerdate).weekday(0);
+            var momentWeeks = [];
+            var startDate = Moment(allCustom[0].timerdate).weekday(0);
 
-            var today = Moment(allTimers[allTimers.length-1].timerdate).weekday(7);
+            var today = Moment(allCustom[allCustom.length-1].timerdate).weekday(7);
             while(startDate.isBefore(today)) {
                 let startDateWeek = startDate.weekday(0).format('MM/DD');
                 let endDateWeek = startDate.weekday(6).format('MM/DD');
                 startDate.add(7,'days');
                 weeks.push(startDateWeek.concat(" - ", endDateWeek));
+                momentWeeks.push({week: startWeek, year: Moment(startDate.weekday(0)).year()});
+                if(startWeek === 52) {
+                    startWeek = 0;
+                }
+                startWeek += 1;
             }
 
-            for (var i = 0; i < allTimers.length; i++) {
-                // console.log(Moment(allTimers[i].timerdate).week(), Moment(allTimers[i].timerdate).format('MM/DD/YYYY'));
-                if (Moment(allTimers[i].timerdate).week() === thisWeek) {
-                    writing += allTimers[i].writingtime;
-                    research += allTimers[i].researchtime;
-                    custom += allTimers[i].customtime;
-                    if (i === allTimers.length - 1) {
-                        writingDataPoints.push(writing / 3600);
-                        researchDataPoints.push(research / 3600);
-                        customDataPoints.push(custom / 3600);
-                    }
-                } else {
-                    writingDataPoints.push(writing / 3600);
-                    researchDataPoints.push(research / 3600);
-                    customDataPoints.push(custom / 3600);
+            var filterByName;
+            var filterByWeek;
 
-                    writing = 0;
-                    research = 0;
-                    custom = 0;
+            // this depends on distinctCustomNames being sorted. Currently sorted alphabetically, can be changed
+            // as long as it is consistenly sorted the same way throughout the page
 
-                    var numWeeks = 0;
-                    if(Moment(allTimers[i-1].timerdate).week() < Moment(allTimers[i].timerdate).week()) {
-                        numWeeks = (Moment(allTimers[i].timerdate).week() - Moment(allTimers[i-1].timerdate).week()-1);
+            for(var i=0; i<distinctCustomNames.length; i++) {
+                filterByName = allCustom.filter((timer) => timer.name === distinctCustomNames[i].name);
+                for(var j=0; j<momentWeeks.length; j++) {
+                    filterByWeek = filterByName.filter((timer) => Moment(timer.timerdate).week() === momentWeeks[j].week && Moment(timer.timerdate).year() === momentWeeks[j].year);
+                    if(filterByWeek.length > 0) {
+                        var totalHrs = filterByWeek.reduce((a, b) => a + b.time, 0) / 3600;
+                        graphSeries[i].data.push(totalHrs);
                     }
                     else {
-                        numWeeks = (52 - Moment(allTimers[i-1].timerdate).week() + Moment(allTimers[i].timerdate).week()-1);
+                        graphSeries[i].data.push(0)
                     }
 
-
-                    if(numWeeks >= 1) {
-                        // console.log(numWeeks, Moment(allTimers[i-1].timerdate).format('MM/DD/YY'), Moment(allTimers[i].timerdate).format('MM/DD/YY'));
-                        for(var j = 0; j< numWeeks; j++) {
-                            writingDataPoints.push(0);
-                            researchDataPoints.push(0);
-                            customDataPoints.push(0);
-                        }
-                        writing = 0;
-                        research = 0;
-                        custom = 0;
-                        thisWeek += 1;
-                    }
-
-                    thisWeek = Moment(allTimers[i].timerdate).week();
-                    writing += allTimers[i].writingtime;
-                    research += allTimers[i].researchtime;
-                    custom += allTimers[i].customtime;
-
-                    if (i === allTimers.length - 1) {
-                        writingDataPoints.push(allTimers[i].writingtime / 3600);
-                        researchDataPoints.push(allTimers[i].researchtime / 3600);
-                        customDataPoints.push(allTimers[i].customtime / 3600);
-                    }
                 }
-
             }
         }
+        else {
+            graphSeries = [];
+        }
 
-        var maxY = Math.max(...writingDataPoints, ...researchDataPoints, ...customDataPoints);
+        
+
+        var maxArray = [];
+
+        for(i=0; i<graphSeries.length; i++) {
+            maxArray.push(Math.max(...graphSeries[i].data));
+        }
+
+        var maxY = Math.max(...maxArray);
 
         var options= {
-            colors: ['#4B9CD3', '#13294B', '#6AC9D2'],
+            colors: ['#0b476b', '#106699', '#329c8d', '#7abe9a', '#ebefcd', '#d3b276'],
             chart: {
               id: 'Timer Stats'
             },
@@ -733,8 +707,8 @@ class UserView extends React.Component {
                     }
                 },
                 min: 0,
-                max: Math.ceil(maxY) + 2,
-                tickAmount: (Math.ceil(maxY) + 2)/2
+                max: Math.ceil(maxY) + 1,
+                tickAmount: (Math.ceil(maxY) + 1)/2
             },
             title: {
                 text: 'Timer Hours Per Week',
@@ -761,20 +735,7 @@ class UserView extends React.Component {
                 }
             }
           };
-          var series= [
-            {
-                name: 'Writing Timers',
-                data: writingDataPoints
-            },
-            {
-                name: "Research Timers",
-                data: researchDataPoints
-            },
-            {
-                name: "Custom Timers",
-                data: customDataPoints
-            }
-        ];
+          var series = graphSeries;
         this.setState({options, series, className, classField: className, groupName, groupField: groupName});
     }
 

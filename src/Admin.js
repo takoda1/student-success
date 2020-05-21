@@ -353,7 +353,8 @@ class ClassGoals extends React.Component {
                                     goaldate: formattedDate, 
                                     goaltext: this.state.goalText, 
                                     completed: false, 
-                                    completedate: "2100-01-01"
+                                    completedate: "2100-01-01",
+                                    priority: -1
                                 }).then((response) => { }, (error) => {
                                     alert("There was an error trying to add the class goal. Please make sure you filled everything out correctly and try again. Contact your developers if the issue persists.");
                                     breakLoop = true; });

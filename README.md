@@ -235,7 +235,7 @@ Returns a single goal referenced by the goal primary key id
 POST /weeklyGoal    (Requires json/js body of {userid: number, goaldate: "yyyy-mm-dd", goaltext: string, completed: boolean, completedate: "yyyy-mm-dd"})
 Posts a weekly goal with specified values
 
-PUT /weeklyGoal/:id  (Requires json/js body of {goaltext: string, completed: boolean, completedate: "yyyy-mm-dd"})
+PUT /weeklyGoal/:id  (Requires json/js body of {goaltext: string, completed: boolean, completedate: "yyyy-mm-dd", priority: number})
 Updates/puts the goal specified by its unique id with new goalText, completed, and completedate values.
 
 DELETE /weeklyGoal/:id

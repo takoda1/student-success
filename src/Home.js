@@ -257,7 +257,8 @@ class Home extends React.Component {
             goaldate: this.state.selectedMomentDate, 
             goaltext: this.state.newWeeklyText, 
             completed: false, 
-            completedate: "2100-01-01" 
+            completedate: "2100-01-01",
+            priority: (this.state.unfilteredWeeklyGoals.length + 1) 
         };
         await axios.post('/weeklyGoal', newGoal).then((response) => { }, (error) => {
             alert("There was an error trying to submit the long term goal. Please make sure you filled everything out correctly and try again. Contact your instructor if the issue persists."); });
@@ -268,12 +269,13 @@ class Home extends React.Component {
         });
     }
 
-    async onWeeklyGoalEdited(event, newText, goalId, completed, completeDate) {
+    async onWeeklyGoalEdited(event, newText, goalId, completed, completeDate, priority) {
         event.preventDefault();
         const updatedGoal = { 
             goaltext: newText, 
             completed: completed, 
-            completedate: Moment(completeDate).format("YYYY-MM-DD") 
+            completedate: Moment(completeDate).format("YYYY-MM-DD"),
+            priority
         };
         await axios.put(`/weeklyGoal/${goalId}`, updatedGoal);
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
@@ -655,24 +657,63 @@ class WeeklyGoals extends React.Component {
 }
 
 class WeeklyGoalList extends React.Component {
+    constructor(props) {
+        super(props);
+    
+        this.state = {
+          prioritizing: false,
+        }
+      }
+
     render() {
-        const sortedWeeklyGoals = this.props.unfilteredWeeklyGoals.sort(function(a, b){return a.id - b.id});
+        const sortedWeeklyGoals = this.props.unfilteredWeeklyGoals.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
         const listWeeklyGoals = sortedWeeklyGoals.map((g) => <WeeklyGoalItem key={g.id} goal={g} selectedMomentDate={this.props.selectedMomentDate} onWeeklyGoalEdited={this.props.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.props.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.props.onWeeklyGoalCheck} makeDailyGoal={this.props.makeDailyGoal} makeDailyGoalFromSub={this.props.makeDailyGoalFromSub} />);
-        return(
-            <ul className="goal-list">
-                {listWeeklyGoals}
-                <Form className="addGoal" onSubmit={this.props.onWeeklyGoalSubmitted}>
-                    <Form.Row>
-                        <Col className="goal-input">
-                            <Form.Control type="text" className="addGoalField" value={this.props.newWeeklyText} onChange={this.props.onWeeklyGoalTyped} />
-                        </Col>
-                        <Col className="goal-buttons-col">
-                            <Button type="submit">Add Goal</Button>
-                        </Col>
-                    </Form.Row>
-                </Form>
-            </ul>
+
+        const viewMode = (
+            <div>
+                <Button onClick={() => this.setState({ prioritizing: true })}>Reorder List</Button>
+                <ul className="goal-list">
+                    {listWeeklyGoals}
+                    <Form className="addGoal" onSubmit={this.props.onWeeklyGoalSubmitted}>
+                        <Form.Row>
+                            <Col className="goal-input">
+                                <Form.Control type="text" className="addGoalField" value={this.props.newWeeklyText} onChange={this.props.onWeeklyGoalTyped} />
+                            </Col>
+                            <Col className="goal-buttons-col">
+                                <Button type="submit">Add Goal</Button>
+                            </Col>
+                        </Form.Row>
+                    </Form>
+                </ul>
+            </div>
         );
+
+        const priorityMode = (
+            <div>
+              <ul className="goal-list">
+                <Form onSubmit={ () => this.setState({ prioritizing: false }) }>
+                  {sortedWeeklyGoals.map((goal) => {
+                    return (
+                      <Form.Row key={goal.id}>
+                        <Col>{goal.goaltext}</Col>
+                        <Col>
+                          <Form.Control as="select" onChange={async (event) => {
+                            event.preventDefault();
+                            await this.props.onWeeklyGoalEdited(event, goal.goaltext, goal.id, goal.completed, goal.completedate, event.target.value);
+                          }}>
+                              <option key={0} >{0}</option>
+                              {this.props.unfilteredWeeklyGoals.map((group, index) => <option key={index+1}>{index+1}</option>)}
+                          </Form.Control>
+                        </Col>
+                      </Form.Row>
+                    );
+                  })}
+                  <Button type="submit">Save</Button>
+                </Form>
+              </ul>
+            </div>
+          );
+          return this.state.prioritizing ? priorityMode : viewMode;
     }
 }
 
@@ -703,7 +744,8 @@ class WeeklyGoalItem extends React.Component {
                     this.state.goaltext, 
                     this.props.goal.id, 
                     this.props.goal.completed, 
-                    this.props.goal.completedate
+                    this.props.goal.completedate,
+                    this.props.goal.priority
                 );
             }}>
                 <Form.Row className="goal-row">

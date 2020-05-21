@@ -55,9 +55,23 @@ class Forum extends Component {
         // if Admin, this is an announcement
         const title = isAdmin ? "Announcement: " + this.state.newPostTitle : this.state.newPostTitle;
         const newPost = { title, body: this.state.newPostText, userid: this.props.user.id, username: `${this.props.user.firstname} ${this.props.user.lastname}`, postdate: todayDate, classid: this.state.selectedClass };
+        const recipients = (await axios.get('/users')).data.filter((user) => user.classid === this.state.selectedClass).map((ob) => ob.email);
         await axios.post('/forum', newPost);
 
-        // Send email ?
+        // Send email notification to class members
+        if (isAdmin) {
+            const message = {
+                recipients,
+                subject: "Your Instructor has posted a new Announcement", // Subject line
+                messageHtml: `<h4>${this.state.newPostTitle}</h4>
+                                <p>${this.state.newPostText}</p>
+                                </br>
+                                <p>Visit <a href="https://student-success.herokuapp.com/forum">here</a> to view the post.</p>
+                             `, // html body
+            }
+
+            await axios.post('/send', message); // Send the email!
+        }
 
         const forumPosts = await this.getPosts(this.state.selectedView);
         this.setState({ forumPosts, newPostTitle: '', newPostText: '', makingPost: false });
@@ -90,7 +104,6 @@ class Forum extends Component {
 
     render() {
         let dates = [];
-        let chosenView;
         const isAdmin = auth0Client.getProfile()[config.roleUrl] === 'admin';
 
         return (

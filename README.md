@@ -30,6 +30,8 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_DATABASE=<database name>
 PORT=3005
+DEV_EMAIL_ADDR=testaddress@email.com
+DEV_EMAIL_PASS=testemailpassword
 
 - Fork the project https://github.com/takoda1/student-success, then clone it
 -`cd student-success`

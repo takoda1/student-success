@@ -161,6 +161,9 @@ Classlinks:
 
 ## Current endpoints:
 
+### Send Email
+POST /send  Sends an email to specified recipients, requires a body of {recipients: string[], subject: string, message: string} (message is expected in HTML format)
+
 ### Users
 
 GET /users   Returns all users

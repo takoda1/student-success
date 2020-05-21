@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const nodemailer = require('nodemailer')
 const cors = require('cors')
 
 const userQueries = require('./queries/userQueries')
@@ -34,6 +35,26 @@ const { pool } = require('./config')
 
 const port = 3000
 
+// EMAIL SETUP
+const emailAddress = process.env.NODE_ENV === 'production' ? process.env.EMAIL_ADDR : process.env.DEV_EMAIL_ADDR;
+const emailPassword = process.env.NODE_ENV === 'production' ? process.env.EMAIL_PASS : process.env.DEV_EMAIL_PASS;
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    secure: true,
+    auth: {
+        user: emailAddress,
+        pass: emailPassword
+    }
+});
+
+transporter.verify((error, success) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('All works fine, congratz!');
+    }
+});
 
 const app = express();
 
@@ -42,6 +63,34 @@ app.use(
     bodyParser.urlencoded({ extended: true })
 )
 app.use(cors())
+
+
+app.post('/send', (req, res, next) => {
+    const recipients = req.body.recipients
+    const subject = req.body.subject
+    const message = req.body.messageHtml
+  
+    var mail = {
+      from: '"Trellis" <info.trellis.team@example.com>',
+      to: recipients,  
+      subject,
+      html: message,
+    }
+  
+    let info = transporter.sendMail(mail, (err, data) => {
+        if (err) {
+          res.json({
+            msg: 'fail'
+          })
+        } else {
+          res.json({
+            msg: 'success'
+          })
+        }
+      })
+    console.log(info)
+})
+
 
 app.get('/users', userQueries.getUsers)
 app.get('/user/:id', userQueries.getUser)

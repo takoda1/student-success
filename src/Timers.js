@@ -203,7 +203,6 @@ class TimerPage extends Component {
     }
 
     async updateTimers (time, category) {
-
         window.gtag('event', 'Logged Time', {
             'event_category': 'Timers',
             'event_label': `${this.props.user.lastname}, ${this.props.user.firstname}`,
@@ -316,8 +315,6 @@ class TimerPage extends Component {
             allCustomTimers
         });
     }
-
-
 
     render() {
         return (
@@ -478,8 +475,9 @@ class Timer extends Component {
         if (Notification.permission === "granted") {
             var notification = new Notification("Time complete!");
         }
-        document.getElementsByClassName("audio-sound")[0].loop = true;
+
         const alarmAudio = document.getElementsByClassName("audio-sound")[0];
+        alarmAudio.currentTime = 0;
         alarmAudio.play();
         alert("Time complete!");
         alarmAudio.pause();

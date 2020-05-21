@@ -298,10 +298,10 @@ class Home extends React.Component {
     async onWeeklyGoalCheck(completed, goal) {
         var updatedGoal;
         if(completed === true) {
-            updatedGoal = { goaltext: goal.goaltext, completed, completedate: this.state.selectedMomentDate };
+            updatedGoal = { goaltext: goal.goaltext, completed, completedate: this.state.selectedMomentDate, priority: goal.priority };
         }
         else {
-            updatedGoal = { goaltext: goal.goaltext, completed, completedate: "2100-01-01" };
+            updatedGoal = { goaltext: goal.goaltext, completed, completedate: "2100-01-01", priority: goal.priority };
         }
         await axios.put(`/weeklyGoal/${goal.id}`, updatedGoal);
         const weeklyGoals = (await axios.get(`/weeklyGoals/${this.props.user.id}`)).data;
@@ -395,7 +395,7 @@ class Home extends React.Component {
         this.setState({ editingReflections });
     }
 
-    async makeDailyGoal(event, goalId, completed, text, subgoals) {
+    async makeDailyGoal(event, completed, text, subgoals) {
         event.preventDefault();
 
         const newGoal = { 
@@ -412,7 +412,6 @@ class Home extends React.Component {
             var newDailyGoal = goals.filter(goal => goal.goaltext === text);
 
             for(var i=0; i<subgoals.length; i++) {
-                // await axios.delete(`/weeklySubgoal/${subgoals[i].id}`);
                 var newSubGoal = {
                     userid: this.props.user.id,
                     parentgoal: newDailyGoal[0].id,
@@ -552,9 +551,6 @@ class Home extends React.Component {
                                     <WeeklyGoals user={this.props.user} selectedMomentDate={this.state.selectedMomentDate} weeklyGoals={this.state.weeklyGoals} unfilteredWeeklyGoals={this.state.unfilteredWeeklyGoals} newWeeklyText={this.state.newWeeklyText} onWeeklyGoalTyped={this.onWeeklyGoalTyped} onWeeklyGoalSubmitted={this.onWeeklyGoalSubmitted} onWeeklyGoalEdited={this.onWeeklyGoalEdited} onWeeklyGoalRemoved={this.onWeeklyGoalRemoved} onWeeklyGoalCheck={this.onWeeklyGoalCheck} makeDailyGoal={this.makeDailyGoal} makeDailyGoalFromSub={this.makeDailyGoalFromSub} />
                                     <Reflections completedReflections={this.state.completedReflections} reflections={this.state.reflections} user={this.props.user} questions={this.state.questions} reflectionQuestions={this.state.reflectionQuestions} selectedMomentDate={this.state.selectedMomentDate} onReflectionSubmitted={this.onReflectionSubmitted} onReflectionOneChanged={this.onReflectionOneChanged} onReflectionTwoChanged={this.onReflectionTwoChanged} onReflectionThreeChanged={this.onReflectionThreeChanged} onExtraReflectionChanged={this.onExtraReflectionChanged} onEditButtonClick={this.onEditButtonClick} editingReflections={this.state.editingReflections} />
                                 </div>
-                                {/* <div className="home-bottom-flex">
-                                    
-                                </div> */}
                             </div>
                         )
                     }
@@ -697,7 +693,7 @@ class WeeklyGoalList extends React.Component {
                       <Form.Row key={goal.id}>
                         <Col>{goal.goaltext}</Col>
                         <Col>
-                          <Form.Control as="select" onChange={async (event) => {
+                          <Form.Control as="select" value={goal.priority} onChange={async (event) => {
                             event.preventDefault();
                             await this.props.onWeeklyGoalEdited(event, goal.goaltext, goal.id, goal.completed, goal.completedate, event.target.value);
                           }}>
@@ -708,7 +704,7 @@ class WeeklyGoalList extends React.Component {
                       </Form.Row>
                     );
                   })}
-                  <Button type="submit">Save</Button>
+                  <Button type="submit">Close</Button>
                 </Form>
               </ul>
             </div>
@@ -770,7 +766,7 @@ class WeeklyGoalItem extends React.Component {
                         <Button className="edit" onClick={() => this.setState({editing: !this.state.editing })}>Edit</Button>
                         <Button className="remove" onClick={() => this.props.onWeeklyGoalRemoved(this.props.goal.id)}>Remove</Button>
                         <OverlayTrigger overlay={<Tooltip className="make-daily-goal-tooltip">Create Daily Goal</Tooltip>}>
-                            <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.id, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
+                            <Button onClick={(event) => this.props.makeDailyGoal(event, this.props.goal.completed, this.state.goaltext, this.state.subgoals)} size="sm" id="weeklySubgoalToggle">
                                 <FontAwesomeIcon icon={faAngleDoubleLeft} />
                             </Button>
                         </OverlayTrigger>

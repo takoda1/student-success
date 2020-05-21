@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const nodemailer = require('nodemailer')
+const cron = require('node-cron')
 const cors = require('cors')
 
 const userQueries = require('./queries/userQueries')
@@ -56,6 +57,54 @@ transporter.verify((error, success) => {
     }
 });
 
+// Scheduling email to send private note updates once a day
+cron.schedule('0 16 * * *', () => {      // every day at 4:00pm
+
+    // Get today's date in string format
+    var d = new Date();
+    var year = d.getFullYear().toString();
+    var month = (d.getMonth() + 1);
+    var day = d.getDate();
+    if(month < 10) {
+        month = '0' + month;
+    }
+    if(day < 10) {
+        day = '0' + day;
+    }
+    todayDate = year.concat("-", month, "-", day)
+
+    let todayNotes = [];
+    pool.query('SELECT * FROM forum WHERE classid = $1', [-1], (error, results) => {
+        if (error) {
+            throw error
+        } else {
+            // Get private notes for today
+            todayNotes = results.rows;
+            todayNotes = todayNotes ? todayNotes.filter((post) => post.postdate === todayDate) : [];
+        
+            const mailOptions = {
+                from: '"Trellis" <info.trellis.team@gmail.com>',
+                to: ['info.trellis.team@gmail.com', 'jcooleyf@live.unc.edu'],
+                subject: `Your Daily Digest: Trellis`,
+                html: `<h4>You have ${todayNotes.length} new Private Notes on Trellis</h4><p>Click <a href="https://student-success.herokuapp.com/forum">here</a> and view Instructor Notes to check them</p>`
+            }
+        
+            if (todayNotes.length > 0) {
+                // Send e-mail
+                transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                    console.log(error);
+                    } else {
+                    console.log('Email sent: ' + info.response);
+                    }
+                });
+            }
+        }
+    })
+
+});
+
+
 const app = express();
 
 app.use(bodyParser.json())
@@ -71,7 +120,7 @@ app.post('/send', (req, res, next) => {
     const message = req.body.messageHtml
   
     var mail = {
-      from: '"Trellis" <info.trellis.team@example.com>',
+      from: '"Trellis" <info.trellis.team@gmail.com>',
       to: recipients,  
       subject,
       html: message,

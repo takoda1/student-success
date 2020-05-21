@@ -97,9 +97,6 @@ class TimerPage extends Component {
                 }
                 startWeek += 1;
             }
-
-            console.log(Moment("12/25/2019").week());
-
             var filterByName;
             var filterByWeek;
 
@@ -372,6 +369,7 @@ class Timers extends Component {
                     </div>
 
                 </div>
+                <p style={{ marginLeft: '3vw', fontSize: '0.75em' }}>Warning: an alarm sound will go off when you have reached the end of the timer.</p>
             </div>
         );
     }
@@ -480,6 +478,7 @@ class Timer extends Component {
         if (Notification.permission === "granted") {
             var notification = new Notification("Time complete!");
         }
+        document.getElementsByClassName("audio-sound")[0].loop = true;
         const alarmAudio = document.getElementsByClassName("audio-sound")[0];
         alarmAudio.play();
         alert("Time complete!");

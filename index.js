@@ -81,7 +81,7 @@ cron.schedule('0 16 * * *', () => {      // every day at 4:00pm
         
             const mailOptions = {
                 from: '"Trellis" <info.trellis.team@gmail.com>',
-                to: ['info.trellis.team@gmail.com', 'jcooleyf@live.unc.edu'],
+                to: ['info.trellis.team@gmail.com'],
                 subject: `Your Daily Digest: Trellis`,
                 html: `<h4>You have ${todayNotes.length} new Private Notes on Trellis</h4><p>Click <a href="https://student-success.herokuapp.com/forum">here</a> and view Instructor Notes to check them</p>`
             }

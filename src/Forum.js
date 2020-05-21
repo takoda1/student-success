@@ -318,7 +318,7 @@ class ActivePost extends Component {
         if (this.props.post.classid === -1) {             
             const isAdmin = auth0Client.getProfile()[config.roleUrl] === 'admin';
             const recipients = [];
-            recipients.push(isAdmin ? (await axios.get(`/user/${this.props.post.userid}`)).data[0].email : this.props.user.email);
+            recipients.push(isAdmin ? (await axios.get(`/user/${this.props.post.userid}`)).data[0].email : "info.trellis.team@gmail.com");
             
             const message = {
                 recipients,
